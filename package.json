@@ -7,7 +7,7 @@
   "devDependencies": {
     "webpack": "~4.44.2",
     "webpack-cli": "~3.3.12",
-    "css-loader": "~4.3.0",
+    "css-loader": "~3.6.0",
     "vue-loader": "~15.9.3",
     "vue-template-compiler": "~2.6.12"
   }
