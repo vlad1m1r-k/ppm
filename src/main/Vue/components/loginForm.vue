@@ -18,7 +18,7 @@ export default {
     methods: {
         setToken() {
             this.$root.tokenProvider.setToken(123);
-            console.log(this.$root.tokenProvider);
+            // console.log(document.cookie);
         }
     }
 }

@@ -9,6 +9,36 @@ const vm = new Vue({
         'login-form': loginForm
     },
     data: {
-        tokenProvider: tokenProvider
+        tokenProvider: tokenProvider,
+        language: {
+            name: "",
+            data: {}
+        }
+    },
+    methods: {
+        getPreferredLang() {
+            let lang = (document.cookie.match('lang=(.+?)(;|$)') || [])[1] || '';
+            if (lang === "") {
+                return navigator.language;
+            }
+            return lang;
+        },
+        loadLanguage(lang) {
+            const component = this;
+            $.getJSON("/static/language/" + lang + ".json",
+                (data) => {
+                    component.language.name = data.name;
+                    component.language.data = data.data;
+                }
+            )
+                .fail((error) => {
+                    if (error.status === 404) {
+                        component.loadLanguage("en-Us");
+                    }
+                })
+        }
+    },
+    mounted() {
+        this.loadLanguage(this.getPreferredLang());
     }
 });
