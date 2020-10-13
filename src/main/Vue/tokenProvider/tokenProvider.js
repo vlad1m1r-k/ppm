@@ -5,5 +5,6 @@ export default {
     },
     login(login, password, link) {
         link.message = "ERROR";
+        Vue.cryptoProvider.tt2();
     }
 }

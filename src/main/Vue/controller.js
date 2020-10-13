@@ -1,8 +1,15 @@
 import MainBlock from './components/mainBlock.vue';
 import loginForm from "./components/loginForm.vue";
 import tokenProvider from "./tokenProvider/tokenProvider";
+import cryptoProvider from "./tokenProvider/cryptoProvider";
 
-const vm = new Vue({
+Vue.use({
+    install(Vue) {
+        Vue.cryptoProvider = cryptoProvider;
+    }
+})
+
+new Vue({
     el: '#app',
     components: {
         'main-block': MainBlock,
