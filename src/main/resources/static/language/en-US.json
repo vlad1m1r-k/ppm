@@ -1,6 +1,8 @@
 {
   "name": "en-US",
   "data": {
-    "test1": "Test 1 sss"
+    "lf1": "Login",
+    "lf2": "Password",
+    "lf3": "Enter"
   }
 }

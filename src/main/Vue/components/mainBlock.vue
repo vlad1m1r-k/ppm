@@ -1,6 +1,6 @@
 <template>
     <div :class="{'blur': tokenProvider.token === null}">
-        Page Content  {{lang.data.test1}}
+        Page Content
         <br>
         <language-selector :lang-name="lang.name" @language-changed="setLang"></language-selector>
     </div>

@@ -1,8 +1,20 @@
 <template>
     <div class="l-modal" v-if="tokenProvider.token === null">
         <div class="l-modal-body">
-            Modal Content
-            <button @click=setToken>Ok</button>
+            <div class="alert alert-danger" v-if="message" @click="message = ''">
+                {{ message }}
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" :placeholder="lang.data.lf1" v-model="login">
+            </div>
+            <div class="form-group">
+                <input type="password" class="form-control" :placeholder="lang.data.lf2" v-model="password" @keypress.enter="doLogin">
+            </div>
+            <div class="container">
+                <div class="row justify-content-md-center">
+                    <button class="btn btn-primary" @click=doLogin>{{ lang.data.lf3 }}</button>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -12,13 +24,21 @@ export default {
     name: "loginForm",
     data() {
         return {
-            tokenProvider: this.$root.tokenProvider
+            tokenProvider: this.$root.tokenProvider,
+            lang: this.$root.$data.language,
+            message: "",
+            login: "",
+            password: ""
         }
     },
     methods: {
-        setToken() {
-            this.$root.tokenProvider.setToken(123);
-            // console.log(document.cookie);
+        doLogin() {
+            if (this.login.length < 1) {
+                return;
+            }
+            this.message = "";
+            this.tokenProvider.login(this.login, this.password, this.$data);
+            this.password = "";
         }
     }
 }
