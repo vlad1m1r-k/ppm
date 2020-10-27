@@ -23,6 +23,7 @@
         <bootstrap.version>4.5.2</bootstrap.version>
         <popper.version>2.5.2</popper.version>
         <jquery.version>3.5.1</jquery.version>
+        <bcprov.version>1.66</bcprov.version>
     </properties>
 
     <dependencies>
@@ -62,6 +63,11 @@
             <groupId>org.webjars</groupId>
             <artifactId>jquery</artifactId>
             <version>${jquery.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk15on</artifactId>
+            <version>${bcprov.version}</version>
         </dependency>
     </dependencies>
 
