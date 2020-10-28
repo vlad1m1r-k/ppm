@@ -1,10 +1,12 @@
 package com.vladimir.ppm.controller;
 
+import com.vladimir.ppm.dto.PublicKeyDto;
 import com.vladimir.ppm.service.CryptoProviderService;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 @RequestMapping("/crypto")
 public class CryptoRestController {
     private CryptoProviderService cryptoProviderService;
@@ -13,7 +15,8 @@ public class CryptoRestController {
         this.cryptoProviderService = cryptoProviderService;
     }
 
-    public String getPublicKey() {
-
+    @GetMapping("/getKey")
+    public PublicKeyDto getPublicKey() {
+        return cryptoProviderService.getPublicKey();
     }
 }
