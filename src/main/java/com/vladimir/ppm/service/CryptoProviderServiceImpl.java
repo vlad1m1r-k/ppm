@@ -21,6 +21,8 @@ public class CryptoProviderServiceImpl implements CryptoProviderService {
 
     @Value("${keyLifeTimeDays}")
     private int keyLifeTimeDays;
+    @Value("${rsaKeySize}")
+    private int rsaKeySize;
 
     @PostConstruct
     public void init() {
@@ -28,7 +30,7 @@ public class CryptoProviderServiceImpl implements CryptoProviderService {
         try {
             KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA", "BC");
             SecureRandom random = new SecureRandom();
-            keyPairGenerator.initialize(2048, random);
+            keyPairGenerator.initialize(rsaKeySize, random);
             keyPair = keyPairGenerator.generateKeyPair();
             keyPairExpireDate = System.currentTimeMillis() + keyLifeTimeDays * 24 * 60 * 60 * 1000;
         } catch (NoSuchAlgorithmException | NoSuchProviderException e) {

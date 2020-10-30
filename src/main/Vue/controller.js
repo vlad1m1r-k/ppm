@@ -9,6 +9,8 @@ Vue.use({
     }
 })
 
+Vue.cryptoProvider.init();
+
 new Vue({
     el: '#app',
     components: {
