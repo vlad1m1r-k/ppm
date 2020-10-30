@@ -9,6 +9,8 @@
     "webpack-cli": "~3.3.12",
     "css-loader": "~3.6.0",
     "vue-loader": "~15.9.3",
-    "vue-template-compiler": "~2.6.12"
+    "vue-template-compiler": "~2.6.12",
+    "node-forge": "~0.10.0",
+    "copy-webpack-plugin": "~6.2.1"
   }
 }

@@ -1,5 +1,6 @@
-var path = require('path');
-var webpack = require('webpack');
+const path = require('path');
+const webpack = require('webpack');
+const CopyPlugin = require('copy-webpack-plugin');
 
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
@@ -24,7 +25,15 @@ module.exports = {
         ]
     },
     plugins: [
-        new VueLoaderPlugin()
+        new VueLoaderPlugin(),
+        new CopyPlugin({
+            patterns: [
+                {
+                    from: "./node_modules/node-forge/dist/forge.all.min.js",
+                    to: "./"
+                }
+            ]
+        })
     ]
 };
 
