@@ -2,19 +2,25 @@ package com.vladimir.ppm.dto;
 
 public class PublicKeyDto {
     private Long keyPairExpireDate;
-    private String publicKey;
+    private String modulus;
+    private String exponent;
 
     private PublicKeyDto(Builder builder) {
         this.keyPairExpireDate = builder.keyPairExpireDate;
-        this.publicKey = builder.publicKey;
+        this.modulus = builder.modulus;
+        this.exponent = builder.exponent;
     }
 
     public Long getKeyPairExpireDate() {
         return keyPairExpireDate;
     }
 
-    public String getPublicKey() {
-        return publicKey;
+    public String getModulus() {
+        return modulus;
+    }
+
+    public String getExponent() {
+        return exponent;
     }
 
     public static Builder builder() {
@@ -23,15 +29,21 @@ public class PublicKeyDto {
 
     public static class Builder {
         private Long keyPairExpireDate;
-        private String publicKey;
+        private String modulus;
+        private String exponent;
 
         public Builder keyPairExpireDate(Long keyPairExpireDate) {
             this.keyPairExpireDate = keyPairExpireDate;
             return this;
         }
 
-        public Builder publicKey(String publicKey) {
-            this.publicKey = publicKey;
+        public Builder modulus(String modulus) {
+            this.modulus = modulus;
+            return this;
+        }
+
+        public Builder exponent(String exponent) {
+            this.exponent = exponent;
             return this;
         }
 

@@ -8,8 +8,6 @@ export default {
         data.login = login;
         data.password = password;
         let encryptedData = Vue.cryptoProvider.encrypt(data);
-        password = "";
-        data = null;
         //TODO login
     }
 }
