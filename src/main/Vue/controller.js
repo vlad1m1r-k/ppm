@@ -22,7 +22,8 @@ new Vue({
         language: {
             name: "",
             data: {}
-        }
+        },
+        langLoadStatus: false
     },
     methods: {
         getPreferredLang() {
@@ -34,7 +35,7 @@ new Vue({
         },
         loadLanguage(lang) {
             const component = this;
-            $.getJSON("/static/language/" + lang + ".json",
+            $.getJSON("/language/" + lang + ".json",
                 (data) => {
                     component.language.name = data.name;
                     component.language.data = data.data;
@@ -42,7 +43,12 @@ new Vue({
             )
                 .fail((error) => {
                     if (error.status === 404) {
-                        component.loadLanguage("en-Us");
+                        if (component.langLoadStatus) {
+                            console.log("Error loading language.");
+                            return;
+                        }
+                        component.langLoadStatus = true;
+                        component.loadLanguage("en-US");
                     }
                 })
         }

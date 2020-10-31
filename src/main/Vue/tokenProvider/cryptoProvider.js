@@ -9,7 +9,7 @@ export default {
         let aesIv = forge.random.getBytesSync(32);
         let cipher = forge.cipher.createCipher("AES-CBC", aesKey);
         cipher.start({iv: aesIv});
-        cipher.update(forge.util.createBuffer(forge.util.encode64(data.toString())));
+        cipher.update(forge.util.createBuffer(data.toString()));
         cipher.finish();
         console.log(cipher.output);
 

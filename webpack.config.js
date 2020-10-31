@@ -30,7 +30,12 @@ module.exports = {
             patterns: [
                 {
                     from: "./node_modules/node-forge/dist/forge.all.min.js",
-                    to: "./"
+                    to: "./forge/"
+                },
+                {
+                    from: "./node_modules/node-forge/dist/prime.worker.min.js",
+                    to: "./forge/prime.worker.js",
+                    toType: 'file',
                 }
             ]
         })
