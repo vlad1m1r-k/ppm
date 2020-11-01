@@ -16,11 +16,8 @@ export default {
         cipher.finish();
 
         const aesKeyBundle = {key: forge.util.encode64(aesKey), iv: forge.util.encode64(aesIv)};
-        const srvPubKey = forge.pki.rsa.setPublicKey(this.serverPublicKey.m, this.serverPublicKey.e);
-        // const encryptedAESKey = srvPubKey.encrypt(JSON.stringify(aesKeyBundle));
-        const encryptedAESKey = srvPubKey.encrypt("Hello World!!!");
-        console.log(encryptedAESKey.length);
-
+        const srvPubKey = forge.pki.publicKeyFromPem(this.serverPublicKey);
+        const encryptedAESKey = srvPubKey.encrypt(JSON.stringify(aesKeyBundle));
 
         $.ajax({
             url: "/crypto/testAES",
@@ -50,12 +47,7 @@ export default {
             url: "/crypto/getKey",
             async: false,
             success: (data) => {
-                const hexModulus = forge.util.bytesToHex(forge.util.decode64(data.modulus));
-                const hexExponent = forge.util.bytesToHex(forge.util.decode64(data.exponent));
-                component.serverPublicKey = {
-                    m: new forge.jsbn.BigInteger(hexModulus, 16),
-                    e: new forge.jsbn.BigInteger(hexExponent, 16)
-                };
+                component.serverPublicKey = data.keyPEM;
                 component.serverKeyExpireDate = data.keyPairExpireDate;
             },
             error: (error) => {

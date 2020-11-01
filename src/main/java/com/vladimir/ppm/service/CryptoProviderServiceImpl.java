@@ -2,6 +2,8 @@ package com.vladimir.ppm.service;
 
 import com.vladimir.ppm.dto.PublicKeyDto;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -12,17 +14,16 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.io.IOException;
+import java.io.StringWriter;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
-import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 import java.security.Security;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.RSAPublicKeySpec;
 import java.util.Base64;
 
 @Service
@@ -49,37 +50,36 @@ public class CryptoProviderServiceImpl implements CryptoProviderService {
 
     @Override
     public PublicKeyDto getPublicKey() {
-        try {
-            KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-            RSAPublicKeySpec keySpec = keyFactory.getKeySpec(keyPair.getPublic(), RSAPublicKeySpec.class);
-            return PublicKeyDto.builder()
-                    .keyPairExpireDate(keyPairExpireDate)
-                    .modulus(Base64.getEncoder().withoutPadding().encodeToString(keySpec.getModulus().toByteArray()))
-                    .exponent(Base64.getEncoder().withoutPadding().encodeToString(keySpec.getPublicExponent().toByteArray()))
-                    .build();
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+        String privateKeyPem = "";
+        try (StringWriter stringWriter = new StringWriter(); JcaPEMWriter keyWriter = new JcaPEMWriter(stringWriter)) {
+            keyWriter.writeObject(keyPair.getPublic());
+            keyWriter.flush();
+            stringWriter.flush();
+            privateKeyPem = stringWriter.toString();
+        } catch (IOException e) {
             e.printStackTrace();
         }
-        return null;
+        return PublicKeyDto.builder()
+                .keyPairExpireDate(keyPairExpireDate)
+                .keyPEM(privateKeyPem)
+                .build();
     }
 
     @Override
     public void test(String key, String data) {
-        System.out.println(key.length());
         byte[] keyBytes = Base64.getDecoder().decode(key);
-        System.out.println(keyBytes.length);
-        System.out.println(new String(keyBytes));
         byte[] dataBytes = Base64.getDecoder().decode(data);
         try {
             Cipher rsaCipher = Cipher.getInstance("RSA/ECB/PKCS1Padding", "BC");
             rsaCipher.init(Cipher.DECRYPT_MODE, keyPair.getPrivate());
-            System.out.println(new String(rsaCipher.doFinal(keyBytes)));
-
+            JSONObject json = new JSONObject(new String(rsaCipher.doFinal(keyBytes)));
+            byte[] aesKeyBytes = Base64.getDecoder().decode(json.getString("key"));
+            byte[] aesIVBytes = Base64.getDecoder().decode(json.getString("iv"));
             Cipher aesCipher = Cipher.getInstance("AES/CBC/PKCS7Padding", "BC");
-            aesCipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(keyBytes, "AES"), new IvParameterSpec(null));
-//            System.out.println(new String(aesCipher.doFinal(dataBytes)));
+            aesCipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(aesKeyBytes, "AES"), new IvParameterSpec(aesIVBytes));
+            System.out.println(new String(aesCipher.doFinal(dataBytes)));
         } catch (NoSuchAlgorithmException | NoSuchProviderException | NoSuchPaddingException | InvalidKeyException |
-                InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
+                IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException e) {
             e.printStackTrace();
         }
     }
