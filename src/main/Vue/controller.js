@@ -7,7 +7,17 @@ Vue.use({
     install(Vue) {
         Vue.cryptoProvider = cryptoProvider;
     }
-})
+});
+Vue.use({
+    install(Vue) {
+        Vue.errorParser = function (error) {
+            if (error.responseJSON) {
+                return 'Error ' + error.responseJSON.status + ' ' + error.responseJSON.error + ' ' + error.responseJSON.message;
+            }
+            return 'Error ' + error.status;
+        }
+    }
+});
 
 Vue.cryptoProvider.init();
 

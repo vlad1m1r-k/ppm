@@ -17,22 +17,10 @@ export default {
         const srvPubKey = forge.pki.publicKeyFromPem(this.serverPublicKey);
         const encryptedAESKey = srvPubKey.encrypt(JSON.stringify(aesKeyBundle));
 
-        $.ajax({
-            url: "/crypto/testAES",
-            type: "post",
-            data: {
-                key: forge.util.encode64(encryptedAESKey),
-                data: forge.util.encode64(cipher.output.data)
-            }
-        });
-
-        // let decipher = forge.cipher.createDecipher("AES-CBC", aesKey);
-        // decipher.start({iv: aesIv});
-        // decipher.update(cipher.output);
-        // decipher.finish();
-        // let dcp = decipher.output;
-        // console.log(dcp.data);
-        //TODO ========
+        return {
+            key: forge.util.encode64(encryptedAESKey),
+            data: forge.util.encode64(cipher.output.data)
+        }
     },
     checkKey() {
         if (this.serverPublicKey === null || this.serverKeyExpireDate === null || this.serverKeyExpireDate < Date.now()) {
