@@ -5,9 +5,7 @@ export default {
 
     encrypt(data) {
         this.checkKey();
-        data.publicKey = {};
-        data.publicKey.n = forge.util.encode64(this.frontKeyPair.publicKey.n.data.toString());
-        data.publicKey.e = forge.util.encode64(this.frontKeyPair.publicKey.e.data.toString());
+        data.publicKey = forge.pki.publicKeyToPem(this.frontKeyPair.publicKey);
         const aesKey = forge.random.getBytesSync(32);
         const aesIv = forge.random.getBytesSync(16);
         const cipher = forge.cipher.createCipher("AES-CBC", aesKey);
