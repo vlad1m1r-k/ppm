@@ -1,7 +1,7 @@
 import MainBlock from './components/mainBlock.vue';
 import loginForm from "./components/loginForm.vue";
-import tokenProvider from "./tokenProvider/tokenProvider";
-import cryptoProvider from "./tokenProvider/cryptoProvider";
+import tokenProvider from "./provider/tokenProvider";
+import cryptoProvider from "./provider/cryptoProvider";
 
 Vue.use({
     install(Vue) {

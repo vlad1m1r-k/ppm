@@ -50,25 +50,26 @@ public class CryptoProviderServiceImpl implements CryptoProviderService {
 
     @Override
     public PublicKeyDto getPublicKey() {
-        String privateKeyPem = "";
+        String publicKeyPem = "";
         try (StringWriter stringWriter = new StringWriter(); JcaPEMWriter keyWriter = new JcaPEMWriter(stringWriter)) {
             keyWriter.writeObject(keyPair.getPublic());
             keyWriter.flush();
             stringWriter.flush();
-            privateKeyPem = stringWriter.toString();
+            publicKeyPem = stringWriter.toString();
         } catch (IOException e) {
             e.printStackTrace();
         }
         return PublicKeyDto.builder()
                 .keyPairExpireDate(keyPairExpireDate)
-                .keyPEM(privateKeyPem)
+                .keyPEM(publicKeyPem)
                 .build();
     }
 
     @Override
-    public void test(String key, String data) {
+    public String decrypt(String key, String data) {
         byte[] keyBytes = Base64.getDecoder().decode(key);
         byte[] dataBytes = Base64.getDecoder().decode(data);
+        String decryptedString = "";
         try {
             Cipher rsaCipher = Cipher.getInstance("RSA/ECB/PKCS1Padding", "BC");
             rsaCipher.init(Cipher.DECRYPT_MODE, keyPair.getPrivate());
@@ -77,10 +78,11 @@ public class CryptoProviderServiceImpl implements CryptoProviderService {
             byte[] aesIVBytes = Base64.getDecoder().decode(json.getString("iv"));
             Cipher aesCipher = Cipher.getInstance("AES/CBC/PKCS7Padding", "BC");
             aesCipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(aesKeyBytes, "AES"), new IvParameterSpec(aesIVBytes));
-            System.out.println(new String(aesCipher.doFinal(dataBytes)));
+            decryptedString = new String(aesCipher.doFinal(dataBytes));
         } catch (NoSuchAlgorithmException | NoSuchProviderException | NoSuchPaddingException | InvalidKeyException |
                 IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException e) {
             e.printStackTrace();
         }
+        return decryptedString;
     }
 }
