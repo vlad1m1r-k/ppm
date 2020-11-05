@@ -16,6 +16,8 @@
     </parent>
 
     <properties>
+        <mysql.connector.version>8.0.22</mysql.connector.version>
+        <liqubase.version>4.1.1</liqubase.version>
         <frontend.plugin.version>1.10.0</frontend.plugin.version>
         <node.version>v12.18.4</node.version>
         <webjars.locator.version>0.40</webjars.locator.version>
@@ -38,7 +40,22 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.connector.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>${liqubase.version}</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.webjars</groupId>
