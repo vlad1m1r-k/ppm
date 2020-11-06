@@ -1,6 +1,8 @@
 package com.vladimir.ppm.controller;
 
+import com.vladimir.ppm.dto.TokenDto;
 import com.vladimir.ppm.service.CryptoProviderService;
+import com.vladimir.ppm.service.UserService;
 import org.json.JSONObject;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,20 +15,19 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/user")
 public class UserRestController {
     private CryptoProviderService cryptoProviderService;
+    private UserService userService;
 
-    public UserRestController(CryptoProviderService cryptoProviderService) {
+    public UserRestController(CryptoProviderService cryptoProviderService, UserService userService) {
         this.cryptoProviderService = cryptoProviderService;
+        this.userService = userService;
     }
 
     @PostMapping("/login")
-    public boolean login(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+    public TokenDto login(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
         JSONObject json = new JSONObject(cryptoProviderService.decrypt(key, data));
         String login = json.getString("login");
         String password = json.getString("password");
         String publicKeyPEM = json.getString("publicKey");
-        System.out.println(request.getRemoteAddr());
-        System.out.println(request.getHeader("User-Agent"));
-        //TODO
-        return true;
+        return userService.login(login, password, publicKeyPEM, request.getRemoteAddr(), request.getHeader("User-Agent"));
     }
 }
