@@ -7,7 +7,7 @@ export default {
         let data = {login: "", password: ""};
         data.login = login;
         data.password = password;
-        let encryptedData = Vue.cryptoProvider.encrypt(data);
+        const encryptedData = Vue.cryptoProvider.encrypt(data);
         $.ajax({
             url: "/user/login",
             method: "POST",
@@ -16,7 +16,7 @@ export default {
                 data: encryptedData.data
             },
             success: (data) => {
-                link.message = data;
+                const decryptedData = Vue.tokenProvider.decrypt(data);
                 //TODO token decrypt
             },
             error: (error) => {

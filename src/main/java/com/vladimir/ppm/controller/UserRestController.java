@@ -1,5 +1,6 @@
 package com.vladimir.ppm.controller;
 
+import com.vladimir.ppm.dto.CryptoDto;
 import com.vladimir.ppm.dto.TokenDto;
 import com.vladimir.ppm.service.CryptoProviderService;
 import com.vladimir.ppm.service.UserService;
@@ -14,8 +15,8 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/user")
 public class UserRestController {
-    private CryptoProviderService cryptoProviderService;
-    private UserService userService;
+    private final CryptoProviderService cryptoProviderService;
+    private final UserService userService;
 
     public UserRestController(CryptoProviderService cryptoProviderService, UserService userService) {
         this.cryptoProviderService = cryptoProviderService;
@@ -23,11 +24,12 @@ public class UserRestController {
     }
 
     @PostMapping("/login")
-    public TokenDto login(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+    public CryptoDto login(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
         JSONObject json = new JSONObject(cryptoProviderService.decrypt(key, data));
         String login = json.getString("login");
         String password = json.getString("password");
         String publicKeyPEM = json.getString("publicKey");
-        return userService.login(login, password, publicKeyPEM, request.getRemoteAddr(), request.getHeader("User-Agent"));
+        TokenDto tokenDto = userService.login(login, password, request.getRemoteAddr(), request.getHeader("User-Agent"));
+        return cryptoProviderService.encrypt(publicKeyPEM, tokenDto.toJson());
     }
 }

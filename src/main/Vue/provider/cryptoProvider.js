@@ -22,6 +22,9 @@ export default {
             data: forge.util.encode64(cipher.output.data)
         }
     },
+    decrypt(data) {
+        //TODO Decrypt
+    },
     checkKey() {
         if (this.serverPublicKey === null || this.serverKeyExpireDate === null || this.serverKeyExpireDate < Date.now()) {
             this.getPublicKey();

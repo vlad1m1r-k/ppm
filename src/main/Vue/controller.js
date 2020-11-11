@@ -37,7 +37,7 @@ new Vue({
     },
     methods: {
         getPreferredLang() {
-            let lang = (document.cookie.match('lang=(.+?)(;|$)') || [])[1] || '';
+            const lang = (document.cookie.match('lang=(.+?)(;|$)') || [])[1] || '';
             if (lang === "") {
                 return navigator.language;
             }

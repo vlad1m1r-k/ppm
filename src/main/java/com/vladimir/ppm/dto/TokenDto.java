@@ -1,7 +1,9 @@
 package com.vladimir.ppm.dto;
 
+import org.json.JSONObject;
+
 public class TokenDto {
-    private final String lifeTime;
+    private final Long lifeTime;
     private final String message;
     private final String token;
 
@@ -11,7 +13,7 @@ public class TokenDto {
         this.token = builder.token;
     }
 
-    public String getLifeTime() {
+    public Long getLifeTime() {
         return lifeTime;
     }
 
@@ -23,16 +25,20 @@ public class TokenDto {
         return token;
     }
 
+    public String toJson() {
+        return new JSONObject(this).toString();
+    }
+
     public static Builder builder() {
         return new Builder();
     }
 
     public static class Builder {
-        private String lifeTime;
+        private Long lifeTime;
         private String message;
         private String token;
 
-        public Builder lifeTime(String lifeTime) {
+        public Builder lifeTime(Long lifeTime) {
             this.lifeTime = lifeTime;
             return this;
         }
