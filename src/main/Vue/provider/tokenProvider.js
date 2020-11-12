@@ -16,7 +16,7 @@ export default {
                 data: encryptedData.data
             },
             success: (data) => {
-                const decryptedData = Vue.tokenProvider.decrypt(data);
+                const decryptedData = Vue.cryptoProvider.decrypt(data);
                 //TODO token decrypt
             },
             error: (error) => {

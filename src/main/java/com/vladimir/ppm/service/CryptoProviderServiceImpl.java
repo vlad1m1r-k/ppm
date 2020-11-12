@@ -4,7 +4,6 @@ import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.dto.CryptoDto;
 import com.vladimir.ppm.dto.PublicKeyDto;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.jce.provider.JCERSAPublicKey;
 import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
@@ -95,8 +94,8 @@ public class CryptoProviderServiceImpl implements CryptoProviderService {
         } catch (InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
             e.printStackTrace();
         }
-        String aesKeyB64 = Base64.getEncoder().withoutPadding().encodeToString(aesKey);
-        String aesIvB64 = Base64.getEncoder().withoutPadding().encodeToString(aesIv);
+        String aesKeyB64 = Base64.getEncoder().encodeToString(aesKey);
+        String aesIvB64 = Base64.getEncoder().encodeToString(aesIv);
         JSONObject aesKeyBundle = new JSONObject();
         aesKeyBundle.put("key", aesKeyB64);
         aesKeyBundle.put("iv", aesIvB64);
@@ -111,12 +110,13 @@ public class CryptoProviderServiceImpl implements CryptoProviderService {
             PublicKey frontPublicKey = keyFactory.generatePublic(keySpec);
             rsaCipher.init(Cipher.ENCRYPT_MODE, frontPublicKey);
             encryptedAesKey = rsaCipher.doFinal(aesKeyBundle.toString().getBytes());
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException | InvalidKeyException |
+                IllegalBlockSizeException | BadPaddingException e) {
             e.printStackTrace();
         }
         return CryptoDto.builder()
-                .key(Base64.getEncoder().withoutPadding().encodeToString(encryptedAesKey))
-                .data(Base64.getEncoder().withoutPadding().encodeToString(encryptedData))
+                .key(Base64.getEncoder().encodeToString(encryptedAesKey))
+                .data(Base64.getEncoder().encodeToString(encryptedData))
                 .build();
     }
 

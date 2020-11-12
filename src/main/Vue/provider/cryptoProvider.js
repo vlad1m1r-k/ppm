@@ -23,6 +23,9 @@ export default {
         }
     },
     decrypt(data) {
+        const aesKeyBytes = forge.util.decode64(data.key);
+        const aesKeyBundle = JSON.parse(this.frontKeyPair.privateKey.decrypt(aesKeyBytes));
+        console.log(aesKeyBundle);
         //TODO Decrypt
     },
     checkKey() {
