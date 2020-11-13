@@ -145,7 +145,7 @@ public class CryptoProviderServiceImpl implements CryptoProviderService {
         try {
             aesCipher.init(Cipher.ENCRYPT_MODE, tokenAESKey);
             byte[] encryptedToken = aesCipher.doFinal(token.toJson().getBytes());
-            encryptedB64Token = Base64.getEncoder().withoutPadding().encodeToString(encryptedToken);
+            encryptedB64Token = Base64.getEncoder().encodeToString(encryptedToken);
         } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
             e.printStackTrace();
         }

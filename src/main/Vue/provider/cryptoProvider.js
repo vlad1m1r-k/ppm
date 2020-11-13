@@ -25,8 +25,13 @@ export default {
     decrypt(data) {
         const aesKeyBytes = forge.util.decode64(data.key);
         const aesKeyBundle = JSON.parse(this.frontKeyPair.privateKey.decrypt(aesKeyBytes));
-        console.log(aesKeyBundle);
-        //TODO Decrypt
+        const key = forge.util.decode64(aesKeyBundle.key);
+        const iv = forge.util.decode64(aesKeyBundle.iv);
+        const decipher = forge.cipher.createDecipher("AES-CBC", key);
+        decipher.start({iv: iv});
+        decipher.update(forge.util.createBuffer(forge.util.decode64(data.data)));
+        decipher.finish();
+        return JSON.parse(decipher.output.data);
     },
     checkKey() {
         if (this.serverPublicKey === null || this.serverKeyExpireDate === null || this.serverKeyExpireDate < Date.now()) {

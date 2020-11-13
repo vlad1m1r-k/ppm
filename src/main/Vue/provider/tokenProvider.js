@@ -17,6 +17,7 @@ export default {
             },
             success: (data) => {
                 const decryptedData = Vue.cryptoProvider.decrypt(data);
+
                 //TODO token decrypt
             },
             error: (error) => {
