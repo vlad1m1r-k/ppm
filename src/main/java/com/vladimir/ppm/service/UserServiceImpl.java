@@ -23,7 +23,7 @@ public class UserServiceImpl implements UserService {
     public TokenDto login(String login, String password, String remoteAddr, String userAgent) {
         User user = userRepository.findUserByLogin(login);
         if (user == null || !encoder.matches(password, user.getPassword())) {
-            return TokenDto.builder().message("LE1").build();
+            return TokenDto.builder().message("le1").build();
         }
         Token token = tokenService.getToken(user, remoteAddr, userAgent);
         long tokenLifeTime = token.getLifeTime();
