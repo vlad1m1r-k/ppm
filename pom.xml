@@ -22,8 +22,7 @@
         <node.version>v12.18.4</node.version>
         <webjars.locator.version>0.40</webjars.locator.version>
         <vue.version>2.6.12</vue.version>
-        <bootstrap.version>4.5.2</bootstrap.version>
-        <popper.version>2.5.2</popper.version>
+        <bootstrap.version>4.5.3</bootstrap.version>
         <jquery.version>3.5.1</jquery.version>
         <bc.version>1.66</bc.version>
         <json.version>20200518</json.version>
@@ -77,11 +76,6 @@
             <groupId>org.webjars</groupId>
             <artifactId>bootstrap</artifactId>
             <version>${bootstrap.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>popper.js</artifactId>
-            <version>${popper.version}</version>
         </dependency>
         <dependency>
             <groupId>org.webjars</groupId>

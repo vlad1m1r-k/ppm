@@ -5,14 +5,14 @@
                 {{ message }}
             </div>
             <div class="form-group">
-                <input type="text" class="form-control" :placeholder="lang.data.lf1" v-model="login">
+                <input type="text" class="form-control" :placeholder="language.data.lf1" v-model="login">
             </div>
             <div class="form-group">
-                <input type="password" class="form-control" :placeholder="lang.data.lf2" v-model="password" @keypress.enter="doLogin">
+                <input type="password" class="form-control" :placeholder="language.data.lf2" v-model="password" @keypress.enter="doLogin">
             </div>
             <div class="container">
                 <div class="row justify-content-md-center">
-                    <button class="btn btn-primary" @click=doLogin>{{ lang.data.lf3 }}</button>
+                    <button class="btn btn-primary" @click=doLogin>{{ language.data.lf3 }}</button>
                 </div>
             </div>
         </div>
@@ -25,7 +25,7 @@ export default {
     data() {
         return {
             tokenProvider: this.$root.tokenProvider,
-            lang: this.$root.$data.language,
+            language: this.$root.$data.language,
             message: "",
             login: "",
             password: ""

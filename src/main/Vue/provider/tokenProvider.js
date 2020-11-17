@@ -1,6 +1,7 @@
 export default {
     lifeTime: null,
     token: null,
+    userName: null,
     setToken(val) {
         this.token = val;
     },
@@ -19,15 +20,19 @@ export default {
             success: (data) => {
                 const decryptedData = Vue.cryptoProvider.decrypt(data);
                 if (decryptedData.message) {
-                    link.message = link.lang.data[decryptedData.message];
+                    link.message = link.language.data[decryptedData.message];
                     return;
                 }
                 this.lifeTime = decryptedData.lifeTime;
                 this.token = decryptedData.token;
+                this.userName = login;
             },
             error: (error) => {
                 link.message = Vue.errorParser(error);
             }
         })
+    },
+    logout() {
+        this.token = null;
     }
 }

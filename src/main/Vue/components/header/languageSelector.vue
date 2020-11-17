@@ -1,6 +1,6 @@
 <template>
     <div>
-        <select v-model="selectedLang" @change="$emit('language-changed', selectedLang)">
+        <select class="form-control-sm" v-model="selectedLang" @change="$emit('language-changed', selectedLang)">
             <option value="en-US">En</option>
             <option value="uk-UA">Ua</option>
         </select>

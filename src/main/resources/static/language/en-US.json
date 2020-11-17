@@ -4,6 +4,9 @@
     "lf1": "Login",
     "lf2": "Password",
     "lf3": "Enter",
-    "le1": "Incorrect credentials."
+    "lfe1": "Incorrect credentials.",
+    "um1": "Settings",
+    "um2": "Logout",
+    "mp1": "Main"
   }
 }
