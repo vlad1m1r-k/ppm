@@ -6,11 +6,13 @@ public class TokenDto {
     private final Long lifeTime;
     private final String message;
     private final String token;
+    private final Boolean adminSettings;
 
     private TokenDto(Builder builder) {
         this.lifeTime = builder.lifeTime;
         this.message = builder.message;
         this.token = builder.token;
+        this.adminSettings = builder.adminSettings;
     }
 
     public Long getLifeTime() {
@@ -25,6 +27,10 @@ public class TokenDto {
         return token;
     }
 
+    public Boolean getAdminSettings() {
+        return adminSettings;
+    }
+
     public String toJson() {
         return new JSONObject(this).toString();
     }
@@ -37,6 +43,7 @@ public class TokenDto {
         private Long lifeTime;
         private String message;
         private String token;
+        private Boolean adminSettings;
 
         public Builder lifeTime(Long lifeTime) {
             this.lifeTime = lifeTime;
@@ -50,6 +57,11 @@ public class TokenDto {
 
         public Builder token(String token) {
             this.token = token;
+            return this;
+        }
+
+        public Builder adminSettings(boolean adminSettings) {
+            this.adminSettings = adminSettings;
             return this;
         }
 

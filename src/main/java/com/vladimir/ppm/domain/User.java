@@ -4,7 +4,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -14,6 +17,9 @@ public class User {
     private Long id;
     private String login;
     private String password;
+
+    @ManyToMany
+    private Set<Role> roles = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -25,5 +31,9 @@ public class User {
 
     public String getPassword() {
         return password;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
     }
 }

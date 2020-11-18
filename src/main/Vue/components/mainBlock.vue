@@ -1,9 +1,10 @@
 <template>
     <div :class="{'blur': tokenProvider.token === null}">
         <div class="container-fluid">
-            <div class="row justify-content-between">
+            <div class="row justify-content-between form-bg">
                 <div class="col-sm mr-auto">
                     <button class="btn btn-sm btn-outline-secondary" @click="currentTab = 'mainTab'">{{ language.data.mp1 }}</button>
+                    <button class="btn btn-sm btn-outline-danger" @click="currentTab = 'adminSettings'" v-if="tokenProvider.adminSettings">{{ language.data.as1 }}</button>
                 </div>
                 <div class="col-sm-auto">
                     <div class="row">
@@ -30,6 +31,7 @@ import languageSelector from "./header/languageSelector.vue";
 import userMenu from "./header/userMenu.vue";
 import mainTab from "./mainTabs/mainTab.vue";
 import userSettings from "./mainTabs/userSettings.vue";
+import adminSettings from "./mainTabs/adminSettings.vue";
 
 export default {
     name: "mainBlock",
@@ -37,7 +39,8 @@ export default {
         languageSelector,
         userMenu,
         mainTab,
-        userSettings
+        userSettings,
+        adminSettings
     },
     data() {
         return {
@@ -61,5 +64,8 @@ export default {
 <style scoped>
     .blur {
         filter: blur(5px);
+    }
+    .form-bg {
+        background-color: lightgrey;
     }
 </style>

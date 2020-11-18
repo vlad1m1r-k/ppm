@@ -2,6 +2,7 @@ export default {
     lifeTime: null,
     token: null,
     userName: null,
+    adminSettings: false,
     setToken(val) {
         this.token = val;
     },
@@ -25,6 +26,7 @@ export default {
                 }
                 this.lifeTime = decryptedData.lifeTime;
                 this.token = decryptedData.token;
+                this.adminSettings = decryptedData.adminSettings;
                 this.userName = login;
             },
             error: (error) => {
