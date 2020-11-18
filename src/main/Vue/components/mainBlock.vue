@@ -8,7 +8,7 @@
                 <div class="col-sm-auto">
                     <div class="row">
                         <div class="col-sm p-0">
-                            <user-menu @change-tab="currentTab = $event"></user-menu>
+                            <user-menu @change-tab="setTab"></user-menu>
                         </div>
                         <div class="col-sm pl-0">
                             <language-selector :lang-name="language.name" @language-changed="setLang"></language-selector>
@@ -50,6 +50,9 @@ export default {
         setLang(langName) {
             document.cookie = "lang=" + langName + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; samesite=strict";
             this.$root.loadLanguage(langName);
+        },
+        setTab(tabName) {
+            this.currentTab = tabName;
         }
     }
 }
