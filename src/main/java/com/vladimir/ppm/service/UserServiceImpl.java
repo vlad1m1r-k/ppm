@@ -1,6 +1,6 @@
 package com.vladimir.ppm.service;
 
-import com.vladimir.ppm.domain.Role;
+import com.vladimir.ppm.domain.Group;
 import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.domain.User;
 import com.vladimir.ppm.dto.TokenDto;
@@ -36,13 +36,13 @@ public class UserServiceImpl implements UserService {
         return TokenDto.builder()
                 .lifeTime(tokenLifeTime)
                 .token(encryptedToken)
-                .adminSettings(isAdmin(user.getRoles()))
+                .adminSettings(isAdmin(user.getGroups()))
                 .build();
     }
 
-    private boolean isAdmin(Set<Role> roles) {
-        for (Role role : roles) {
-            if (role.isAdminSettings()) {
+    private boolean isAdmin(Set<Group> groups) {
+        for (Group group : groups) {
+            if (group.isAdminSettings()) {
                 return true;
             }
         }

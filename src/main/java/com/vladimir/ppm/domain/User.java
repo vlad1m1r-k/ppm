@@ -19,7 +19,7 @@ public class User {
     private String password;
 
     @ManyToMany
-    private Set<Role> roles = new HashSet<>();
+    private Set<Group> groups = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -33,7 +33,7 @@ public class User {
         return password;
     }
 
-    public Set<Role> getRoles() {
-        return roles;
+    public Set<Group> getGroups() {
+        return groups;
     }
 }

@@ -10,23 +10,22 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "groups")
-public class Role {
+@Table(name = "seq_groups")
+public class Group {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private boolean adminSettings = false;
 
-    @ManyToMany(mappedBy = "roles")
+    @ManyToMany(mappedBy = "groups")
     private Set<User> users = new HashSet<>();
 
-    //TODO rename roles to groups
     //TODO link Container and Group
 
-    public Role() {}
+    public Group() {}
 
-    public Role(String name, boolean adminSettings) {
+    public Group(String name, boolean adminSettings) {
         this.name = name;
         this.adminSettings = adminSettings;
     }
