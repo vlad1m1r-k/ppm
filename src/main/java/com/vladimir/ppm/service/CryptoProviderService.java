@@ -9,4 +9,5 @@ public interface CryptoProviderService {
     CryptoDto encrypt(String publicKey, String data);
     String decrypt(String key, String data);
     String encryptToken(Token token);
+    Token decryptToken(String token);
 }

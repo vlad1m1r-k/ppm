@@ -151,4 +151,17 @@ public class CryptoProviderServiceImpl implements CryptoProviderService {
         }
         return encryptedB64Token;
     }
+
+    @Override
+    public Token decryptToken(String token) {
+        String tokenStr = "";
+        try {
+            aesCipher.init(Cipher.DECRYPT_MODE, tokenAESKey);
+            tokenStr = new String(aesCipher.doFinal(Base64.getDecoder().decode(token)));
+        } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
+            e.printStackTrace();
+        }
+        JSONObject json = new JSONObject(tokenStr);
+        return new Token(json.getString("login"), json.getLong("lifeTime"), json.getString("remoteAddr"), json.getString("userAgent"));
+    }
 }

@@ -25,4 +25,14 @@ public class TokenServiceImpl implements TokenService {
     public String encrypt(Token token) {
         return cryptoProviderService.encryptToken(token);
     }
+
+    @Override
+    public Token validateToken(String token, String remoteAddr, String userAgent) {
+        Token decryptedToken = cryptoProviderService.decryptToken(token);
+        if (decryptedToken.getLifeTime() < System.currentTimeMillis() && decryptedToken.getRemoteAddr().equals(remoteAddr) &&
+                decryptedToken.getUserAgent().equals(userAgent)) {
+            return decryptedToken;
+        }
+        return null;
+    }
 }
