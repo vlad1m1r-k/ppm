@@ -21,6 +21,9 @@ public class Role {
     @ManyToMany(mappedBy = "roles")
     private Set<User> users = new HashSet<>();
 
+    //TODO rename roles to groups
+    //TODO link Container and Group
+
     public Role() {}
 
     public Role(String name, boolean adminSettings) {
