@@ -24,6 +24,12 @@ public class Container {
     @OneToMany
     private Set<Container> children = new HashSet<>();
 
+    @OneToMany
+    private Set<Group> groupsRO = new HashSet<>();
+
+    @OneToMany
+    private Set<Group> groupsRW = new HashSet<>();
+
     public Container() {}
 
     public Container(String name, Container parent) {
@@ -43,6 +49,14 @@ public class Container {
         return parent;
     }
 
+    public Set<Group> getGroupsRO() {
+        return groupsRO;
+    }
+
+    public Set<Group> getGroupsRW() {
+        return groupsRW;
+    }
+
     public Set<Container> getChildren() {
         return children;
     }
@@ -54,5 +68,13 @@ public class Container {
     public void addChild(Container child) {
         child.setParent(this);
         children.add(child);
+    }
+
+    public void addGroupRO (Group group) {
+        groupsRO.add(group);
+    }
+
+    public void addGroupRW(Group group) {
+        groupsRW.add(group);
     }
 }

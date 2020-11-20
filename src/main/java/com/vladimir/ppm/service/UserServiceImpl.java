@@ -40,6 +40,13 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
+    @Override
+    @Transactional
+    public Set<Group> getGroups(Token token) {
+        User user = userRepository.findUserByLogin(token.getLogin());
+        return user.getGroups();
+    }
+
     private boolean isAdmin(Set<Group> groups) {
         for (Group group : groups) {
             if (group.isAdminSettings()) {

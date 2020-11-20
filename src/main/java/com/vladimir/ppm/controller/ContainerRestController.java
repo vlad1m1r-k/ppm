@@ -1,7 +1,9 @@
 package com.vladimir.ppm.controller;
 
 import com.vladimir.ppm.domain.Token;
+import com.vladimir.ppm.dto.ContainerDto;
 import com.vladimir.ppm.dto.CryptoDto;
+import com.vladimir.ppm.service.ContainerService;
 import com.vladimir.ppm.service.CryptoProviderService;
 import com.vladimir.ppm.service.TokenService;
 import com.vladimir.ppm.service.ValidatorService;
@@ -19,12 +21,14 @@ public class ContainerRestController {
     private final ValidatorService validatorService;
     private final CryptoProviderService cryptoProviderService;
     private final TokenService tokenService;
+    private final ContainerService containerService;
 
     public ContainerRestController(ValidatorService validatorService, CryptoProviderService cryptoProviderService,
-                                   TokenService tokenService) {
+                                   TokenService tokenService, ContainerService containerService) {
         this.validatorService = validatorService;
         this.cryptoProviderService = cryptoProviderService;
         this.tokenService = tokenService;
+        this.containerService = containerService;
     }
 
     @PostMapping("/getTree")
@@ -35,8 +39,8 @@ public class ContainerRestController {
             String publicKeyPEM = json.getString("publicKey");
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null) {
-
-                //TODO
+                ContainerDto tree = containerService.getTree(decryptedToken);
+                return cryptoProviderService.encrypt(publicKeyPEM,tree.toJson());
             }
         }
         return null;
