@@ -40,7 +40,7 @@ public class ContainerRestController {
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null) {
                 ContainerDto tree = containerService.getTree(decryptedToken);
-                return cryptoProviderService.encrypt(publicKeyPEM,tree.toJson());
+                return cryptoProviderService.encrypt(publicKeyPEM, tree.toJson());
             }
         }
         return null;

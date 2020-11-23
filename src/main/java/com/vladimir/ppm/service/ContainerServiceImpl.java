@@ -44,10 +44,29 @@ public class ContainerServiceImpl implements ContainerService {
                 }
             }
         }
-        //TODO
+        return ContainerDto.builder()
+                .id(container.getId())
+                .name(container.getName())
+                .access(access)
+                .children(children)
+                .build();
     }
 
     private Access getAccess(Container container, Set<Group> groups) {
-        //TODO
+        for (Group groupRW : container.getGroupsRW()) {
+            for (Group group : groups) {
+                if (group.equals(groupRW)) {
+                    return Access.RW;
+                }
+            }
+        }
+        for (Group groupRO : container.getGroupsRO()) {
+            for (Group group : groups) {
+                if (group.equals(groupRO)) {
+                    return Access.RO;
+                }
+            }
+        }
+        return Access.NA;
     }
 }

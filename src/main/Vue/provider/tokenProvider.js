@@ -36,5 +36,8 @@ export default {
     },
     logout() {
         this.token = null;
+    },
+    getToken() {
+        //TODO
     }
 }
