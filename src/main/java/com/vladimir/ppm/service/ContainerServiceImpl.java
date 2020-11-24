@@ -53,18 +53,14 @@ public class ContainerServiceImpl implements ContainerService {
     }
 
     private Access getAccess(Container container, Set<Group> groups) {
-        for (Group groupRW : container.getGroupsRW()) {
-            for (Group group : groups) {
-                if (group.equals(groupRW)) {
-                    return Access.RW;
-                }
+        for (Group group : groups) {
+            if (container.getGroupsRW().contains(group)) {
+                return Access.RW;
             }
         }
-        for (Group groupRO : container.getGroupsRO()) {
-            for (Group group : groups) {
-                if (group.equals(groupRO)) {
-                    return Access.RO;
-                }
+        for (Group group : groups) {
+            if (container.getGroupsRO().contains(group)) {
+                return Access.RO;
             }
         }
         return Access.NA;

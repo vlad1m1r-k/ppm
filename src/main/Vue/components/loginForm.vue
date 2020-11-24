@@ -32,12 +32,12 @@ export default {
         }
     },
     methods: {
-        doLogin() {
+        async doLogin() {
             if (this.login.length < 1) {
                 return;
             }
             this.message = "";
-            this.tokenProvider.login(this.login, this.password, this.$data);
+            await this.tokenProvider.login(this.login, this.password, this.$data);
             this.password = "";
         }
     }

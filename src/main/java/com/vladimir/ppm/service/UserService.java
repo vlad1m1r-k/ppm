@@ -8,5 +8,6 @@ import java.util.Set;
 
 public interface UserService {
     TokenDto login(String login, String password, String remoteAddr, String userAgent);
+    TokenDto renewToken(Token token);
     Set<Group> getGroups(Token token);
 }

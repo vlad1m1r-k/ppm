@@ -41,6 +41,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public TokenDto renewToken(Token token) {
+
+    }
+
+    @Override
     @Transactional
     public Set<Group> getGroups(Token token) {
         User user = userRepository.findUserByLogin(token.getLogin());

@@ -17,8 +17,8 @@ export default {
         }
     },
     methods: {
-        updateTree() {
-            const token = tokenProvider.getToken();
+        async updateTree() {
+            const token = await tokenProvider.getToken();
             //TODO
         }
     },
