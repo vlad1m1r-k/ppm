@@ -37,6 +37,7 @@ public class CryptoProviderServiceImpl implements CryptoProviderService {
     private KeyPair keyPair;
     private Long keyPairExpireDate;
     private SecretKeySpec tokenAESKey;
+    private IvParameterSpec tokenAESIv;
     private Cipher rsaCipher;
     private Cipher aesCipher;
     SecureRandom random = new SecureRandom();
@@ -53,9 +54,12 @@ public class CryptoProviderServiceImpl implements CryptoProviderService {
             keyPair = keyPairGenerator.generateKeyPair();
             keyPairExpireDate = System.currentTimeMillis() + keyLifeTimeDays * 24 * 60 * 60 * 1000;
 
-            byte[] aesKeyBytes = new byte[32];
-            random.nextBytes(aesKeyBytes);
-            tokenAESKey = new SecretKeySpec(aesKeyBytes, "AES");
+            byte[] aesKey = new byte[32];
+            byte[] aesIv = new byte[16];
+            random.nextBytes(aesKey);
+            random.nextBytes(aesIv);
+            tokenAESKey = new SecretKeySpec(aesKey, "AES");
+            tokenAESIv = new IvParameterSpec(aesIv);
 
             rsaCipher = Cipher.getInstance("RSA/ECB/PKCS1Padding", "BC");
             aesCipher = Cipher.getInstance("AES/CBC/PKCS7Padding", "BC");
@@ -143,10 +147,10 @@ public class CryptoProviderServiceImpl implements CryptoProviderService {
     public String encryptToken(Token token) {
         String encryptedB64Token = null;
         try {
-            aesCipher.init(Cipher.ENCRYPT_MODE, tokenAESKey);
+            aesCipher.init(Cipher.ENCRYPT_MODE, tokenAESKey, tokenAESIv);
             byte[] encryptedToken = aesCipher.doFinal(token.toJson().getBytes());
             encryptedB64Token = Base64.getEncoder().encodeToString(encryptedToken);
-        } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
+        } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException e) {
             e.printStackTrace();
         }
         return encryptedB64Token;
@@ -156,9 +160,9 @@ public class CryptoProviderServiceImpl implements CryptoProviderService {
     public Token decryptToken(String token) {
         String tokenStr = "";
         try {
-            aesCipher.init(Cipher.DECRYPT_MODE, tokenAESKey);
+            aesCipher.init(Cipher.DECRYPT_MODE, tokenAESKey, tokenAESIv);
             tokenStr = new String(aesCipher.doFinal(Base64.getDecoder().decode(token)));
-        } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
+        } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException e) {
             e.printStackTrace();
         }
         JSONObject json = new JSONObject(tokenStr);

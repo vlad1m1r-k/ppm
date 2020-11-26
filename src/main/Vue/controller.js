@@ -55,10 +55,10 @@ new Vue({
                     if (error.status === 404) {
                         if (component.langLoadStatus) {
                             console.log("Error loading language.");
-                            return;
+                        } else {
+                            component.langLoadStatus = true;
+                            component.loadLanguage("en-US");
                         }
-                        component.langLoadStatus = true;
-                        component.loadLanguage("en-US");
                     }
                 })
         }

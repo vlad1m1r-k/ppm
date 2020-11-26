@@ -33,12 +33,20 @@ export default {
     },
     methods: {
         async doLogin() {
-            if (this.login.length < 1) {
-                return;
+            if (this.login.length > 1) {
+                this.message = "";
+                try {
+                    await this.tokenProvider.login(this.login, this.password);
+                } catch (e) {
+                    if (e.message) {
+                        this.message = this.language.data[e.message];
+                    } else {
+                        this.message = Vue.errorParser(e);
+                    }
+                } finally {
+                    this.password = "";
+                }
             }
-            this.message = "";
-            await this.tokenProvider.login(this.login, this.password, this.$data);
-            this.password = "";
         }
     }
 }

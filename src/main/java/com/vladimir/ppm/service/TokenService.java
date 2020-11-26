@@ -7,5 +7,4 @@ public interface TokenService {
     Token getToken(User user, String remoteAddr, String userAgent);
     String encrypt(Token token);
     Token validateToken(String token, String remoteAddr, String userAgent);
-    //TODO Renew token
 }

@@ -42,7 +42,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public TokenDto renewToken(Token token) {
-
+        User user = userRepository.findUserByLogin(token.getLogin());
+        Token newToken = tokenService.getToken(user, token.getRemoteAddr(), token.getUserAgent());
+        long tokenLifeTime = newToken.getLifeTime();
+        String encryptedToken = tokenService.encrypt(newToken);
+        return TokenDto.builder()
+                .lifeTime(tokenLifeTime)
+                .token(encryptedToken)
+                .adminSettings(isAdmin(user.getGroups()))
+                .build();
     }
 
     @Override

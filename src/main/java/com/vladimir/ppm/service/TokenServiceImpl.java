@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 public class TokenServiceImpl implements TokenService {
     @Value("${tokenLifeTimeMinutes}")
     private int tokenLifeTimeMinutes;
-    private CryptoProviderService cryptoProviderService;
+    private final CryptoProviderService cryptoProviderService;
 
     public TokenServiceImpl(CryptoProviderService cryptoProviderService) {
         this.cryptoProviderService = cryptoProviderService;
@@ -29,7 +29,7 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public Token validateToken(String token, String remoteAddr, String userAgent) {
         Token decryptedToken = cryptoProviderService.decryptToken(token);
-        if (decryptedToken.getLifeTime() < System.currentTimeMillis() && decryptedToken.getRemoteAddr().equals(remoteAddr) &&
+        if (decryptedToken.getLifeTime() > System.currentTimeMillis() && decryptedToken.getRemoteAddr().equals(remoteAddr) &&
                 decryptedToken.getUserAgent().equals(userAgent)) {
             return decryptedToken;
         }
