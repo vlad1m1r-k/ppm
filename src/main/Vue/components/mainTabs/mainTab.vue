@@ -12,6 +12,7 @@
         </div>
         <div class="row">
             <div class="col bg-light">
+                <span @click="updateTree" style="cursor: pointer; position: absolute">&#x21BA;</span>
                 <tree-item :item="tree"></tree-item>
             </div>
             <div class="col">

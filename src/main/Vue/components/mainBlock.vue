@@ -19,7 +19,9 @@
             </div>
             <div class="row">
                 <div class="col-auto">
-                    <component :is="currentTab"></component>
+                    <keep-alive>
+                        <component :is="currentTab"></component>
+                    </keep-alive>
                 </div>
             </div>
         </div>
@@ -46,7 +48,7 @@ export default {
         return {
             tokenProvider: this.$root.$data.tokenProvider,
             language: this.$root.$data.language,
-            currentTab: mainTab
+            currentTab: "mainTab"
         }
     },
     methods: {

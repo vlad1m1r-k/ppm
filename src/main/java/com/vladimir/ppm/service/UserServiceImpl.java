@@ -41,6 +41,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public TokenDto renewToken(Token token) {
         User user = userRepository.findUserByLogin(token.getLogin());
         Token newToken = tokenService.getToken(user, token.getRemoteAddr(), token.getUserAgent());
