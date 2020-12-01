@@ -8,6 +8,7 @@ import com.vladimir.ppm.service.CryptoProviderService;
 import com.vladimir.ppm.service.TokenService;
 import com.vladimir.ppm.service.ValidatorService;
 import org.json.JSONObject;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -44,5 +45,18 @@ public class ContainerRestController {
             }
         }
         return null;
+    }
+
+    @PostMapping("/move")
+    public boolean move(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+        if (validatorService.validateCrypto(key, data)) {
+            JSONObject json = new JSONObject(cryptoProviderService.decrypt(key, data));
+            String token = json.getString("token");
+            String publicKeyPEM = json.getString("publicKey");
+            long itemId = json.getLong("item");
+            long moveToId = json.getLong("moveTo");
+            //TODO
+        }
+        return false;
     }
 }

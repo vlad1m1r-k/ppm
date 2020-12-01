@@ -13,7 +13,7 @@
         <div class="row">
             <div class="col bg-light">
                 <span @click="updateTree" style="cursor: pointer; position: absolute">&#x21BA;</span>
-                <tree-item :item="tree"></tree-item>
+                <tree-item :item="tree" @msg-evt="displayMsg($event)"></tree-item>
             </div>
             <div class="col">
                 Data
@@ -52,6 +52,9 @@ export default {
             } catch (e) {
                 this.message = Vue.errorParser(e);
             }
+        },
+        displayMsg(evt) {
+            this.message = Vue.errorParser(evt);
         }
     },
     watch: {
