@@ -4,13 +4,16 @@ import com.vladimir.ppm.domain.Access;
 import com.vladimir.ppm.domain.Container;
 import com.vladimir.ppm.domain.Group;
 import com.vladimir.ppm.domain.Token;
+import com.vladimir.ppm.domain.User;
 import com.vladimir.ppm.dto.ContainerDto;
 import com.vladimir.ppm.repository.ContainerRepository;
+import com.vladimir.ppm.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 @Service
 public class ContainerServiceImpl implements ContainerService {
@@ -30,12 +33,27 @@ public class ContainerServiceImpl implements ContainerService {
         return buildTree(root, groups);
     }
 
+    @Override
+    @Transactional
+    public boolean moveContainer(Token token, long itemId, long moveToId) {
+        Container container = containerRepository.getOne(itemId);
+        Container cntMoveTo = containerRepository.getOne(moveToId);
+        if (getAccess(container, userService.getGroups(token)) == Access.RW && getAccess(cntMoveTo, userService.getGroups(token)) == Access.RW
+                && !container.getName().equals("root") && !container.equals(cntMoveTo)) {
+            container.getParent().getChildren().remove(container);
+            container.setParent(cntMoveTo);
+            cntMoveTo.addChild(container);
+            return true;
+        }
+        return false;
+    }
+
     private ContainerDto buildTree(Container container, Set<Group> groups) {
         Access access = getAccess(container, groups);
         if (access == Access.NA) {
             return ContainerDto.builder().build();
         }
-        Set<ContainerDto> children = new HashSet<>();
+        Set<ContainerDto> children = new TreeSet<>();
         if (!container.getChildren().isEmpty()) {
             for (Container childContainer : container.getChildren()) {
                 ContainerDto childDto = buildTree(childContainer, groups);

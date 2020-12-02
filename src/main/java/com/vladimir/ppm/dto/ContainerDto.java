@@ -5,7 +5,7 @@ import org.json.JSONObject;
 
 import java.util.Set;
 
-public class ContainerDto {
+public class ContainerDto implements Comparable<ContainerDto>{
     private Long id;
     private String name;
     private Set<ContainerDto> children;
@@ -40,6 +40,11 @@ public class ContainerDto {
 
     public static Builder builder() {
         return new Builder();
+    }
+
+    @Override
+    public int compareTo(ContainerDto cntDto) {
+        return this.name.compareTo(cntDto.getName());
     }
 
     public static class Builder {

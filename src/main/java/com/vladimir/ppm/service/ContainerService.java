@@ -5,4 +5,5 @@ import com.vladimir.ppm.dto.ContainerDto;
 
 public interface ContainerService {
     ContainerDto getTree(Token token);
+    boolean moveContainer(Token token, long itemId, long moveToId);
 }

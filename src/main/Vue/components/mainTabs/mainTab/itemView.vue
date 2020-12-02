@@ -1,10 +1,15 @@
 <template>
-
+    <div>
+        {{ item.name }}
+    </div>
 </template>
 
 <script>
 export default {
-    name: "itemView"
+    name: "itemView",
+    props: {
+        item: Object
+    }
 }
 </script>
 

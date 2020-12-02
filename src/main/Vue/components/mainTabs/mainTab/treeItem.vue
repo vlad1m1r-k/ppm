@@ -3,11 +3,14 @@
         <li style="white-space: nowrap" :draggable="item.access === 'RW' && item.name !== 'root'" @dragover="dragover"
             @dragstart="startDrag($event, item)" @drop="dropHandler($event, item)">
             <span class="caret" :class="{'caret-down': isOpen}" @click="isOpen = !isOpen"></span>
-            <span class="branch">{{ item.name }}</span>
+            <span class="branch" :class="{'selected': item.id === selectedItem.id}" @click="$emit('item-select', item)">
+                {{ item.name }}
+            </span>
         </li>
-        <div v-show="isOpen">
-            <tree-item :item="child" v-for="child in item.children" @msg-evt="$emit('msg-evt', $event)"></tree-item>
-        </div>
+        <li v-show="isOpen">
+            <tree-item :item="child" :selected-item="selectedItem" v-for="child in item.children" @msg-evt="$emit('msg-evt', $event)"
+                       @update-tree="$emit('update-tree')" @item-select="$emit('item-select', $event)"></tree-item>
+        </li>
     </ul>
 </template>
 
@@ -15,7 +18,8 @@
 export default {
     name: "treeItem",
     props: {
-        item: Object
+        item: Object,
+        selectedItem: Object
     },
     data() {
         return {
@@ -52,7 +56,7 @@ export default {
                         method: "POST",
                         data: encryptedData
                     });
-                    await this.$parent.updateTree();
+                    this.$emit("update-tree");
                 } catch (e) {
                     this.$emit("msg-evt", e);
                 }
@@ -83,5 +87,8 @@ ul {
     padding-right: 5px;
     padding-left: 5px;
     border-radius: .2rem;
+}
+.selected {
+    border: 2px solid blue;
 }
 </style>

@@ -52,10 +52,12 @@ public class ContainerRestController {
         if (validatorService.validateCrypto(key, data)) {
             JSONObject json = new JSONObject(cryptoProviderService.decrypt(key, data));
             String token = json.getString("token");
-            String publicKeyPEM = json.getString("publicKey");
             long itemId = json.getLong("item");
             long moveToId = json.getLong("moveTo");
-            //TODO
+            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            if (decryptedToken != null) {
+                return containerService.moveContainer(decryptedToken, itemId, moveToId);
+            }
         }
         return false;
     }
