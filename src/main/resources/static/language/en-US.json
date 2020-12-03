@@ -10,6 +10,8 @@
     "mp1": "Main",
     "as1": "Admin",
     "cf1": "Move",
-    "cf2": "to"
+    "cf2": "to",
+    "iv1": "Add container",
+    "iv2": "Delete container"
   }
 }

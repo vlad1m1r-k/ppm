@@ -18,6 +18,7 @@ Vue.use({
         }
     }
 });
+Vue.prototype.$eventHub = new Vue();
 
 Vue.cryptoProvider.init();
 

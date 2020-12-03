@@ -12,13 +12,13 @@
                             <user-menu @change-tab="setTab"></user-menu>
                         </div>
                         <div class="col-sm pl-0">
-                            <language-selector :lang-name="language.name" @language-changed="setLang"></language-selector>
+                            <language-selector></language-selector>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="row">
-                <div class="col-auto">
+                <div class="col">
                     <keep-alive>
                         <component :is="currentTab"></component>
                     </keep-alive>
@@ -52,10 +52,6 @@ export default {
         }
     },
     methods: {
-        setLang(langName) {
-            document.cookie = "lang=" + langName + "; expires=Fri, 31 Dec 9999 23:59:59 GMT; samesite=strict";
-            this.$root.loadLanguage(langName);
-        },
         setTab(tabName) {
             this.currentTab = tabName;
         }

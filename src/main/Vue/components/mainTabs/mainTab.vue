@@ -1,5 +1,5 @@
 <template>
-    <div class="container-fluid">
+    <div>
         <div class="row">
             <div class="col">
                 <div class="alert alert-danger" v-if="message">
@@ -11,13 +11,13 @@
             </div>
         </div>
         <div class="row">
-            <div class="col bg-light">
+            <div class="col-md-auto bg-light">
                 <span @click="updateTree" style="cursor: pointer; position: absolute">&#x21BA;</span>
                 <tree-item :item="tree" :selected-item="selectedItem" @msg-evt="displayMsg($event)" @update-tree="updateTree"
                            @item-select="selectItem"></tree-item>
             </div>
-            <div class="col">
-                <item-view :item="selectedItem"></item-view>
+            <div class="col p-0">
+                <item-view :item="selectedItem" @msg-evt="displayMsg($event)"></item-view>
             </div>
         </div>
     </div>

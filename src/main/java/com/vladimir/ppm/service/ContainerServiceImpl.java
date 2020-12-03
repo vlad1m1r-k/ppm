@@ -72,7 +72,7 @@ public class ContainerServiceImpl implements ContainerService {
 
     private Access getAccess(Container container, Set<Group> groups) {
         for (Group group : groups) {
-            if (container.getGroupsRW().contains(group)) {
+            if (group.isAdminSettings() || container.getGroupsRW().contains(group)) {
                 return Access.RW;
             }
         }

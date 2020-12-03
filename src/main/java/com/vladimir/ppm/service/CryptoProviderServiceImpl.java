@@ -35,7 +35,7 @@ import java.util.Base64;
 @Service
 public class CryptoProviderServiceImpl implements CryptoProviderService {
     private KeyPair keyPair;
-    private Long keyPairExpireDate;
+    private Long keyPairExpireDate; //TODO renew keypair
     private SecretKeySpec tokenAESKey;
     private IvParameterSpec tokenAESIv;
     private Cipher rsaCipher;
@@ -52,7 +52,7 @@ public class CryptoProviderServiceImpl implements CryptoProviderService {
             KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA", "BC");
             keyPairGenerator.initialize(2048, random);
             keyPair = keyPairGenerator.generateKeyPair();
-            keyPairExpireDate = System.currentTimeMillis() + keyLifeTimeDays * 24 * 60 * 60 * 1000;
+            keyPairExpireDate = System.currentTimeMillis() + (long) keyLifeTimeDays * 24 * 60 * 60 * 1000;
 
             byte[] aesKey = new byte[32];
             byte[] aesIv = new byte[16];
