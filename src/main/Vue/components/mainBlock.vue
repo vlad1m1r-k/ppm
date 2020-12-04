@@ -19,6 +19,16 @@
             </div>
             <div class="row">
                 <div class="col">
+                    <div class="alert alert-danger" v-if="message">
+                        {{ message }}
+                        <button class="close" @click="message = ''">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
                     <keep-alive>
                         <component :is="currentTab"></component>
                     </keep-alive>
@@ -48,13 +58,23 @@ export default {
         return {
             tokenProvider: this.$root.$data.tokenProvider,
             language: this.$root.$data.language,
-            currentTab: "mainTab"
+            currentTab: "mainTab",
+            message: ""
         }
     },
     methods: {
         setTab(tabName) {
             this.currentTab = tabName;
+        },
+        showMsg(msg) {
+            this.message = msg;
         }
+    },
+    created() {
+        this.$eventHub.$on("show-msg", this.showMsg);
+    },
+    beforeDestroy() {
+        this.$eventHub.$off("show-msg");
     }
 }
 </script>

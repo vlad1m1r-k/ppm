@@ -8,8 +8,8 @@
             </span>
         </li>
         <li v-show="isOpen">
-            <tree-item :item="child" :selected-item="selectedItem" v-for="child in item.children" @msg-evt="$emit('msg-evt', $event)"
-                       @update-tree="$emit('update-tree')" @item-select="$emit('item-select', $event)"></tree-item>
+            <tree-item :item="child" :selected-item="selectedItem" v-for="child in item.children"
+                       @item-select="$emit('item-select', $event)"></tree-item>
         </li>
     </ul>
 </template>
@@ -41,6 +41,7 @@ export default {
             evt.dataTransfer.setData("name", item.name);
         },
         async dropHandler(evt, item) {
+            this.$eventHub.$emit("show-msg", "");
             const confResult = confirm(this.language.data.cf1 + " \"" + evt.dataTransfer.getData("name") +
                     "\" " + this.language.data.cf2 + " \"" + item.name + "\" ?");
             if (confResult) {
@@ -56,9 +57,9 @@ export default {
                         method: "POST",
                         data: encryptedData
                     });
-                    this.$emit("update-tree");
+                    this.$eventHub.$emit("update-tree");
                 } catch (e) {
-                    this.$emit("msg-evt", e);
+                    this.$eventHub.$emit("show-msg", Vue.errorParser(e));
                 }
             }
         }

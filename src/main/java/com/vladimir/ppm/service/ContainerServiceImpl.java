@@ -4,14 +4,12 @@ import com.vladimir.ppm.domain.Access;
 import com.vladimir.ppm.domain.Container;
 import com.vladimir.ppm.domain.Group;
 import com.vladimir.ppm.domain.Token;
-import com.vladimir.ppm.domain.User;
 import com.vladimir.ppm.dto.ContainerDto;
+import com.vladimir.ppm.dto.MessageDto;
 import com.vladimir.ppm.repository.ContainerRepository;
-import com.vladimir.ppm.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -46,6 +44,21 @@ public class ContainerServiceImpl implements ContainerService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    @Transactional
+    public MessageDto add(Token token, long parentId, String name) {
+        Container parent = containerRepository.getOne(parentId);
+        if (getAccess(parent, userService.getGroups(token)) == Access.RW) {
+            Container container = new Container(name, parent);
+            if (parent.getChildren().contains(container)) {
+                return MessageDto.builder().message("ive1").build();
+            }
+            container = containerRepository.save(container);
+            parent.addChild(container);
+        }
+        return MessageDto.builder().build();
     }
 
     private ContainerDto buildTree(Container container, Set<Group> groups) {

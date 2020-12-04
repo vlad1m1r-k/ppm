@@ -12,6 +12,8 @@
     "cf1": "Move",
     "cf2": "to",
     "iv1": "Add container",
-    "iv2": "Delete container"
+    "iv2": "Delete container",
+    "iv3": "Delete child elements first",
+    "ive1": "A container with that name already exists"
   }
 }

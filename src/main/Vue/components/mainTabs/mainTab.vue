@@ -1,23 +1,12 @@
 <template>
     <div>
         <div class="row">
-            <div class="col">
-                <div class="alert alert-danger" v-if="message">
-                    {{ message }}
-                    <button class="close" @click="message = ''">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <div class="row">
             <div class="col-md-auto bg-light">
                 <span @click="updateTree" style="cursor: pointer; position: absolute">&#x21BA;</span>
-                <tree-item :item="tree" :selected-item="selectedItem" @msg-evt="displayMsg($event)" @update-tree="updateTree"
-                           @item-select="selectItem"></tree-item>
+                <tree-item :item="tree" :selected-item="selectedItem" @item-select="selectItem"></tree-item>
             </div>
             <div class="col p-0">
-                <item-view :item="selectedItem" @msg-evt="displayMsg($event)"></item-view>
+                <item-view :item="selectedItem"></item-view>
             </div>
         </div>
     </div>
@@ -39,11 +28,11 @@ export default {
             language: this.$root.$data.language,
             tree: {},
             selectedItem: {},
-            message: ""
         }
     },
     methods: {
         async updateTree() {
+            this.$eventHub.$emit("show-msg", "");
             try {
                 const token = await this.tokenProvider.getToken();
                 const encryptedData = await Vue.cryptoProvider.encrypt({token: token});
@@ -54,11 +43,8 @@ export default {
                 });
                 this.tree = Vue.cryptoProvider.decrypt(answer);
             } catch (e) {
-                this.message = Vue.errorParser(e);
+                this.$eventHub.$emit("show-msg", Vue.errorParser(e));
             }
-        },
-        displayMsg(evt) {
-            this.message = Vue.errorParser(evt);
         },
         selectItem(evt) {
             this.selectedItem = evt;
@@ -75,6 +61,12 @@ export default {
                 this.selectedItem = this.tree;
             }
         }
+    },
+    created() {
+        this.$eventHub.$on("update-tree", this.updateTree);
+    },
+    beforeDestroy() {
+        this.$eventHub.$off("update-tree");
     }
 }
 </script>

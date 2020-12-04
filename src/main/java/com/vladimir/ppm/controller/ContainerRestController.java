@@ -3,6 +3,7 @@ package com.vladimir.ppm.controller;
 import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.dto.ContainerDto;
 import com.vladimir.ppm.dto.CryptoDto;
+import com.vladimir.ppm.dto.MessageDto;
 import com.vladimir.ppm.service.ContainerService;
 import com.vladimir.ppm.service.CryptoProviderService;
 import com.vladimir.ppm.service.TokenService;
@@ -58,7 +59,25 @@ public class ContainerRestController {
             if (decryptedToken != null) {
                 return containerService.moveContainer(decryptedToken, itemId, moveToId);
             }
+            //TODO check children when moving
         }
         return false;
+    }
+
+    @PostMapping("/add")
+    public CryptoDto add(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+        if (validatorService.validateCrypto(key, data)) {
+            JSONObject json = new JSONObject(cryptoProviderService.decrypt(key, data));
+            String publicKeyPEM = json.getString("publicKey");
+            String token = json.getString("token");
+            long parentId = json.getLong("parent");
+            String name = json.getString("name");
+            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            if (decryptedToken != null) {
+                MessageDto message = containerService.add(decryptedToken, parentId, name);
+                return cryptoProviderService.encrypt(publicKeyPEM, message.toJson());
+            }
+        }
+        return null;
     }
 }
