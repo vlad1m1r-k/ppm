@@ -11,9 +11,13 @@
     "as1": "Admin",
     "cf1": "Move",
     "cf2": "to",
+    "cfe1": "Error moving container",
     "iv1": "Add container",
     "iv2": "Delete container",
     "iv3": "Delete child elements first",
-    "ive1": "A container with that name already exists"
+    "iv4": "Rename container",
+    "ive1": "A container with that name already exists",
+    "ive2": "Error deleting container",
+    "ive3": "Error renaming container"
   }
 }

@@ -19,6 +19,7 @@ public class Container {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    private boolean deleted = false;
 
     @ManyToOne
     private Container parent;
@@ -61,6 +62,18 @@ public class Container {
 
     public Set<Container> getChildren() {
         return children;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
     }
 
     public void setParent(Container parent) {

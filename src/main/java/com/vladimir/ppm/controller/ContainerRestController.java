@@ -49,19 +49,20 @@ public class ContainerRestController {
     }
 
     @PostMapping("/move")
-    public boolean move(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+    public CryptoDto move(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
         if (validatorService.validateCrypto(key, data)) {
             JSONObject json = new JSONObject(cryptoProviderService.decrypt(key, data));
+            String publicKeyPEM = json.getString("publicKey");
             String token = json.getString("token");
             long itemId = json.getLong("item");
             long moveToId = json.getLong("moveTo");
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null) {
-                return containerService.moveContainer(decryptedToken, itemId, moveToId);
+                MessageDto message = containerService.moveContainer(decryptedToken, itemId, moveToId);
+                return cryptoProviderService.encrypt(publicKeyPEM, message.toJson());
             }
-            //TODO check children when moving
         }
-        return false;
+        return null;
     }
 
     @PostMapping("/add")
@@ -75,6 +76,39 @@ public class ContainerRestController {
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null) {
                 MessageDto message = containerService.add(decryptedToken, parentId, name);
+                return cryptoProviderService.encrypt(publicKeyPEM, message.toJson());
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/delete")
+    public CryptoDto delete(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+        if (validatorService.validateCrypto(key, data)) {
+            JSONObject json = new JSONObject(cryptoProviderService.decrypt(key, data));
+            String publicKeyPEM = json.getString("publicKey");
+            String token = json.getString("token");
+            long itemId = json.getLong("item");
+            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            if (decryptedToken != null) {
+                MessageDto message = containerService.delete(decryptedToken, itemId);
+                return cryptoProviderService.encrypt(publicKeyPEM, message.toJson());
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/rename")
+    public CryptoDto rename(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+        if (validatorService.validateCrypto(key, data)) {
+            JSONObject json = new JSONObject(cryptoProviderService.decrypt(key, data));
+            String publicKeyPEM = json.getString("publicKey");
+            String token = json.getString("token");
+            long itemId = json.getLong("item");
+            String name = json.getString("name");
+            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            if (decryptedToken != null) {
+                MessageDto message = containerService.rename(decryptedToken, itemId, name);
                 return cryptoProviderService.encrypt(publicKeyPEM, message.toJson());
             }
         }

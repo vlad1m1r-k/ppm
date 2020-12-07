@@ -6,6 +6,8 @@ import com.vladimir.ppm.dto.MessageDto;
 
 public interface ContainerService {
     ContainerDto getTree(Token token);
-    boolean moveContainer(Token token, long itemId, long moveToId);
+    MessageDto moveContainer(Token token, long itemId, long moveToId);
     MessageDto add(Token token, long parentId, String name);
+    MessageDto delete(Token token, long itemId);
+    MessageDto rename(Token token, long itemId, String name);
 }

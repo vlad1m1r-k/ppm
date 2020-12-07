@@ -10,6 +10,7 @@ import com.vladimir.ppm.repository.ContainerRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -33,24 +34,25 @@ public class ContainerServiceImpl implements ContainerService {
 
     @Override
     @Transactional
-    public boolean moveContainer(Token token, long itemId, long moveToId) {
+    public MessageDto moveContainer(Token token, long itemId, long moveToId) {
         Container container = containerRepository.getOne(itemId);
         Container cntMoveTo = containerRepository.getOne(moveToId);
-        if (getAccess(container, userService.getGroups(token)) == Access.RW && getAccess(cntMoveTo, userService.getGroups(token)) == Access.RW
-                && !container.getName().equals("root") && !container.equals(cntMoveTo)) {
-            container.getParent().getChildren().remove(container);
-            container.setParent(cntMoveTo);
-            cntMoveTo.addChild(container);
-            return true;
+        if (getAccess(container, userService.getGroups(token)) != Access.RW || getAccess(cntMoveTo, userService.getGroups(token)) != Access.RW
+                || container.getName().equals("root") || container.equals(cntMoveTo) || cntMoveTo.getChildren().contains(container)
+                || container.isDeleted() || cntMoveTo.isDeleted()) {
+            return MessageDto.builder().message("cfe1").build();
         }
-        return false;
+        container.getParent().getChildren().remove(container);
+        container.setParent(cntMoveTo);
+        cntMoveTo.addChild(container);
+        return MessageDto.builder().build();
     }
 
     @Override
     @Transactional
     public MessageDto add(Token token, long parentId, String name) {
         Container parent = containerRepository.getOne(parentId);
-        if (getAccess(parent, userService.getGroups(token)) == Access.RW) {
+        if (getAccess(parent, userService.getGroups(token)) == Access.RW && name.length() > 0 && !parent.isDeleted()) {
             Container container = new Container(name, parent);
             if (parent.getChildren().contains(container)) {
                 return MessageDto.builder().message("ive1").build();
@@ -61,9 +63,40 @@ public class ContainerServiceImpl implements ContainerService {
         return MessageDto.builder().build();
     }
 
+    @Override
+    @Transactional
+    public MessageDto delete(Token token, long itemId) {
+        Container container = containerRepository.getOne(itemId);
+        if (container.isDeleted() || container.getName().equals("root") || container.getChildren().size() != 0
+                || getAccess(container, userService.getGroups(token)) != Access.RW) {
+            return MessageDto.builder().message("ive2").build();
+        }
+        container.getParent().getChildren().remove(container);
+        container.setDeleted(true);
+        container.setName(container.getName() + "_Deleted_By_" + token.getLogin() + "_" + new Date());
+        return MessageDto.builder().build();
+    }
+
+    @Override
+    @Transactional
+    public MessageDto rename(Token token, long itemId, String name) {
+        Container container = containerRepository.getOne(itemId);
+        if (container.isDeleted() || container.getName().equals("root") || name == null || name.length() == 0
+                || getAccess(container, userService.getGroups(token)) != Access.RW) {
+            return MessageDto.builder().message("ive3").build();
+        }
+        for (Container child : container.getParent().getChildren()) {
+            if (child.getName().equals(name)) {
+                return MessageDto.builder().message("ive1").build();
+            }
+        }
+        container.setName(name);
+        return MessageDto.builder().build();
+    }
+
     private ContainerDto buildTree(Container container, Set<Group> groups) {
         Access access = getAccess(container, groups);
-        if (access == Access.NA) {
+        if (access == Access.NA || container.isDeleted()) {
             return ContainerDto.builder().build();
         }
         Set<ContainerDto> children = new TreeSet<>();

@@ -52,16 +52,26 @@ export default {
                         item: evt.dataTransfer.getData("id"),
                         moveTo: item.id
                     });
-                    await $.ajax({
+                    const answer = await $.ajax({
                         url: "/container/move",
                         method: "POST",
                         data: encryptedData
                     });
-                    this.$eventHub.$emit("update-tree");
+                    const data = Vue.cryptoProvider.decrypt(answer);
+                    if (data.message) {
+                        this.$eventHub.$emit("show-msg", this.language.data[data.message]);
+                    } else {
+                        this.$eventHub.$emit("update-tree");
+                    }
                 } catch (e) {
                     this.$eventHub.$emit("show-msg", Vue.errorParser(e));
                 }
             }
+        }
+    },
+    beforeDestroy() {
+        if (this.item.id === this.selectedItem.id) {
+            this.$emit('item-select', this.$parent.$props.item);
         }
     }
 }
