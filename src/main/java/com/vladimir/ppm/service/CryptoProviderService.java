@@ -10,4 +10,5 @@ public interface CryptoProviderService {
     String decrypt(String key, String data);
     String encryptToken(Token token);
     Token decryptToken(String token);
+    boolean isSystemClosed();
 }

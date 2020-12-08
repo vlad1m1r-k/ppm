@@ -38,6 +38,8 @@ public class CryptoProviderServiceImpl implements CryptoProviderService {
     private Long keyPairExpireDate; //TODO renew keypair
     private SecretKeySpec tokenAESKey;
     private IvParameterSpec tokenAESIv;
+    private SecretKeySpec dbAESKey;
+    private IvParameterSpec dbAESIv;
     private Cipher rsaCipher;
     private Cipher aesCipher;
     SecureRandom random = new SecureRandom();
@@ -167,5 +169,10 @@ public class CryptoProviderServiceImpl implements CryptoProviderService {
         }
         JSONObject json = new JSONObject(tokenStr);
         return new Token(json.getString("login"), json.getLong("lifeTime"), json.getString("remoteAddr"), json.getString("userAgent"));
+    }
+
+    @Override
+    public boolean isSystemClosed() {
+        return dbAESKey == null || dbAESIv == null;
     }
 }

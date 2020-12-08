@@ -10,7 +10,7 @@
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
                         <a class="dropdown-item" @click="showAddDlg = true">{{ language.data.iv1 }}</a>
                         <a class="dropdown-item" @click="showRenameDlg = true" v-if="item.name !== 'root'">{{ language.data.iv4 }}</a>
-                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-divider" v-if="item.name !== 'root'"></div>
                         <span :title="item.children.length > 0 ? language.data.iv3 : false"
                               :class="{'cursor-stop': item.children.length > 0}" v-if="item.name !== 'root'">
                         <a class="dropdown-item text-danger"

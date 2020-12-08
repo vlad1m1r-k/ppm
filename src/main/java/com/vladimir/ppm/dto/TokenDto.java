@@ -7,12 +7,14 @@ public class TokenDto {
     private final String message;
     private final String token;
     private final Boolean adminSettings;
+    private final Boolean systemClosed;
 
     private TokenDto(Builder builder) {
         this.lifeTime = builder.lifeTime;
         this.message = builder.message;
         this.token = builder.token;
         this.adminSettings = builder.adminSettings;
+        this.systemClosed = builder.systemClosed;
     }
 
     public Long getLifeTime() {
@@ -39,11 +41,16 @@ public class TokenDto {
         return new Builder();
     }
 
+    public Boolean getSystemClosed() {
+        return systemClosed;
+    }
+
     public static class Builder {
         private Long lifeTime;
         private String message;
         private String token;
         private Boolean adminSettings;
+        private Boolean systemClosed;
 
         public Builder lifeTime(Long lifeTime) {
             this.lifeTime = lifeTime;
@@ -62,6 +69,11 @@ public class TokenDto {
 
         public Builder adminSettings(boolean adminSettings) {
             this.adminSettings = adminSettings;
+            return this;
+        }
+
+        public Builder systemClosed(boolean systemClosed) {
+            this.systemClosed = systemClosed;
             return this;
         }
 

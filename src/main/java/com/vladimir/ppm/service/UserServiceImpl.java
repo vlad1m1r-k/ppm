@@ -16,11 +16,14 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder;
     private final TokenService tokenService;
+    private final CryptoProviderService cryptoProviderService;
 
-    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder encoder, TokenService tokenService) {
+    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder encoder, TokenService tokenService,
+                           CryptoProviderService cryptoProviderService) {
         this.userRepository = userRepository;
         this.encoder = encoder;
         this.tokenService = tokenService;
+        this.cryptoProviderService = cryptoProviderService;
     }
 
     @Override
@@ -30,6 +33,9 @@ public class UserServiceImpl implements UserService {
         if (user == null || !encoder.matches(password, user.getPassword())) {
             return TokenDto.builder().message("lfe1").build();
         }
+        if (cryptoProviderService.isSystemClosed() && !isAdmin(user.getGroups())) {
+            return TokenDto.builder().message("lfe2").build();
+        }
         Token token = tokenService.getToken(user, remoteAddr, userAgent);
         long tokenLifeTime = token.getLifeTime();
         String encryptedToken = tokenService.encrypt(token);
@@ -37,6 +43,7 @@ public class UserServiceImpl implements UserService {
                 .lifeTime(tokenLifeTime)
                 .token(encryptedToken)
                 .adminSettings(isAdmin(user.getGroups()))
+                .systemClosed(cryptoProviderService.isSystemClosed())
                 .build();
     }
 

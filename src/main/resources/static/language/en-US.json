@@ -5,6 +5,7 @@
     "lf2": "Password",
     "lf3": "Enter",
     "lfe1": "Incorrect credentials.",
+    "lfe2": "System closed, call your system administrator",
     "um1": "Settings",
     "um2": "Logout",
     "mp1": "Main",
@@ -18,6 +19,7 @@
     "iv4": "Rename container",
     "ive1": "A container with that name already exists",
     "ive2": "Error deleting container",
-    "ive3": "Error renaming container"
+    "ive3": "Error renaming container",
+    "db1": "Database"
   }
 }

@@ -23,6 +23,7 @@ export default {
         this.adminSettings = decryptedAnswer.adminSettings;
         this.userName = login;
         this.renewTime = Date.now() + (decryptedAnswer.lifeTime - Date.now()) / 2;
+        return decryptedAnswer.systemClosed;
     },
     logout() {
         this.token = null;

@@ -36,7 +36,10 @@ export default {
             if (this.login.length > 1) {
                 this.message = "";
                 try {
-                    await this.tokenProvider.login(this.login, this.password);
+                    const answer = await this.tokenProvider.login(this.login, this.password);
+                    if (answer) {
+                        this.$eventHub.$emit("show-msg", this.language.data.lfe2);
+                    }
                 } catch (e) {
                     if (e.message) {
                         this.message = this.language.data[e.message];
