@@ -28,7 +28,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col">
+                <div class="col p-0">
                     <keep-alive>
                         <component :is="currentTab"></component>
                     </keep-alive>

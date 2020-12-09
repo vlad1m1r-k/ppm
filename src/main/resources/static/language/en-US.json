@@ -20,6 +20,11 @@
     "ive1": "A container with that name already exists",
     "ive2": "Error deleting container",
     "ive3": "Error renaming container",
-    "db1": "Database"
+    "db1": "Database",
+    "db2": "DB encryption status: ",
+    "db3": "OK No actions needed",
+    "db4": "Need encryption key",
+    "db5": "Need to generate new encryption key",
+    "us1": "Users"
   }
 }

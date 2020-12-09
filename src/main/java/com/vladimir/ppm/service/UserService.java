@@ -10,4 +10,5 @@ public interface UserService {
     TokenDto login(String login, String password, String remoteAddr, String userAgent);
     TokenDto renewToken(Token token);
     Set<Group> getGroups(Token token);
+    boolean isAdmin(Token token);
 }
