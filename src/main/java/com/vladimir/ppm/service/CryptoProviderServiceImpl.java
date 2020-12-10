@@ -1,5 +1,6 @@
 package com.vladimir.ppm.service;
 
+import com.vladimir.ppm.domain.DbKey;
 import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.dto.CryptoDto;
 import com.vladimir.ppm.dto.PublicKeyDto;
@@ -174,5 +175,20 @@ public class CryptoProviderServiceImpl implements CryptoProviderService {
     @Override
     public boolean isSystemClosed() {
         return dbAESKey == null || dbAESIv == null;
+    }
+
+    @Override
+    public DbKey generateDbKey() {
+        byte[] key = new byte[32];
+        byte[] iv = new byte[16];
+        random.nextBytes(key);
+        random.nextBytes(iv);
+        return new DbKey(System.currentTimeMillis(), key, iv);
+    }
+
+    @Override
+    public void installDbKey(byte[] key, byte[] iv) {
+        dbAESKey = new SecretKeySpec(key, "AES");
+        dbAESIv = new IvParameterSpec(iv);
     }
 }

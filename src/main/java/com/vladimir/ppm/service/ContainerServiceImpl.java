@@ -25,7 +25,7 @@ public class ContainerServiceImpl implements ContainerService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public ContainerDto getTree(Token token) {
         Set<Group> groups = userService.getGroups(token);
         Container root = containerRepository.getContainerByName("root");

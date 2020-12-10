@@ -42,6 +42,6 @@ export default {
     border-radius: 3px;
 }
 .selected {
-    border-color: darkblue;
+    border-bottom: 4px solid darkblue;
 }
 </style>

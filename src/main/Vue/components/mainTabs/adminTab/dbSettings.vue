@@ -1,14 +1,16 @@
 <template>
     <div>
-        {{ language.data.db2 }}
-        <div v-if="status === 'OK'">
-            {{ language.data.db3 }}
-        </div>
-        <div v-if="status === 'NEED_KEY'">
-            {{ language.data.db4 }}
+        <div>
+            {{ language.data.db2 }} {{ statusTxt }}
         </div>
         <div v-if="status === 'NEW_DB'">
-            {{ language.data.db5 }}
+            <button class="btn btn-sm btn-warning" @click="generate" :disabled="key">{{ language.data.db6 }}</button>
+            <br> &#x2757; {{ language.data.db7 }}
+            <textarea class="form-control" readonly rows="4" v-model="key"></textarea>
+            <span v-html="language.data.db8"></span>
+        </div>
+        <div v-if="status === 'NEED_KEY'">
+            <!--        TODO-->
         </div>
     </div>
 </template>
@@ -17,15 +19,23 @@
 export default {
     name: "dbSettings",
     data() {
-        return{
+        return {
             tokenProvider: this.$root.$data.tokenProvider,
             language: this.$root.$data.language,
-            status: null
+            status: null,
+            key: null
         }
     },
     computed: {
-        status() {
-            //TODO
+        statusTxt() {
+            switch (this.status) {
+                case "OK":
+                    return this.language.data.db3;
+                case "NEED_KEY":
+                    return this.language.data.db4;
+                case "NEW_DB":
+                    return this.language.data.db5;
+            }
         }
     },
     methods: {
@@ -41,6 +51,22 @@ export default {
                 });
                 const data = Vue.cryptoProvider.decrypt(answer);
                 this.status = data.message;
+            } catch (e) {
+                this.$eventHub.$emit("show-msg", Vue.errorParser(e));
+            }
+        },
+        async generate() {
+            this.$eventHub.$emit("show-msg", "");
+            try {
+                const token = await this.tokenProvider.getToken();
+                const encryptedData = await Vue.cryptoProvider.encrypt({token: token});
+                const answer = await $.ajax({
+                    url: "/settings/keyGen",
+                    method: "POST",
+                    data: encryptedData
+                });
+                const data = Vue.cryptoProvider.decrypt(answer);
+                this.key = data.message;
             } catch (e) {
                 this.$eventHub.$emit("show-msg", Vue.errorParser(e));
             }

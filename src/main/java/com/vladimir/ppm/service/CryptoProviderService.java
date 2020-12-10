@@ -1,5 +1,6 @@
 package com.vladimir.ppm.service;
 
+import com.vladimir.ppm.domain.DbKey;
 import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.dto.CryptoDto;
 import com.vladimir.ppm.dto.PublicKeyDto;
@@ -11,4 +12,6 @@ public interface CryptoProviderService {
     String encryptToken(Token token);
     Token decryptToken(String token);
     boolean isSystemClosed();
+    DbKey generateDbKey();
+    void installDbKey(byte[] key, byte[] iv);
 }

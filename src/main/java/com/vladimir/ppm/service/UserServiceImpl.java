@@ -62,14 +62,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public Set<Group> getGroups(Token token) {
         User user = userRepository.findUserByLogin(token.getLogin());
         return user.getGroups();
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public boolean isAdmin(Token token) {
         User user = userRepository.findUserByLogin(token.getLogin());
         return isAdmin(user.getGroups());

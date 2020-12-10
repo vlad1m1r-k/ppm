@@ -45,4 +45,19 @@ public class SettingsRestController {
         }
         return null;
     }
+
+    @PostMapping("/keyGen")
+    public CryptoDto generateKey(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+        if (validatorService.validateCrypto(key, data)) {
+            JSONObject json = new JSONObject(cryptoProviderService.decrypt(key, data));
+            String token = json.getString("token");
+            String publicKeyPEM = json.getString("publicKey");
+            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            if (decryptedToken != null) {
+                MessageDto dbKey = settingsService.generateDbKey(decryptedToken);
+                return cryptoProviderService.encrypt(publicKeyPEM, dbKey.toJson());
+            }
+        }
+        return null;
+    }
 }

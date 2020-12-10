@@ -25,6 +25,9 @@
     "db3": "OK No actions needed",
     "db4": "Need encryption key",
     "db5": "Need to generate new encryption key",
+    "db6": "Generate",
+    "db7": "Database encryption key: ",
+    "db8": "Save the key! <br> You will have to input the key after the server rebooted. <br> You will lose your data if the key is lost.",
     "us1": "Users"
   }
 }
