@@ -5,7 +5,7 @@ import com.vladimir.ppm.dto.ContainerDto;
 import com.vladimir.ppm.dto.CryptoDto;
 import com.vladimir.ppm.dto.MessageDto;
 import com.vladimir.ppm.service.ContainerService;
-import com.vladimir.ppm.service.CryptoProviderService;
+import com.vladimir.ppm.service.CryptoProvider;
 import com.vladimir.ppm.service.TokenService;
 import com.vladimir.ppm.service.ValidatorService;
 import org.json.JSONObject;
@@ -20,14 +20,14 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/container")
 public class ContainerRestController {
     private final ValidatorService validatorService;
-    private final CryptoProviderService cryptoProviderService;
+    private final CryptoProvider cryptoProvider;
     private final TokenService tokenService;
     private final ContainerService containerService;
 
-    public ContainerRestController(ValidatorService validatorService, CryptoProviderService cryptoProviderService,
+    public ContainerRestController(ValidatorService validatorService, CryptoProvider cryptoProvider,
                                    TokenService tokenService, ContainerService containerService) {
         this.validatorService = validatorService;
-        this.cryptoProviderService = cryptoProviderService;
+        this.cryptoProvider = cryptoProvider;
         this.tokenService = tokenService;
         this.containerService = containerService;
     }
@@ -35,13 +35,13 @@ public class ContainerRestController {
     @PostMapping("/getTree")
     public CryptoDto getTree(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
         if (validatorService.validateCrypto(key, data)) {
-            JSONObject json = new JSONObject(cryptoProviderService.decrypt(key, data));
+            JSONObject json = new JSONObject(cryptoProvider.decrypt(key, data));
             String token = json.getString("token");
             String publicKeyPEM = json.getString("publicKey");
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null) {
                 ContainerDto tree = containerService.getTree(decryptedToken);
-                return cryptoProviderService.encrypt(publicKeyPEM, tree.toJson());
+                return cryptoProvider.encrypt(publicKeyPEM, tree.toJson());
             }
         }
         return null;
@@ -50,7 +50,7 @@ public class ContainerRestController {
     @PostMapping("/move")
     public CryptoDto move(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
         if (validatorService.validateCrypto(key, data)) {
-            JSONObject json = new JSONObject(cryptoProviderService.decrypt(key, data));
+            JSONObject json = new JSONObject(cryptoProvider.decrypt(key, data));
             String publicKeyPEM = json.getString("publicKey");
             String token = json.getString("token");
             long itemId = json.getLong("item");
@@ -58,7 +58,7 @@ public class ContainerRestController {
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null) {
                 MessageDto message = containerService.moveContainer(decryptedToken, itemId, moveToId);
-                return cryptoProviderService.encrypt(publicKeyPEM, message.toJson());
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
             }
         }
         return null;
@@ -67,7 +67,7 @@ public class ContainerRestController {
     @PostMapping("/add")
     public CryptoDto add(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
         if (validatorService.validateCrypto(key, data)) {
-            JSONObject json = new JSONObject(cryptoProviderService.decrypt(key, data));
+            JSONObject json = new JSONObject(cryptoProvider.decrypt(key, data));
             String publicKeyPEM = json.getString("publicKey");
             String token = json.getString("token");
             long parentId = json.getLong("parent");
@@ -75,7 +75,7 @@ public class ContainerRestController {
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null) {
                 MessageDto message = containerService.add(decryptedToken, parentId, name);
-                return cryptoProviderService.encrypt(publicKeyPEM, message.toJson());
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
             }
         }
         return null;
@@ -84,14 +84,14 @@ public class ContainerRestController {
     @PostMapping("/delete")
     public CryptoDto delete(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
         if (validatorService.validateCrypto(key, data)) {
-            JSONObject json = new JSONObject(cryptoProviderService.decrypt(key, data));
+            JSONObject json = new JSONObject(cryptoProvider.decrypt(key, data));
             String publicKeyPEM = json.getString("publicKey");
             String token = json.getString("token");
             long itemId = json.getLong("item");
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null) {
                 MessageDto message = containerService.delete(decryptedToken, itemId);
-                return cryptoProviderService.encrypt(publicKeyPEM, message.toJson());
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
             }
         }
         return null;
@@ -100,7 +100,7 @@ public class ContainerRestController {
     @PostMapping("/rename")
     public CryptoDto rename(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
         if (validatorService.validateCrypto(key, data)) {
-            JSONObject json = new JSONObject(cryptoProviderService.decrypt(key, data));
+            JSONObject json = new JSONObject(cryptoProvider.decrypt(key, data));
             String publicKeyPEM = json.getString("publicKey");
             String token = json.getString("token");
             long itemId = json.getLong("item");
@@ -108,7 +108,7 @@ public class ContainerRestController {
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null) {
                 MessageDto message = containerService.rename(decryptedToken, itemId, name);
-                return cryptoProviderService.encrypt(publicKeyPEM, message.toJson());
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
             }
         }
         return null;

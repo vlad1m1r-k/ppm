@@ -7,12 +7,10 @@ import java.util.Base64;
 public class DbKey {
     private long id;
     private byte[] key;
-    private byte[] iv;
 
-    public DbKey(long id, byte[] key, byte[] iv) {
+    public DbKey(long id, byte[] key) {
         this.id = id;
         this.key = key;
-        this.iv = iv;
     }
 
     public long getId() {
@@ -21,10 +19,6 @@ public class DbKey {
 
     public byte[] getKey() {
         return key;
-    }
-
-    public byte[] getIv() {
-        return iv;
     }
 
     @Override

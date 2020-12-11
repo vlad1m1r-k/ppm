@@ -22,12 +22,14 @@
     "ive3": "Error renaming container",
     "db1": "Database",
     "db2": "DB encryption status: ",
-    "db3": "OK No actions needed",
+    "db3": "OK. No actions needed",
     "db4": "Need encryption key",
     "db5": "Need to generate new encryption key",
     "db6": "Generate",
     "db7": "Database encryption key: ",
     "db8": "Save the key! <br> You will have to input the key after the server rebooted. <br> You will lose your data if the key is lost.",
+    "db9": "Send",
+    "db10": "Incorrect database encryption key",
     "us1": "Users"
   }
 }

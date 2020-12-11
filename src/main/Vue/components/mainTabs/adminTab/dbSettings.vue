@@ -6,11 +6,12 @@
         <div v-if="status === 'NEW_DB'">
             <button class="btn btn-sm btn-warning" @click="generate" :disabled="key">{{ language.data.db6 }}</button>
             <br> &#x2757; {{ language.data.db7 }}
-            <textarea class="form-control" readonly rows="4" v-model="key"></textarea>
+            <textarea class="form-control" readonly rows="3" v-model="key"></textarea>
             <span v-html="language.data.db8"></span>
         </div>
         <div v-if="status === 'NEED_KEY'">
-            <!--        TODO-->
+            <textarea class="form-control" rows="3" v-model="key"></textarea>
+            <button class="btn btn-sm btn-warning" @click="sendKey" :disabled="!key">{{ language.data.db9 }}</button>
         </div>
     </div>
 </template>
@@ -67,6 +68,29 @@ export default {
                 });
                 const data = Vue.cryptoProvider.decrypt(answer);
                 this.key = data.message;
+            } catch (e) {
+                this.$eventHub.$emit("show-msg", Vue.errorParser(e));
+            }
+        },
+        async sendKey() {
+            this.$eventHub.$emit("show-msg", "");
+            try {
+                const token = await this.tokenProvider.getToken();
+                const encryptedData = await Vue.cryptoProvider.encrypt({
+                    token: token,
+                    key: this.key
+                });
+                const answer = await $.ajax({
+                    url: "/settings/setKey",
+                    method: "POST",
+                    data: encryptedData
+                });
+                const data = Vue.cryptoProvider.decrypt(answer);
+                if (data.message) {
+                    this.$eventHub.$emit("show-msg", this.language.data[data.message]);
+                } else {
+                    this.getStatus();
+                }
             } catch (e) {
                 this.$eventHub.$emit("show-msg", Vue.errorParser(e));
             }

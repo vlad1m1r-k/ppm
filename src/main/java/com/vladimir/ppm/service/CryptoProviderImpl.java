@@ -4,6 +4,7 @@ import com.vladimir.ppm.domain.DbKey;
 import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.dto.CryptoDto;
 import com.vladimir.ppm.dto.PublicKeyDto;
+import org.apache.commons.lang3.ArrayUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
 import org.json.JSONObject;
@@ -19,6 +20,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyFactory;
@@ -32,15 +34,15 @@ import java.security.Security;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
-public class CryptoProviderServiceImpl implements CryptoProviderService {
+public class CryptoProviderImpl implements CryptoProvider {
     private KeyPair keyPair;
     private Long keyPairExpireDate; //TODO renew keypair
     private SecretKeySpec tokenAESKey;
-    private IvParameterSpec tokenAESIv;
     private SecretKeySpec dbAESKey;
-    private IvParameterSpec dbAESIv;
     private Cipher rsaCipher;
     private Cipher aesCipher;
     SecureRandom random = new SecureRandom();
@@ -58,11 +60,12 @@ public class CryptoProviderServiceImpl implements CryptoProviderService {
             keyPairExpireDate = System.currentTimeMillis() + (long) keyLifeTimeDays * 24 * 60 * 60 * 1000;
 
             byte[] aesKey = new byte[32];
-            byte[] aesIv = new byte[16];
             random.nextBytes(aesKey);
-            random.nextBytes(aesIv);
             tokenAESKey = new SecretKeySpec(aesKey, "AES");
-            tokenAESIv = new IvParameterSpec(aesIv);
+
+            //TODO remove it
+            byte[] dbKey = {25, 126, -91, 78, 87, 110, -25, -27, 6, 121, 44, 96, -63, 17, 32, -69, -29, -8, 51, -12, 80, -44, 61, 108, 120, 36, -55, -86, 2, -117, -119, -123};
+            dbAESKey = new SecretKeySpec(dbKey, "AES");
 
             rsaCipher = Cipher.getInstance("RSA/ECB/PKCS1Padding", "BC");
             aesCipher = Cipher.getInstance("AES/CBC/PKCS7Padding", "BC");
@@ -149,9 +152,12 @@ public class CryptoProviderServiceImpl implements CryptoProviderService {
     @Override
     public String encryptToken(Token token) {
         String encryptedB64Token = null;
+        byte[] iv = generateIV();
+        IvParameterSpec aesIv = new IvParameterSpec(iv);
         try {
-            aesCipher.init(Cipher.ENCRYPT_MODE, tokenAESKey, tokenAESIv);
+            aesCipher.init(Cipher.ENCRYPT_MODE, tokenAESKey, aesIv);
             byte[] encryptedToken = aesCipher.doFinal(token.toJson().getBytes());
+            encryptedToken = insertIv(iv, encryptedToken);
             encryptedB64Token = Base64.getEncoder().encodeToString(encryptedToken);
         } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException e) {
             e.printStackTrace();
@@ -162,9 +168,11 @@ public class CryptoProviderServiceImpl implements CryptoProviderService {
     @Override
     public Token decryptToken(String token) {
         String tokenStr = "";
+        Map<String, byte[]> tokenMap = extractIv(Base64.getDecoder().decode(token));
+        IvParameterSpec aesIv = new IvParameterSpec(tokenMap.get("iv"));
         try {
-            aesCipher.init(Cipher.DECRYPT_MODE, tokenAESKey, tokenAESIv);
-            tokenStr = new String(aesCipher.doFinal(Base64.getDecoder().decode(token)));
+            aesCipher.init(Cipher.DECRYPT_MODE, tokenAESKey, aesIv);
+            tokenStr = new String(aesCipher.doFinal(tokenMap.get("data")));
         } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException e) {
             e.printStackTrace();
         }
@@ -174,21 +182,37 @@ public class CryptoProviderServiceImpl implements CryptoProviderService {
 
     @Override
     public boolean isSystemClosed() {
-        return dbAESKey == null || dbAESIv == null;
+        return dbAESKey == null;
     }
 
     @Override
     public DbKey generateDbKey() {
         byte[] key = new byte[32];
-        byte[] iv = new byte[16];
         random.nextBytes(key);
-        random.nextBytes(iv);
-        return new DbKey(System.currentTimeMillis(), key, iv);
+        return new DbKey(System.currentTimeMillis(), key);
     }
 
     @Override
-    public void installDbKey(byte[] key, byte[] iv) {
+    public void installDbKey(byte[] key) {
         dbAESKey = new SecretKeySpec(key, "AES");
-        dbAESIv = new IvParameterSpec(iv);
+    }
+
+    private byte[] generateIV() {
+        byte[] iv = new byte[16];
+        random.nextBytes(iv);
+        return iv;
+    }
+
+    private byte[] insertIv(byte[] iv, byte[] data) {
+        return ArrayUtils.addAll(iv, data);
+    }
+
+    private Map<String, byte[]> extractIv(byte[] data) {
+        Map<String, byte[]> result = new HashMap<>();
+        byte[] iv = ArrayUtils.subarray(data, 0, 16);
+        byte[] body = ArrayUtils.subarray(data, 16, data.length);
+        result.put("iv", iv);
+        result.put("data", body);
+        return result;
     }
 }
