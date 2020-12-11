@@ -100,7 +100,7 @@ public class CryptoProviderImpl implements CryptoProvider {
         byte[] encryptedData = null;
         try {
             aesCipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(aesKey, "AES"), new IvParameterSpec(aesIv));
-            encryptedData = aesCipher.doFinal(data.getBytes());
+            encryptedData = aesCipher.doFinal(data.getBytes(StandardCharsets.UTF_8));
         } catch (InvalidKeyException | InvalidAlgorithmParameterException | IllegalBlockSizeException | BadPaddingException e) {
             e.printStackTrace();
         }
@@ -142,7 +142,7 @@ public class CryptoProviderImpl implements CryptoProvider {
             byte[] aesIVBytes = Base64.getDecoder().decode(json.getString("iv"));
 
             aesCipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(aesKeyBytes, "AES"), new IvParameterSpec(aesIVBytes));
-            decryptedString = new String(aesCipher.doFinal(dataBytes));
+            decryptedString = new String(aesCipher.doFinal(dataBytes), StandardCharsets.UTF_8);
         } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException e) {
             e.printStackTrace();
         }
@@ -156,7 +156,7 @@ public class CryptoProviderImpl implements CryptoProvider {
         IvParameterSpec aesIv = new IvParameterSpec(iv);
         try {
             aesCipher.init(Cipher.ENCRYPT_MODE, tokenAESKey, aesIv);
-            byte[] encryptedToken = aesCipher.doFinal(token.toJson().getBytes());
+            byte[] encryptedToken = aesCipher.doFinal(token.toJson().getBytes(StandardCharsets.UTF_8));
             encryptedToken = insertIv(iv, encryptedToken);
             encryptedB64Token = Base64.getEncoder().encodeToString(encryptedToken);
         } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException e) {
@@ -172,7 +172,7 @@ public class CryptoProviderImpl implements CryptoProvider {
         IvParameterSpec aesIv = new IvParameterSpec(tokenMap.get("iv"));
         try {
             aesCipher.init(Cipher.DECRYPT_MODE, tokenAESKey, aesIv);
-            tokenStr = new String(aesCipher.doFinal(tokenMap.get("data")));
+            tokenStr = new String(aesCipher.doFinal(tokenMap.get("data")), StandardCharsets.UTF_8);
         } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException e) {
             e.printStackTrace();
         }

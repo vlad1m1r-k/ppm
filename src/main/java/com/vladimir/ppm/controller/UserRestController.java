@@ -34,17 +34,12 @@ public class UserRestController {
     @PostMapping("/login")
     public CryptoDto login(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
         if (validatorService.validateCrypto(key, data)) {
-            //TODO
-            System.out.println(cryptoProvider.decrypt(key, data));
-            return null;
-
-
-//            JSONObject json = new JSONObject(cryptoProvider.decrypt(key, data));
-//            String login = json.getString("login");
-//            String password = json.getString("password");
-//            String publicKeyPEM = json.getString("publicKey");
-//            TokenDto tokenDto = userService.login(login, password, request.getRemoteAddr(), request.getHeader("User-Agent"));
-//            return cryptoProvider.encrypt(publicKeyPEM, tokenDto.toJson());
+            JSONObject json = new JSONObject(cryptoProvider.decrypt(key, data));
+            String login = json.getString("login");
+            String password = json.getString("password");
+            String publicKeyPEM = json.getString("publicKey");
+            TokenDto tokenDto = userService.login(login, password, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            return cryptoProvider.encrypt(publicKeyPEM, tokenDto.toJson());
         }
         return null;
     }

@@ -11,7 +11,7 @@ export default {
             const aesIv = forge.random.getBytesSync(16);
             const cipher = forge.cipher.createCipher("AES-CBC", aesKey);
             cipher.start({iv: aesIv});
-            cipher.update(forge.util.createBuffer(JSON.stringify(data)));
+            cipher.update(forge.util.createBuffer(JSON.stringify(data), "utf8"));
             cipher.finish();
 
             const aesKeyBundle = {key: forge.util.encode64(aesKey), iv: forge.util.encode64(aesIv)};
@@ -34,7 +34,7 @@ export default {
         decipher.start({iv: iv});
         decipher.update(forge.util.createBuffer(forge.util.decode64(data.data)));
         decipher.finish();
-        return JSON.parse(decipher.output.data);
+        return JSON.parse(forge.util.decodeUtf8(decipher.output.data));
     },
     async checkKey() {
         if (this.serverPublicKey === null || this.serverKeyExpireDate === null || this.serverKeyExpireDate < Date.now()) {
