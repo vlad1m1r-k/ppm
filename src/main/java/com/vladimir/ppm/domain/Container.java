@@ -1,5 +1,7 @@
 package com.vladimir.ppm.domain;
 
+import com.vladimir.ppm.dto.Note;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -33,6 +35,9 @@ public class Container {
     @ManyToMany
     private Set<Group> groupsRW = new HashSet<>();
 
+    @OneToMany
+    private Set<Note> notes = new HashSet<>();
+
     public Container() {}
 
     public Container(String name, Container parent) {
@@ -64,6 +69,10 @@ public class Container {
         return children;
     }
 
+    public Set<Note> getNotes() {
+        return notes;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -91,6 +100,10 @@ public class Container {
 
     public void addGroupRW(Group group) {
         groupsRW.add(group);
+    }
+
+    public void addNote(Note note) {
+        notes.add(note);
     }
 
     @Override

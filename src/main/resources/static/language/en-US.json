@@ -17,6 +17,8 @@
     "iv2": "Delete container",
     "iv3": "Delete child elements first",
     "iv4": "Rename container",
+    "iv5": "Add note",
+    "iv6": "Name",
     "ive1": "A container with that name already exists",
     "ive2": "Error deleting container",
     "ive3": "Error renaming container",

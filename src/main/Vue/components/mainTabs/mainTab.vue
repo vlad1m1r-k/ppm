@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="row">
-            <div class="col-md-auto bg-light">
+            <div class="col-md-auto bg-light p-0">
                 <span @click="updateTree" style="cursor: pointer; position: absolute">&#x21BA;</span>
                 <tree-item :item="tree" :selected-item="selectedItem" @item-select="selectItem"></tree-item>
             </div>

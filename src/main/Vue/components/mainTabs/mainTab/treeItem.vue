@@ -80,6 +80,7 @@ export default {
 <style scoped>
 ul {
     list-style-type: none;
+    padding-left: 20px;
 }
 .caret {
     cursor: pointer;
@@ -87,7 +88,6 @@ ul {
 .caret::before {
     content: "\25B7";
     color: black;
-    margin-right: 6px;
 }
 .caret-down::before {
     content: "\25BD";

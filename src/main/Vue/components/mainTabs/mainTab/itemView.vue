@@ -1,6 +1,6 @@
 <template>
     <div class="decor-iv">
-        <div class="row">
+        <div class="row m-0">
             <div class="col">
                 <div class="dropdown" v-if="item.access === 'RW'">
                     <button class="btn-sm btn-outline-primary dropdown-toggle" type="button" id="dropdownMenuButton"
@@ -10,6 +10,7 @@
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
                         <a class="dropdown-item" @click="showAddDlg = true">{{ language.data.iv1 }}</a>
                         <a class="dropdown-item" @click="showRenameDlg = true" v-if="item.name !== 'root'">{{ language.data.iv4 }}</a>
+                        <a class="dropdown-item" @click="showAddNoteDlg = true">{{ language.data.iv5 }}</a>
                         <div class="dropdown-divider" v-if="item.name !== 'root'"></div>
                         <span :title="item.children.length > 0 ? language.data.iv3 : false"
                               :class="{'cursor-stop': item.children.length > 0}" v-if="item.name !== 'root'">
@@ -24,10 +25,11 @@
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-auto m-2">
-                <add-dlg class="decor-dlg" :item="item" v-if="showAddDlg" @close-dlg="showAddDlg = false"></add-dlg>
-                <rename-dlg class="decor-dlg" :item="item" v-if="showRenameDlg" @close-dlg="showRenameDlg = false"></rename-dlg>
+        <div class="row m-0">
+            <div class="col m-2">
+                <add-dlg :item="item" v-if="showAddDlg" @close-dlg="showAddDlg = false"></add-dlg>
+                <rename-dlg :item="item" v-if="showRenameDlg" @close-dlg="showRenameDlg = false"></rename-dlg>
+                <add-note :item="item" v-if="showAddNoteDlg" @close-dlg="showAddNoteDlg = false"></add-note>
             </div>
         </div>
     </div>
@@ -36,12 +38,14 @@
 <script>
 import addDlg from "./itemView/addDlg.vue";
 import renameDlg from "./itemView/renameDlg.vue";
+import addNote from "./itemView/addNoteDlg.vue";
 
 export default {
     name: "itemView",
     components: {
         "add-dlg": addDlg,
-        "rename-dlg": renameDlg
+        "rename-dlg": renameDlg,
+        "add-note": addNote
     },
     props: {
         item: Object
@@ -51,13 +55,15 @@ export default {
             language: this.$root.$data.language,
             tokenProvider: this.$root.$data.tokenProvider,
             showAddDlg: false,
-            showRenameDlg: false
+            showRenameDlg: false,
+            showAddNoteDlg: false
         }
     },
     watch: {
         item() {
             this.showAddDlg = false;
             this.showRenameDlg = false;
+            this.showAddNoteDlg = false;
         }
     },
     methods: {
@@ -98,12 +104,6 @@ export default {
     background-color: #eaeaea;
     border-radius: 3px;
 }
-
-.decor-dlg {
-    background-color: #dbdbdb;
-    border-radius: 2px;
-}
-
 .cursor-stop {
     cursor: not-allowed;
 }
