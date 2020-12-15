@@ -3,25 +3,34 @@ package com.vladimir.ppm.service;
 import com.vladimir.ppm.domain.Access;
 import com.vladimir.ppm.domain.Container;
 import com.vladimir.ppm.domain.Group;
+import com.vladimir.ppm.domain.Note;
 import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.dto.ContainerDto;
 import com.vladimir.ppm.dto.MessageDto;
+import com.vladimir.ppm.dto.NoteDto;
 import com.vladimir.ppm.repository.ContainerRepository;
+import com.vladimir.ppm.repository.NoteRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 @Service
 public class ContainerServiceImpl implements ContainerService {
     private final UserService userService;
     private final ContainerRepository containerRepository;
+    private final CryptoProvider cryptoProvider;
+    private final NoteRepository noteRepository;
 
-    public ContainerServiceImpl(UserService userService, ContainerRepository containerRepository) {
+    public ContainerServiceImpl(UserService userService, ContainerRepository containerRepository, CryptoProvider cryptoProvider,
+                                NoteRepository noteRepository) {
         this.userService = userService;
         this.containerRepository = containerRepository;
+        this.cryptoProvider = cryptoProvider;
+        this.noteRepository = noteRepository;
     }
 
     @Override
@@ -59,6 +68,8 @@ public class ContainerServiceImpl implements ContainerService {
             }
             container = containerRepository.save(container);
             parent.addChild(container);
+            container.setGroupsRO(parent.getGroupsRO());
+            container.setGroupsRW(parent.getGroupsRW());
         }
         return MessageDto.builder().build();
     }
@@ -94,6 +105,32 @@ public class ContainerServiceImpl implements ContainerService {
         return MessageDto.builder().build();
     }
 
+    @Override
+    @Transactional
+    public MessageDto addNote(Token token, long itemId, String name, String text) {
+        Container container = containerRepository.getOne(itemId);
+        if (container.isDeleted() || name == null || name.length() == 0 || getAccess(container, userService.getGroups(token)) != Access.RW) {
+            return MessageDto.builder().message("ive4").build();
+        }
+        byte[] encryptedText = cryptoProvider.encryptDbEntry(text);
+        Note note = new Note(name, encryptedText);
+        note = noteRepository.save(note);
+        container.addNote(note);
+        return MessageDto.builder().build();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public MessageDto getNote(Token token, long noteId) {
+        Note note = noteRepository.getOne(noteId);
+        Container parent = note.getParent();
+        if (getAccess(parent, userService.getGroups(token)) != Access.RW) {
+            return MessageDto.builder().build();
+        }
+        String text = cryptoProvider.decryptDbEntry(note.getEncryptedText());
+        return MessageDto.builder().message(text).build();
+    }
+
     private ContainerDto buildTree(Container container, Set<Group> groups) {
         Access access = getAccess(container, groups);
         if (access == Access.NA || container.isDeleted()) {
@@ -108,11 +145,15 @@ public class ContainerServiceImpl implements ContainerService {
                 }
             }
         }
+        Set<NoteDto> notes = container.getNotes().stream()
+                .map(n -> NoteDto.builder().id(n.getId()).name(n.getName()).build())
+                .collect(Collectors.toCollection(TreeSet::new));
         return ContainerDto.builder()
                 .id(container.getId())
                 .name(container.getName())
                 .access(access)
                 .children(children)
+                .notes(notes)
                 .build();
     }
 

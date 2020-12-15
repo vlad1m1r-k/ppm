@@ -1,8 +1,8 @@
 package com.vladimir.ppm.dto;
 
 public class PublicKeyDto {
-    private Long keyPairExpireDate;
-    private String keyPEM;
+    private final Long keyPairExpireDate;
+    private final String keyPEM;
 
     private PublicKeyDto(Builder builder) {
         this.keyPairExpireDate = builder.keyPairExpireDate;

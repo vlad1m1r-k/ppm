@@ -197,6 +197,35 @@ public class CryptoProviderImpl implements CryptoProvider {
         dbAESKey = new SecretKeySpec(key, "AES");
     }
 
+    @Override
+    public byte[] encryptDbEntry(String text) {
+        byte[] iv = generateIV();
+        IvParameterSpec aesIv = new IvParameterSpec(iv);
+        byte[] encryptedText = new byte[0];
+        try {
+            aesCipher.init(Cipher.ENCRYPT_MODE, dbAESKey, aesIv);
+            encryptedText = aesCipher.doFinal(text.getBytes(StandardCharsets.UTF_8));
+            encryptedText = insertIv(iv, encryptedText);
+        } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException e) {
+            e.printStackTrace();
+        }
+        return encryptedText;
+    }
+
+    @Override
+    public String decryptDbEntry(byte[] bytes) {
+        String text = "";
+        Map<String, byte[]> entryMap = extractIv(bytes);
+        IvParameterSpec aesIv = new IvParameterSpec(entryMap.get("iv"));
+        try {
+            aesCipher.init(Cipher.DECRYPT_MODE, dbAESKey, aesIv);
+            text = new String(aesCipher.doFinal(entryMap.get("data")), StandardCharsets.UTF_8);
+        } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException e) {
+            e.printStackTrace();
+        }
+        return text;
+    }
+
     private byte[] generateIV() {
         byte[] iv = new byte[16];
         random.nextBytes(iv);

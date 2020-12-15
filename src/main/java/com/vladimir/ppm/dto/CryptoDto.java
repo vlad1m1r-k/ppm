@@ -1,8 +1,8 @@
 package com.vladimir.ppm.dto;
 
 public class CryptoDto {
-    private String key;
-    private String data;
+    private final String key;
+    private final String data;
 
     private CryptoDto(Builder builder) {
         this.key = builder.key;

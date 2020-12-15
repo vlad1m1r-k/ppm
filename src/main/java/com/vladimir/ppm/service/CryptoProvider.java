@@ -14,4 +14,6 @@ public interface CryptoProvider {
     boolean isSystemClosed();
     DbKey generateDbKey();
     void installDbKey(byte[] key);
+    byte[] encryptDbEntry(String text);
+    String decryptDbEntry(byte[] bytes);
 }

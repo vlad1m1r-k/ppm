@@ -2,7 +2,8 @@
     <div>
         <div class="row">
             <div class="col">
-                <button class="btn btn-sm btn-outline-success" :disabled="name.length === 0" @click="addNote">&check;</button>
+                <button class="btn btn-sm btn-outline-success" :disabled="name.length === 0" @click="addNote">&check;
+                </button>
                 <button class="btn btn-sm btn-outline-danger" @click="$emit('close-dlg')">&Chi;</button>
             </div>
         </div>
@@ -36,7 +37,29 @@ export default {
     methods: {
         async addNote() {
             this.$eventHub.$emit("show-msg", "");
-            //TODO
+            try {
+                const token = await this.tokenProvider.getToken();
+                const encryptedData = await Vue.cryptoProvider.encrypt({
+                    token: token,
+                    item: this.item.id,
+                    name: this.name,
+                    text: this.text
+                });
+                const answer = await $.ajax({
+                    url: "/container/addNote",
+                    method: "POST",
+                    data: encryptedData
+                });
+                const data = Vue.cryptoProvider.decrypt(answer);
+                if (data.message) {
+                    this.$eventHub.$emit("show-msg", this.language.data[data.message]);
+                } else {
+                    this.$emit('close-dlg');
+                }
+                this.$eventHub.$emit("update-tree");
+            } catch (e) {
+                this.$eventHub.$emit("show-msg", Vue.errorParser(e));
+            }
         }
     }
 }

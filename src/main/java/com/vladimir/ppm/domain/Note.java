@@ -1,10 +1,11 @@
-package com.vladimir.ppm.dto;
+package com.vladimir.ppm.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.util.Objects;
 
@@ -18,13 +19,18 @@ public class Note {
     private String name;
 
     @Lob
-    private String text;
+    private byte[] encryptedText;
+
+    private boolean deleted = false;
+
+    @ManyToOne
+    private Container parent;
 
     public Note () {}
 
-    public Note(String name, String text) {
+    public Note(String name, byte[] encryptedText) {
         this.name = name;
-        this.text = text;
+        this.encryptedText = encryptedText;
     }
 
     public Long getId() {
@@ -35,8 +41,12 @@ public class Note {
         return name;
     }
 
-    public String getText() {
-        return text;
+    public byte[] getEncryptedText() {
+        return encryptedText;
+    }
+
+    public Container getParent() {
+        return parent;
     }
 
     @Override
@@ -50,5 +60,9 @@ public class Note {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    public boolean isDeleted() {
+        return deleted;
     }
 }

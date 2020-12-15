@@ -6,15 +6,17 @@ import org.json.JSONObject;
 import java.util.Set;
 
 public class ContainerDto implements Comparable<ContainerDto>{
-    private Long id;
-    private String name;
-    private Set<ContainerDto> children;
-    private Access access;
+    private final Long id;
+    private final String name;
+    private final Set<ContainerDto> children;
+    private final Set<NoteDto> notes;
+    private final Access access;
 
     private ContainerDto(Builder builder) {
         this.id = builder.id;
         this.name = builder.name;
         this.children = builder.children;
+        this.notes = builder.notes;
         this.access = builder.access;
     }
 
@@ -28,6 +30,10 @@ public class ContainerDto implements Comparable<ContainerDto>{
 
     public Set<ContainerDto> getChildren() {
         return children;
+    }
+
+    public Set<NoteDto> getNotes() {
+        return notes;
     }
 
     public Access getAccess() {
@@ -51,6 +57,7 @@ public class ContainerDto implements Comparable<ContainerDto>{
         private Long id;
         private String name;
         private Set<ContainerDto> children;
+        private Set<NoteDto> notes;
         private Access access;
 
         public Builder id(Long id) {
@@ -65,6 +72,11 @@ public class ContainerDto implements Comparable<ContainerDto>{
 
         public Builder children(Set<ContainerDto> children) {
             this.children = children;
+            return this;
+        }
+
+        public Builder notes(Set<NoteDto> notes) {
+            this.notes = notes;
             return this;
         }
 

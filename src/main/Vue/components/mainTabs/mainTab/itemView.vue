@@ -30,6 +30,9 @@
                 <add-dlg :item="item" v-if="showAddDlg" @close-dlg="showAddDlg = false"></add-dlg>
                 <rename-dlg :item="item" v-if="showRenameDlg" @close-dlg="showRenameDlg = false"></rename-dlg>
                 <add-note :item="item" v-if="showAddNoteDlg" @close-dlg="showAddNoteDlg = false"></add-note>
+                {{ language.data.iv7 }} <br>
+                <note-view v-for="note in item.notes" :note="note" :access="item.access"></note-view>
+                {{ language.data.iv8 }} <br>
             </div>
         </div>
     </div>
@@ -39,13 +42,15 @@
 import addDlg from "./itemView/addDlg.vue";
 import renameDlg from "./itemView/renameDlg.vue";
 import addNote from "./itemView/addNoteDlg.vue";
+import noteView from "./itemView/noteView.vue";
 
 export default {
     name: "itemView",
     components: {
         "add-dlg": addDlg,
         "rename-dlg": renameDlg,
-        "add-note": addNote
+        "add-note": addNote,
+        "note-view": noteView
     },
     props: {
         item: Object

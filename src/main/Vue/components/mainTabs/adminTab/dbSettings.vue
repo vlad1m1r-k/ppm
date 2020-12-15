@@ -5,7 +5,7 @@
         </div>
         <div v-if="status === 'NEW_DB'">
             <button class="btn btn-sm btn-warning" @click="generate" :disabled="key">{{ language.data.db6 }}</button>
-            <br> &#x2757; {{ language.data.db7 }}
+            <br> &#x26A0; {{ language.data.db7 }}
             <textarea class="form-control" readonly rows="3" v-model="key"></textarea>
             <span v-html="language.data.db8"></span>
         </div>
