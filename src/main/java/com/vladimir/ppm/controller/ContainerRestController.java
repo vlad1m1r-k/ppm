@@ -147,4 +147,22 @@ public class ContainerRestController {
         }
         return null;
     }
+
+    @PostMapping("/editNote")
+    public CryptoDto editNote(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+        if (validatorService.validateCrypto(key, data)) {
+            JSONObject json = new JSONObject(cryptoProvider.decrypt(key, data));
+            String publicKeyPEM = json.getString("publicKey");
+            String token = json.getString("token");
+            long noteId = json.getLong("note");
+            String name = json.getString("name");
+            String text = json.getString("text");
+            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            if (decryptedToken != null) {
+                MessageDto message = containerService.editNote(decryptedToken, noteId, name, text);
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
+            }
+        }
+        return null;
+    }
 }

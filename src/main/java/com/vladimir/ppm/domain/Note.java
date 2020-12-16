@@ -28,7 +28,8 @@ public class Note {
 
     public Note () {}
 
-    public Note(String name, byte[] encryptedText) {
+    public Note(Container parent, String name, byte[] encryptedText) {
+        this.parent = parent;
         this.name = name;
         this.encryptedText = encryptedText;
     }
@@ -47,6 +48,14 @@ public class Note {
 
     public Container getParent() {
         return parent;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setEncryptedText(byte[] encryptedText) {
+        this.encryptedText = encryptedText;
     }
 
     @Override

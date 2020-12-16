@@ -2,11 +2,14 @@
     <div>
         <div class="decor">
             &#x1f512; &nbsp; {{ note.name }} &nbsp;
-            <span class="btn-dc" @click="toggle">&#x1f441</span>
-            <span class="btn-dc" v-show="text.length && access === 'RW'">&#x1f589</span>
-            <span class="btn-dc" v-show="text.length && access === 'RW'">&#x274c</span>
+            <span class="btn-dc" @click="toggle" :title="language.data.cm1">&#x1f441;</span>
+            <span class="btn-dc" v-show="text.length && access === 'RW'" :title="language.data.cm2" @click="edit = true">&#x1f589;</span>
+            <span class="btn-dc" v-show="text.length && access === 'RW' && edit" :title="language.data.cm3" @click="save">&#x2705;</span>
+            <span class="btn-dc" v-show="text.length && access === 'RW' && edit" :title="language.data.cm4" @click="cancel">&#x274c;</span>
+            <span class="btn-dc float-right" v-show="access === 'RW'" :title="language.data.cm5" @click="remove">&#x1f5d1</span>
         </div>
-        <textarea class="form-control" rows="4" readonly v-show="text" v-model="text"></textarea>
+        <input class="form-control" v-show="text.length && edit" v-model="name">
+        <textarea class="form-control" rows="4" :readonly="!edit" v-show="text" v-model="text"></textarea>
     </div>
 </template>
 
@@ -21,6 +24,8 @@ export default {
         return {
             language: this.$root.$data.language,
             tokenProvider: this.$root.$data.tokenProvider,
+            edit: false,
+            name: "",
             text: ""
         }
     },
@@ -28,6 +33,8 @@ export default {
         toggle() {
             if (this.text.length) {
                 this.text = "";
+                this.edit = false;
+                this.name = this.note.name;
             } else {
                 this.loadNote();
             }
@@ -50,7 +57,45 @@ export default {
             } catch (e) {
                 this.$eventHub.$emit("show-msg", Vue.errorParser(e));
             }
+        },
+        async save() {
+            if (this.name && confirm(this.language.data.iv9)) {
+                this.$eventHub.$emit("show-msg", "");
+                try {
+                    const token = await this.tokenProvider.getToken();
+                    const encryptedData = await Vue.cryptoProvider.encrypt({
+                        token: token,
+                        note: this.note.id,
+                        name: this.name,
+                        text: this.text
+                    });
+                    const answer = await $.ajax({
+                        url: "/container/editNote",
+                        method: "POST",
+                        data: encryptedData
+                    });
+                    const data = Vue.cryptoProvider.decrypt(answer);
+                    if (data.message) {
+                        this.$eventHub.$emit("show-msg", this.language.data[data.message]);
+                    }
+                    this.edit = false;
+                    this.$eventHub.$emit("update-tree");
+                } catch (e) {
+                    this.$eventHub.$emit("show-msg", Vue.errorParser(e));
+                }
+            }
+        },
+        cancel() {
+            this.edit = false;
+            this.name = this.note.name;
+            this.loadNote();
+        },
+        async remove() {
+            //TODO
         }
+    },
+    mounted() {
+        this.name = this.note.name;
     }
 }
 </script>

@@ -113,7 +113,7 @@ public class ContainerServiceImpl implements ContainerService {
             return MessageDto.builder().message("ive4").build();
         }
         byte[] encryptedText = cryptoProvider.encryptDbEntry(text);
-        Note note = new Note(name, encryptedText);
+        Note note = new Note(container, name, encryptedText);
         note = noteRepository.save(note);
         container.addNote(note);
         return MessageDto.builder().build();
@@ -131,6 +131,20 @@ public class ContainerServiceImpl implements ContainerService {
         return MessageDto.builder().message(text).build();
     }
 
+    @Override
+    @Transactional
+    public MessageDto editNote(Token token, long noteId, String name, String text) {
+        Note note = noteRepository.getOne(noteId);
+        Container parent = note.getParent();
+        if (getAccess(parent, userService.getGroups(token)) != Access.RW || name == null || name.length() == 0 ||
+                parent.isDeleted() || note.isDeleted()) {
+            return MessageDto.builder().message("ive5").build();
+        }
+        note.setName(name);
+        note.setEncryptedText(cryptoProvider.encryptDbEntry(text));
+        return MessageDto.builder().build();
+    }
+
     private ContainerDto buildTree(Container container, Set<Group> groups) {
         Access access = getAccess(container, groups);
         if (access == Access.NA || container.isDeleted()) {
@@ -146,6 +160,7 @@ public class ContainerServiceImpl implements ContainerService {
             }
         }
         Set<NoteDto> notes = container.getNotes().stream()
+                .filter(n -> !n.isDeleted())
                 .map(n -> NoteDto.builder().id(n.getId()).name(n.getName()).build())
                 .collect(Collectors.toCollection(TreeSet::new));
         return ContainerDto.builder()

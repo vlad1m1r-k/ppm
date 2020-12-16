@@ -31,7 +31,7 @@
                 <rename-dlg :item="item" v-if="showRenameDlg" @close-dlg="showRenameDlg = false"></rename-dlg>
                 <add-note :item="item" v-if="showAddNoteDlg" @close-dlg="showAddNoteDlg = false"></add-note>
                 {{ language.data.iv7 }} <br>
-                <note-view v-for="note in item.notes" :note="note" :access="item.access"></note-view>
+                <note-view v-for="note in item.notes" :note="note" :access="item.access" :key="note.id"></note-view>
                 {{ language.data.iv8 }} <br>
             </div>
         </div>

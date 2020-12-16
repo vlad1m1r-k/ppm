@@ -28,6 +28,13 @@ export default {
             isOpen: false
         }
     },
+    watch: {
+        item() {
+            if (this.item.id === this.selectedItem.id) {
+                this.$emit('item-select', this.item);
+            }
+        }
+    },
     methods: {
         dragover(evt) {
             if (this.item.access === "RW" && evt.dataTransfer.getData("id") != this.item.id) {
