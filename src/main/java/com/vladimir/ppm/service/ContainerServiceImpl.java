@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -66,10 +67,10 @@ public class ContainerServiceImpl implements ContainerService {
             if (parent.getChildren().contains(container)) {
                 return MessageDto.builder().message("ive1").build();
             }
+            container.setGroupsRO(new HashSet<>(parent.getGroupsRO()));
+            container.setGroupsRW(new HashSet<>(parent.getGroupsRW()));
             container = containerRepository.save(container);
             parent.addChild(container);
-            container.setGroupsRO(parent.getGroupsRO());
-            container.setGroupsRW(parent.getGroupsRW());
         }
         return MessageDto.builder().build();
     }
@@ -114,8 +115,7 @@ public class ContainerServiceImpl implements ContainerService {
         }
         byte[] encryptedText = cryptoProvider.encryptDbEntry(text);
         Note note = new Note(container, name, encryptedText);
-        note = noteRepository.save(note);
-        container.addNote(note);
+        noteRepository.save(note);
         return MessageDto.builder().build();
     }
 
@@ -142,6 +142,18 @@ public class ContainerServiceImpl implements ContainerService {
         }
         note.setName(name);
         note.setEncryptedText(cryptoProvider.encryptDbEntry(text));
+        return MessageDto.builder().build();
+    }
+
+    @Override
+    @Transactional
+    public MessageDto removeNote(Token token, long noteId) {
+        Note note = noteRepository.getOne(noteId);
+        Container parent = note.getParent();
+        if (getAccess(parent, userService.getGroups(token)) != Access.RW) {
+            return MessageDto.builder().message("ive6").build();
+        }
+        note.setDeleted(true);
         return MessageDto.builder().build();
     }
 

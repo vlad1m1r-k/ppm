@@ -11,6 +11,7 @@
                         <a class="dropdown-item" @click="showAddDlg = true">{{ language.data.iv1 }}</a>
                         <a class="dropdown-item" @click="showRenameDlg = true" v-if="item.name !== 'root'">{{ language.data.iv4 }}</a>
                         <a class="dropdown-item" @click="showAddNoteDlg = true">{{ language.data.iv5 }}</a>
+                        <a class="dropdown-item" @click="showAddNoteDlg = true">{{ language.data.iv11 }}</a>
                         <div class="dropdown-divider" v-if="item.name !== 'root'"></div>
                         <span :title="item.children.length > 0 ? language.data.iv3 : false"
                               :class="{'cursor-stop': item.children.length > 0}" v-if="item.name !== 'root'">
@@ -30,6 +31,7 @@
                 <add-dlg :item="item" v-if="showAddDlg" @close-dlg="showAddDlg = false"></add-dlg>
                 <rename-dlg :item="item" v-if="showRenameDlg" @close-dlg="showRenameDlg = false"></rename-dlg>
                 <add-note :item="item" v-if="showAddNoteDlg" @close-dlg="showAddNoteDlg = false"></add-note>
+                <add-pwd :item="item" v-if="showAddPwdDlg" @close-dlg="showAddPwdDlg = false"></add-pwd>
                 {{ language.data.iv7 }} <br>
                 <note-view v-for="note in item.notes" :note="note" :access="item.access" :key="note.id"></note-view>
                 {{ language.data.iv8 }} <br>
@@ -43,6 +45,7 @@ import addDlg from "./itemView/addDlg.vue";
 import renameDlg from "./itemView/renameDlg.vue";
 import addNote from "./itemView/addNoteDlg.vue";
 import noteView from "./itemView/noteView.vue";
+import addPwd from "./itemView/addPwdDlg.vue";
 
 export default {
     name: "itemView",
@@ -50,7 +53,8 @@ export default {
         "add-dlg": addDlg,
         "rename-dlg": renameDlg,
         "add-note": addNote,
-        "note-view": noteView
+        "note-view": noteView,
+        "add-pwd": addPwd
     },
     props: {
         item: Object
@@ -61,7 +65,8 @@ export default {
             tokenProvider: this.$root.$data.tokenProvider,
             showAddDlg: false,
             showRenameDlg: false,
-            showAddNoteDlg: false
+            showAddNoteDlg: false,
+            showAddPwdDlg: false
         }
     },
     watch: {
@@ -69,6 +74,7 @@ export default {
             this.showAddDlg = false;
             this.showRenameDlg = false;
             this.showAddNoteDlg = false;
+            this.showAddPwdDlg = false;
         }
     },
     methods: {

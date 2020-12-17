@@ -10,28 +10,29 @@ import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity
-@Table(name = "notes")
-public class Note {
+@Table(name = "passwords")
+public class Password {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
+    private boolean deleted = false;
 
     @Lob
-    private byte[] encryptedText;
+    private byte[] encryptedPass;
 
-    private boolean deleted = false;
+    @Lob
+    private byte[] encryptedNote;
 
     @ManyToOne
     private Container parent;
 
-    public Note () {}
+    public Password() {}
 
-    public Note(Container parent, String name, byte[] encryptedText) {
-        this.parent = parent;
+    public Password(String name, Container parent) {
         this.name = name;
-        this.encryptedText = encryptedText;
+        this.parent = parent;
     }
 
     public Long getId() {
@@ -42,8 +43,16 @@ public class Note {
         return name;
     }
 
-    public byte[] getEncryptedText() {
-        return encryptedText;
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public byte[] getEncryptedPass() {
+        return encryptedPass;
+    }
+
+    public byte[] getEncryptedNote() {
+        return encryptedNote;
     }
 
     public Container getParent() {
@@ -54,28 +63,28 @@ public class Note {
         this.name = name;
     }
 
-    public void setEncryptedText(byte[] encryptedText) {
-        this.encryptedText = encryptedText;
-    }
-
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public void setEncryptedPass(byte[] encryptedPass) {
+        this.encryptedPass = encryptedPass;
+    }
+
+    public void setEncryptedNote(byte[] encryptedNote) {
+        this.encryptedNote = encryptedNote;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Note note = (Note) o;
-        return Objects.equals(id, note.id);
+        Password password = (Password) o;
+        return Objects.equals(id, password.id);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id);
-    }
-
-    public boolean isDeleted() {
-        return deleted;
     }
 }

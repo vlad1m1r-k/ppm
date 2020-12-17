@@ -91,7 +91,28 @@ export default {
             this.loadNote();
         },
         async remove() {
-            //TODO
+            if (this.name && confirm(this.language.data.iv10 + this.note.name + "?")) {
+                this.$eventHub.$emit("show-msg", "");
+                try {
+                    const token = await this.tokenProvider.getToken();
+                    const encryptedData = await Vue.cryptoProvider.encrypt({
+                        token: token,
+                        note: this.note.id
+                    });
+                    const answer = await $.ajax({
+                        url: "/container/removeNote",
+                        method: "POST",
+                        data: encryptedData
+                    });
+                    const data = Vue.cryptoProvider.decrypt(answer);
+                    if (data.message) {
+                        this.$eventHub.$emit("show-msg", this.language.data[data.message]);
+                    }
+                    this.$eventHub.$emit("update-tree");
+                } catch (e) {
+                    this.$eventHub.$emit("show-msg", Vue.errorParser(e));
+                }
+            }
         }
     },
     mounted() {

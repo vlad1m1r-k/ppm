@@ -36,6 +36,9 @@ public class Container {
     @OneToMany(mappedBy = "parent")
     private Set<Note> notes = new HashSet<>();
 
+    @OneToMany(mappedBy = "parent")
+    private Set<Password> passwords = new HashSet<>();
+
     public Container() {
     }
 
@@ -70,6 +73,10 @@ public class Container {
 
     public Set<Note> getNotes() {
         return notes;
+    }
+
+    public Set<Password> getPasswords() {
+        return passwords;
     }
 
     public void setName(String name) {
@@ -111,6 +118,10 @@ public class Container {
 
     public void addNote(Note note) {
         notes.add(note);
+    }
+
+    public void addPassword(Password password) {
+        passwords.add(password);
     }
 
     @Override

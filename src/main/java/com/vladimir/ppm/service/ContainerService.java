@@ -13,4 +13,5 @@ public interface ContainerService {
     MessageDto addNote(Token token, long itemId, String name, String text);
     MessageDto getNote(Token token, long noteId);
     MessageDto editNote(Token token, long noteId, String name, String text);
+    MessageDto removeNote(Token token, long noteId);
 }
