@@ -41,7 +41,7 @@ export default {
                 const token = await this.tokenProvider.getToken();
                 const encryptedData = await Vue.cryptoProvider.encrypt({
                     token: token,
-                    item: this.item.id,
+                    parent: this.item.id,
                     name: this.name,
                     text: this.text
                 });

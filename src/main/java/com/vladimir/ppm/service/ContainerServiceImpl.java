@@ -4,12 +4,15 @@ import com.vladimir.ppm.domain.Access;
 import com.vladimir.ppm.domain.Container;
 import com.vladimir.ppm.domain.Group;
 import com.vladimir.ppm.domain.Note;
+import com.vladimir.ppm.domain.Password;
 import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.dto.ContainerDto;
 import com.vladimir.ppm.dto.MessageDto;
 import com.vladimir.ppm.dto.NoteDto;
+import com.vladimir.ppm.dto.PasswordDto;
 import com.vladimir.ppm.repository.ContainerRepository;
 import com.vladimir.ppm.repository.NoteRepository;
+import com.vladimir.ppm.repository.PasswordRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,13 +28,15 @@ public class ContainerServiceImpl implements ContainerService {
     private final ContainerRepository containerRepository;
     private final CryptoProvider cryptoProvider;
     private final NoteRepository noteRepository;
+    private final PasswordRepository passwordRepository;
 
     public ContainerServiceImpl(UserService userService, ContainerRepository containerRepository, CryptoProvider cryptoProvider,
-                                NoteRepository noteRepository) {
+                                NoteRepository noteRepository, PasswordRepository passwordRepository) {
         this.userService = userService;
         this.containerRepository = containerRepository;
         this.cryptoProvider = cryptoProvider;
         this.noteRepository = noteRepository;
+        this.passwordRepository = passwordRepository;
     }
 
     @Override
@@ -108,8 +113,8 @@ public class ContainerServiceImpl implements ContainerService {
 
     @Override
     @Transactional
-    public MessageDto addNote(Token token, long itemId, String name, String text) {
-        Container container = containerRepository.getOne(itemId);
+    public MessageDto addNote(Token token, long parentId, String name, String text) {
+        Container container = containerRepository.getOne(parentId);
         if (container.isDeleted() || name == null || name.length() == 0 || getAccess(container, userService.getGroups(token)) != Access.RW) {
             return MessageDto.builder().message("ive4").build();
         }
@@ -157,6 +162,24 @@ public class ContainerServiceImpl implements ContainerService {
         return MessageDto.builder().build();
     }
 
+    @Override
+    @Transactional
+    public MessageDto addPasswd(Token token, long parentId, String name, String login, String passwd, String note) {
+        Container parent = containerRepository.getOne(parentId);
+        if (parent.isDeleted() || name == null || name.length() == 0 || getAccess(parent, userService.getGroups(token)) != Access.RW) {
+            return MessageDto.builder().message("ive4").build();
+        }
+        byte[] encryptedLogin = cryptoProvider.encryptDbEntry(login);
+        byte[] encryptedPasswd = cryptoProvider.encryptDbEntry(passwd);
+        byte[] encryptedNote = cryptoProvider.encryptDbEntry(note);
+        Password password = new Password(name, parent);
+        password.setEncryptedLogin(encryptedLogin);
+        password.setEncryptedPass(encryptedPasswd);
+        password.setEncryptedNote(encryptedNote);
+        passwordRepository.save(password);
+        return MessageDto.builder().build();
+    }
+
     private ContainerDto buildTree(Container container, Set<Group> groups) {
         Access access = getAccess(container, groups);
         if (access == Access.NA || container.isDeleted()) {
@@ -175,12 +198,17 @@ public class ContainerServiceImpl implements ContainerService {
                 .filter(n -> !n.isDeleted())
                 .map(n -> NoteDto.builder().id(n.getId()).name(n.getName()).build())
                 .collect(Collectors.toCollection(TreeSet::new));
+        Set<PasswordDto> passwords = container.getPasswords().stream()
+                .filter(p -> !p.isDeleted())
+                .map(p -> PasswordDto.builder().id(p.getId()).name(p.getName()).build())
+                .collect(Collectors.toCollection(TreeSet::new));
         return ContainerDto.builder()
                 .id(container.getId())
                 .name(container.getName())
                 .access(access)
                 .children(children)
                 .notes(notes)
+                .passwords(passwords)
                 .build();
     }
 

@@ -35,6 +35,7 @@
     "ive4": "Error adding note",
     "ive5": "Error saving note",
     "ive6": "Error deleting note",
+    "ive7": "Error adding password",
     "db1": "Database",
     "db2": "DB encryption status: ",
     "db3": "OK. No actions needed",

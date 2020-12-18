@@ -20,6 +20,9 @@ public class Password {
     private boolean deleted = false;
 
     @Lob
+    private byte[] encryptedLogin;
+
+    @Lob
     private byte[] encryptedPass;
 
     @Lob
@@ -47,6 +50,10 @@ public class Password {
         return deleted;
     }
 
+    public byte[] getEncryptedLogin() {
+        return encryptedLogin;
+    }
+
     public byte[] getEncryptedPass() {
         return encryptedPass;
     }
@@ -65,6 +72,10 @@ public class Password {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public void setEncryptedLogin(byte[] encryptedLogin) {
+        this.encryptedLogin = encryptedLogin;
     }
 
     public void setEncryptedPass(byte[] encryptedPass) {

@@ -120,12 +120,12 @@ public class ContainerRestController {
             JSONObject json = new JSONObject(cryptoProvider.decrypt(key, data));
             String publicKeyPEM = json.getString("publicKey");
             String token = json.getString("token");
-            long itemId = json.getLong("item");
+            long parentId = json.getLong("parent");
             String name = json.getString("name");
             String text = json.getString("text");
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null) {
-                MessageDto message = containerService.addNote(decryptedToken, itemId, name, text);
+                MessageDto message = containerService.addNote(decryptedToken, parentId, name, text);
                 return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
             }
         }
@@ -176,6 +176,26 @@ public class ContainerRestController {
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null) {
                 MessageDto message = containerService.removeNote(decryptedToken, noteId);
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/addPasswd")
+    public CryptoDto addPasswd(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+        if (validatorService.validateCrypto(key, data)) {
+            JSONObject json = new JSONObject(cryptoProvider.decrypt(key, data));
+            String publicKeyPEM = json.getString("publicKey");
+            String token = json.getString("token");
+            long parentId = json.getLong("parent");
+            String name = json.getString("name");
+            String login = json.getString("login");
+            String pass = json.getString("pass");
+            String note = json.getString("note");
+            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            if (decryptedToken != null) {
+                MessageDto message = containerService.addPasswd(decryptedToken, parentId, name, login, pass, note);
                 return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
             }
         }

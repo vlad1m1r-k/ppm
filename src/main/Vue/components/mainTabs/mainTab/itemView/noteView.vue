@@ -3,13 +3,13 @@
         <div class="decor">
             &#x1f512; &nbsp; {{ note.name }} &nbsp;
             <span class="btn-dc" @click="toggle" :title="language.data.cm1">&#x1f441;</span>
-            <span class="btn-dc" v-show="text.length && access === 'RW'" :title="language.data.cm2" @click="edit = true">&#x1f589;</span>
-            <span class="btn-dc" v-show="text.length && access === 'RW' && edit" :title="language.data.cm3" @click="save">&#x2705;</span>
-            <span class="btn-dc" v-show="text.length && access === 'RW' && edit" :title="language.data.cm4" @click="cancel">&#x274c;</span>
+            <span class="btn-dc" v-show="show && access === 'RW'" :title="language.data.cm2" @click="edit = true">&#x1f589;</span>
+            <span class="btn-dc" v-show="show && access === 'RW' && edit" :title="language.data.cm3" @click="save">&#x2705;</span>
+            <span class="btn-dc" v-show="show && access === 'RW' && edit" :title="language.data.cm4" @click="cancel">&#x274c;</span>
             <span class="btn-dc float-right" v-show="access === 'RW'" :title="language.data.cm5" @click="remove">&#x1f5d1</span>
         </div>
-        <input class="form-control" v-show="text.length && edit" v-model="name">
-        <textarea class="form-control" rows="4" :readonly="!edit" v-show="text" v-model="text"></textarea>
+        <input class="form-control" v-show="show && edit" v-model="name">
+        <textarea class="form-control" rows="4" :readonly="!edit" v-show="show" v-model="text"></textarea>
     </div>
 </template>
 
@@ -24,6 +24,7 @@ export default {
         return {
             language: this.$root.$data.language,
             tokenProvider: this.$root.$data.tokenProvider,
+            show: false,
             edit: false,
             name: "",
             text: ""
@@ -31,12 +32,14 @@ export default {
     },
     methods: {
         toggle() {
-            if (this.text.length) {
+            if (this.show) {
+                this.show = false;
                 this.text = "";
                 this.edit = false;
                 this.name = this.note.name;
             } else {
                 this.loadNote();
+                this.show = true;
             }
         },
         async loadNote() {

@@ -11,7 +11,7 @@
                         <a class="dropdown-item" @click="showAddDlg = true">{{ language.data.iv1 }}</a>
                         <a class="dropdown-item" @click="showRenameDlg = true" v-if="item.name !== 'root'">{{ language.data.iv4 }}</a>
                         <a class="dropdown-item" @click="showAddNoteDlg = true">{{ language.data.iv5 }}</a>
-                        <a class="dropdown-item" @click="showAddNoteDlg = true">{{ language.data.iv11 }}</a>
+                        <a class="dropdown-item" @click="showAddPwdDlg = true">{{ language.data.iv11 }}</a>
                         <div class="dropdown-divider" v-if="item.name !== 'root'"></div>
                         <span :title="item.children.length > 0 ? language.data.iv3 : false"
                               :class="{'cursor-stop': item.children.length > 0}" v-if="item.name !== 'root'">
@@ -35,6 +35,7 @@
                 {{ language.data.iv7 }} <br>
                 <note-view v-for="note in item.notes" :note="note" :access="item.access" :key="note.id"></note-view>
                 {{ language.data.iv8 }} <br>
+                <pwd-view v-for="pwd in item.passwords" :pwd="pwd" :access="item.access" :key="pwd.id"></pwd-view>
             </div>
         </div>
     </div>
@@ -46,6 +47,7 @@ import renameDlg from "./itemView/renameDlg.vue";
 import addNote from "./itemView/addNoteDlg.vue";
 import noteView from "./itemView/noteView.vue";
 import addPwd from "./itemView/addPwdDlg.vue";
+import pwdView from "./itemView/pwdView.vue";
 
 export default {
     name: "itemView",
@@ -54,7 +56,8 @@ export default {
         "rename-dlg": renameDlg,
         "add-note": addNote,
         "note-view": noteView,
-        "add-pwd": addPwd
+        "add-pwd": addPwd,
+        "pwd-view": pwdView
     },
     props: {
         item: Object

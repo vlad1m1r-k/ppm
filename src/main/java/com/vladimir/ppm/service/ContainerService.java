@@ -10,8 +10,9 @@ public interface ContainerService {
     MessageDto add(Token token, long parentId, String name);
     MessageDto delete(Token token, long itemId);
     MessageDto rename(Token token, long itemId, String name);
-    MessageDto addNote(Token token, long itemId, String name, String text);
+    MessageDto addNote(Token token, long parentId, String name, String text);
     MessageDto getNote(Token token, long noteId);
     MessageDto editNote(Token token, long noteId, String name, String text);
     MessageDto removeNote(Token token, long noteId);
+    MessageDto addPasswd(Token token, long parentId, String name, String login, String passwd, String note);
 }

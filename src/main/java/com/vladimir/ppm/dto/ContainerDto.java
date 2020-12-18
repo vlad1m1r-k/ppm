@@ -10,6 +10,7 @@ public class ContainerDto implements Comparable<ContainerDto>{
     private final String name;
     private final Set<ContainerDto> children;
     private final Set<NoteDto> notes;
+    private final Set<PasswordDto> passwords;
     private final Access access;
 
     private ContainerDto(Builder builder) {
@@ -17,6 +18,7 @@ public class ContainerDto implements Comparable<ContainerDto>{
         this.name = builder.name;
         this.children = builder.children;
         this.notes = builder.notes;
+        this.passwords = builder.passwords;
         this.access = builder.access;
     }
 
@@ -34,6 +36,10 @@ public class ContainerDto implements Comparable<ContainerDto>{
 
     public Set<NoteDto> getNotes() {
         return notes;
+    }
+
+    public Set<PasswordDto> getPasswords() {
+        return passwords;
     }
 
     public Access getAccess() {
@@ -58,6 +64,7 @@ public class ContainerDto implements Comparable<ContainerDto>{
         private String name;
         private Set<ContainerDto> children;
         private Set<NoteDto> notes;
+        private Set<PasswordDto> passwords;
         private Access access;
 
         public Builder id(Long id) {
@@ -77,6 +84,11 @@ public class ContainerDto implements Comparable<ContainerDto>{
 
         public Builder notes(Set<NoteDto> notes) {
             this.notes = notes;
+            return this;
+        }
+
+        public Builder passwords(Set<PasswordDto> passwords) {
+            this.passwords = passwords;
             return this;
         }
 
