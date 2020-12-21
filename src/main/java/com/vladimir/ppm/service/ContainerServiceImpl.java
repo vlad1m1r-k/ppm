@@ -129,7 +129,7 @@ public class ContainerServiceImpl implements ContainerService {
     public MessageDto getNote(Token token, long noteId) {
         Note note = noteRepository.getOne(noteId);
         Container parent = note.getParent();
-        if (getAccess(parent, userService.getGroups(token)) != Access.RW) {
+        if (getAccess(parent, userService.getGroups(token)) != Access.RW && getAccess(parent, userService.getGroups(token)) != Access.RO) {
             return MessageDto.builder().build();
         }
         String text = cryptoProvider.decryptDbEntry(note.getEncryptedText());
@@ -178,6 +178,33 @@ public class ContainerServiceImpl implements ContainerService {
         password.setEncryptedNote(encryptedNote);
         passwordRepository.save(password);
         return MessageDto.builder().build();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PasswordDto getPwdEnv(Token token, long pwdId) {
+        Password password = passwordRepository.getOne(pwdId);
+        Container parent = password.getParent();
+        if (getAccess(parent, userService.getGroups(token)) != Access.RW && getAccess(parent, userService.getGroups(token)) != Access.RO) {
+            return PasswordDto.builder().build();
+        }
+        return PasswordDto.builder()
+                .login(cryptoProvider.decryptDbEntry(password.getEncryptedLogin()))
+                .note(cryptoProvider.decryptDbEntry(password.getEncryptedNote()))
+                .build();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PasswordDto getPwdBody(Token token, long pwdId) {
+        Password password = passwordRepository.getOne(pwdId);
+        Container parent = password.getParent();
+        if (getAccess(parent, userService.getGroups(token)) != Access.RW && getAccess(parent, userService.getGroups(token)) != Access.RO) {
+            return PasswordDto.builder().build();
+        }
+        return PasswordDto.builder()
+                .password(cryptoProvider.decryptDbEntry(password.getEncryptedPass()))
+                .build();
     }
 
     private ContainerDto buildTree(Container container, Set<Group> groups) {

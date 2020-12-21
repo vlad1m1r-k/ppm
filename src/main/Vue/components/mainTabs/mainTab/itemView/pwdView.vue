@@ -10,7 +10,11 @@
         </div>
         <input class="form-control" v-show="show && edit" v-model="name">
         <input class="form-control" v-show="show" v-model="login" :readonly="!edit">
-        <input class="form-control" v-show="show" v-model="pass" :readonly="!edit">
+        <span v-show="show" style="display: flex">
+            <div class="btn-st fs" v-show="!edit" @click="loadPwdBody" :title="language.data.cm1">&#x1f441;</div>
+            <div class="btn-st" v-show="!edit" :title="language.data.cm6" @click="pwdToClipboard">&#x1f4cb;</div>
+            <input class="form-control er" v-model="pass" :readonly="!edit" placeholder="******">
+        </span>
         <textarea class="form-control" rows="4" :readonly="!edit" v-show="show" v-model="note"></textarea>
     </div>
 </template>
@@ -30,7 +34,7 @@ export default {
             edit: false,
             name: "",
             login: "",
-            pass: "***",
+            pass: "",
             note: ""
         }
     },
@@ -39,26 +43,94 @@ export default {
             if (this.show) {
                 this.show = false;
                 this.edit = false;
-                this.name = this.note.name;
+                this.name = this.pwd.name;
                 this.login = "";
-                this.pass = "***";
+                this.pass = "";
                 this.note = "";
             } else {
                 this.loadPwdEnv();
                 this.show = true;
             }
         },
-        loadPwdEnv() {
-
+        async loadPwdEnv() {
+            this.$eventHub.$emit("show-msg", "");
+            try {
+                const token = await this.tokenProvider.getToken();
+                const encryptedData = await Vue.cryptoProvider.encrypt({
+                    token: token,
+                    pwd: this.pwd.id,
+                });
+                const answer = await $.ajax({
+                    url: "/container/getPwdEnv",
+                    method: "POST",
+                    data: encryptedData
+                });
+                const data = Vue.cryptoProvider.decrypt(answer);
+                this.login = data.login;
+                this.note = data.note;
+            } catch (e) {
+                this.$eventHub.$emit("show-msg", Vue.errorParser(e));
+            }
         },
-        save() {
-
+        async loadPwdBody() {
+            if (this.pass) {
+                this.pass = "";
+            } else {
+                this.$eventHub.$emit("show-msg", "");
+                try {
+                    const token = await this.tokenProvider.getToken();
+                    const encryptedData = await Vue.cryptoProvider.encrypt({
+                        token: token,
+                        pwd: this.pwd.id,
+                    });
+                    const answer = await $.ajax({
+                        url: "/container/getPwdBody",
+                        method: "POST",
+                        data: encryptedData
+                    });
+                    const data = Vue.cryptoProvider.decrypt(answer);
+                    this.pass = data.password;
+                    setTimeout(this.clearPwd, 10000);
+                } catch (e) {
+                    this.$eventHub.$emit("show-msg", Vue.errorParser(e));
+                }
+            }
+        },
+        async pwdToClipboard() {
+            this.$eventHub.$emit("show-msg", "");
+            try {
+                const token = await this.tokenProvider.getToken();
+                const encryptedData = await Vue.cryptoProvider.encrypt({
+                    token: token,
+                    pwd: this.pwd.id,
+                });
+                const answer = await $.ajax({
+                    url: "/container/getPwdBody",
+                    method: "POST",
+                    data: encryptedData
+                });
+                const data = Vue.cryptoProvider.decrypt(answer);
+                navigator.clipboard.writeText(data.password);
+            } catch (e) {
+                this.$eventHub.$emit("show-msg", Vue.errorParser(e));
+            }
+        },
+        async save() {
+            //TODO
         },
         cancel() {
-
+            this.edit = false;
+            this.name = this.note.name;
+            this.pass = "";
+            this.loadPwdEnv();
         },
-        remove() {
+        async remove() {
             //TODO
+        },
+        clearPwd() {
+            if (!this.edit) {
+                this.pass = "";
+            }
         }
     },
     mounted() {
@@ -74,12 +146,34 @@ export default {
     border-radius: 10px;
     padding-left: 5px;
 }
+
 .btn-dc {
     cursor: pointer;
     user-select: none;
 }
+
 .btn-dc:hover {
     background-color: darkgray;
     border-radius: 4px;
+}
+.btn-st {
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    background-color: #e0e0e0;
+    padding-left: 3px;
+    padding-right: 3px;
+}
+.btn-st:hover {
+    background-color: darkgray;
+}
+.fs {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+.er {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
 }
 </style>

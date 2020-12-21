@@ -4,6 +4,7 @@ import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.dto.ContainerDto;
 import com.vladimir.ppm.dto.CryptoDto;
 import com.vladimir.ppm.dto.MessageDto;
+import com.vladimir.ppm.dto.PasswordDto;
 import com.vladimir.ppm.service.ContainerService;
 import com.vladimir.ppm.service.CryptoProvider;
 import com.vladimir.ppm.service.TokenService;
@@ -197,6 +198,38 @@ public class ContainerRestController {
             if (decryptedToken != null) {
                 MessageDto message = containerService.addPasswd(decryptedToken, parentId, name, login, pass, note);
                 return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/getPwdEnv")
+    public CryptoDto getPwdEnv(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+        if (validatorService.validateCrypto(key, data)) {
+            JSONObject json = new JSONObject(cryptoProvider.decrypt(key, data));
+            String publicKeyPEM = json.getString("publicKey");
+            String token = json.getString("token");
+            long pwdId = json.getLong("pwd");
+            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            if (decryptedToken != null) {
+                PasswordDto passwd = containerService.getPwdEnv(decryptedToken, pwdId);
+                return cryptoProvider.encrypt(publicKeyPEM, passwd.toJson());
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/getPwdBody")
+    public CryptoDto getPwdBody(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+        if (validatorService.validateCrypto(key, data)) {
+            JSONObject json = new JSONObject(cryptoProvider.decrypt(key, data));
+            String publicKeyPEM = json.getString("publicKey");
+            String token = json.getString("token");
+            long pwdId = json.getLong("pwd");
+            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            if (decryptedToken != null) {
+                PasswordDto passwd = containerService.getPwdBody(decryptedToken, pwdId);
+                return cryptoProvider.encrypt(publicKeyPEM, passwd.toJson());
             }
         }
         return null;
