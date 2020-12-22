@@ -234,4 +234,40 @@ public class ContainerRestController {
         }
         return null;
     }
+
+    @PostMapping("/editPassword")
+    public CryptoDto editPassword(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+        if (validatorService.validateCrypto(key, data)) {
+            JSONObject json = new JSONObject(cryptoProvider.decrypt(key, data));
+            String publicKeyPEM = json.getString("publicKey");
+            String token = json.getString("token");
+            long pwdId = json.getLong("pwd");
+            String name = json.getString("name");
+            String login = json.getString("login");
+            String pass = json.getString("pass");
+            String note = json.getString("note");
+            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            if (decryptedToken != null) {
+                MessageDto message = containerService.editPassword(decryptedToken, pwdId, name, login, pass, note);
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/removePassword")
+    public CryptoDto removePassword(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+        if (validatorService.validateCrypto(key, data)) {
+            JSONObject json = new JSONObject(cryptoProvider.decrypt(key, data));
+            String publicKeyPEM = json.getString("publicKey");
+            String token = json.getString("token");
+            long pwdId = json.getLong("pwd");
+            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            if (decryptedToken != null) {
+                MessageDto message = containerService.removePassword(decryptedToken, pwdId);
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
+            }
+        }
+        return null;
+    }
 }

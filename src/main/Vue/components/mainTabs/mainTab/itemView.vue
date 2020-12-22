@@ -33,9 +33,9 @@
                 <add-note :item="item" v-if="showAddNoteDlg" @close-dlg="showAddNoteDlg = false"></add-note>
                 <add-pwd :item="item" v-if="showAddPwdDlg" @close-dlg="showAddPwdDlg = false"></add-pwd>
                 {{ language.data.iv7 }} <br>
-                <note-view v-for="note in item.notes" :note="note" :access="item.access" :key="note.id"></note-view>
+                <note-view v-for="note in item.notes" :note="note" :access="item.access" :key="'N' + note.id"></note-view>
                 {{ language.data.iv8 }} <br>
-                <pwd-view v-for="pwd in item.passwords" :pwd="pwd" :access="item.access" :key="pwd.id"></pwd-view>
+                <pwd-view v-for="pwd in item.passwords" :pwd="pwd" :access="item.access" :key="'P' + pwd.id"></pwd-view>
             </div>
         </div>
     </div>

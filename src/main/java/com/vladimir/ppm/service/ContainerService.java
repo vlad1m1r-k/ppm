@@ -18,4 +18,6 @@ public interface ContainerService {
     MessageDto addPasswd(Token token, long parentId, String name, String login, String passwd, String note);
     PasswordDto getPwdEnv(Token token, long pwdId);
     PasswordDto getPwdBody(Token token, long pwdId);
+    MessageDto editPassword(Token token, long pwdId, String name, String login, String pass, String note);
+    MessageDto removePassword(Token token, long pwdId);
 }

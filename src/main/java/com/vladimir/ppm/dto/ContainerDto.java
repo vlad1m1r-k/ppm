@@ -3,14 +3,15 @@ package com.vladimir.ppm.dto;
 import com.vladimir.ppm.domain.Access;
 import org.json.JSONObject;
 
+import java.util.List;
 import java.util.Set;
 
 public class ContainerDto implements Comparable<ContainerDto>{
     private final Long id;
     private final String name;
     private final Set<ContainerDto> children;
-    private final Set<NoteDto> notes;
-    private final Set<PasswordDto> passwords;
+    private final List<NoteDto> notes;
+    private final List<PasswordDto> passwords;
     private final Access access;
 
     private ContainerDto(Builder builder) {
@@ -34,11 +35,11 @@ public class ContainerDto implements Comparable<ContainerDto>{
         return children;
     }
 
-    public Set<NoteDto> getNotes() {
+    public List<NoteDto> getNotes() {
         return notes;
     }
 
-    public Set<PasswordDto> getPasswords() {
+    public List<PasswordDto> getPasswords() {
         return passwords;
     }
 
@@ -63,8 +64,8 @@ public class ContainerDto implements Comparable<ContainerDto>{
         private Long id;
         private String name;
         private Set<ContainerDto> children;
-        private Set<NoteDto> notes;
-        private Set<PasswordDto> passwords;
+        private List<NoteDto> notes;
+        private List<PasswordDto> passwords;
         private Access access;
 
         public Builder id(Long id) {
@@ -82,12 +83,12 @@ public class ContainerDto implements Comparable<ContainerDto>{
             return this;
         }
 
-        public Builder notes(Set<NoteDto> notes) {
+        public Builder notes(List<NoteDto> notes) {
             this.notes = notes;
             return this;
         }
 
-        public Builder passwords(Set<PasswordDto> passwords) {
+        public Builder passwords(List<PasswordDto> passwords) {
             this.passwords = passwords;
             return this;
         }

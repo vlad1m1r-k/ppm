@@ -10,11 +10,11 @@
         </div>
         <input class="form-control" v-show="show && edit" v-model="name">
         <input class="form-control" v-show="show" v-model="login" :readonly="!edit">
-        <span v-show="show" style="display: flex">
+        <div v-show="show" style="display: flex">
             <div class="btn-st fs" v-show="!edit" @click="loadPwdBody" :title="language.data.cm1">&#x1f441;</div>
             <div class="btn-st" v-show="!edit" :title="language.data.cm6" @click="pwdToClipboard">&#x1f4cb;</div>
             <input class="form-control er" v-model="pass" :readonly="!edit" placeholder="******">
-        </span>
+        </div>
         <textarea class="form-control" rows="4" :readonly="!edit" v-show="show" v-model="note"></textarea>
     </div>
 </template>
@@ -116,16 +116,64 @@ export default {
             }
         },
         async save() {
-            //TODO
+            if (this.name && confirm(this.language.data.cm3 + " " + this.pwd.name + "?")) {
+                this.$eventHub.$emit("show-msg", "");
+                try {
+                    const token = await this.tokenProvider.getToken();
+                    const encryptedData = await Vue.cryptoProvider.encrypt({
+                        token: token,
+                        pwd: this.pwd.id,
+                        name: this.name,
+                        login: this.login,
+                        pass: this.pass,
+                        note: this.note
+                    });
+                    const answer = await $.ajax({
+                        url: "/container/editPassword",
+                        method: "POST",
+                        data: encryptedData
+                    });
+                    const data = Vue.cryptoProvider.decrypt(answer);
+                    if (data.message) {
+                        this.$eventHub.$emit("show-msg", this.language.data[data.message]);
+                    }
+                    this.edit = false;
+                    this.pass = "";
+                    this.$eventHub.$emit("update-tree");
+                } catch (e) {
+                    this.$eventHub.$emit("show-msg", Vue.errorParser(e));
+                }
+            }
         },
         cancel() {
             this.edit = false;
-            this.name = this.note.name;
+            this.name = this.pwd.name;
             this.pass = "";
             this.loadPwdEnv();
         },
         async remove() {
-            //TODO
+            if (this.name && confirm(this.language.data.cm5 + " " + this.pwd.name + "?")) {
+                this.$eventHub.$emit("show-msg", "");
+                try {
+                    const token = await this.tokenProvider.getToken();
+                    const encryptedData = await Vue.cryptoProvider.encrypt({
+                        token: token,
+                        pwd: this.pwd.id
+                    });
+                    const answer = await $.ajax({
+                        url: "/container/removePassword",
+                        method: "POST",
+                        data: encryptedData
+                    });
+                    const data = Vue.cryptoProvider.decrypt(answer);
+                    if (data.message) {
+                        this.$eventHub.$emit("show-msg", this.language.data[data.message]);
+                    }
+                    this.$eventHub.$emit("update-tree");
+                } catch (e) {
+                    this.$eventHub.$emit("show-msg", Vue.errorParser(e));
+                }
+            }
         },
         clearPwd() {
             if (!this.edit) {

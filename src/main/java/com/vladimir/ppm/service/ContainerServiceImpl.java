@@ -16,8 +16,10 @@ import com.vladimir.ppm.repository.PasswordRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -115,7 +117,7 @@ public class ContainerServiceImpl implements ContainerService {
     @Transactional
     public MessageDto addNote(Token token, long parentId, String name, String text) {
         Container container = containerRepository.getOne(parentId);
-        if (container.isDeleted() || name == null || name.length() == 0 || getAccess(container, userService.getGroups(token)) != Access.RW) {
+        if (cryptoProvider.isSystemClosed() || container.isDeleted() || name == null || name.length() == 0 || getAccess(container, userService.getGroups(token)) != Access.RW) {
             return MessageDto.builder().message("ive4").build();
         }
         byte[] encryptedText = cryptoProvider.encryptDbEntry(text);
@@ -129,7 +131,7 @@ public class ContainerServiceImpl implements ContainerService {
     public MessageDto getNote(Token token, long noteId) {
         Note note = noteRepository.getOne(noteId);
         Container parent = note.getParent();
-        if (getAccess(parent, userService.getGroups(token)) != Access.RW && getAccess(parent, userService.getGroups(token)) != Access.RO) {
+        if (cryptoProvider.isSystemClosed() || getAccess(parent, userService.getGroups(token)) != Access.RW && getAccess(parent, userService.getGroups(token)) != Access.RO) {
             return MessageDto.builder().build();
         }
         String text = cryptoProvider.decryptDbEntry(note.getEncryptedText());
@@ -141,7 +143,7 @@ public class ContainerServiceImpl implements ContainerService {
     public MessageDto editNote(Token token, long noteId, String name, String text) {
         Note note = noteRepository.getOne(noteId);
         Container parent = note.getParent();
-        if (getAccess(parent, userService.getGroups(token)) != Access.RW || name == null || name.length() == 0 ||
+        if (cryptoProvider.isSystemClosed() || getAccess(parent, userService.getGroups(token)) != Access.RW || name == null || name.length() == 0 ||
                 parent.isDeleted() || note.isDeleted()) {
             return MessageDto.builder().message("ive5").build();
         }
@@ -166,7 +168,7 @@ public class ContainerServiceImpl implements ContainerService {
     @Transactional
     public MessageDto addPasswd(Token token, long parentId, String name, String login, String passwd, String note) {
         Container parent = containerRepository.getOne(parentId);
-        if (parent.isDeleted() || name == null || name.length() == 0 || getAccess(parent, userService.getGroups(token)) != Access.RW) {
+        if (cryptoProvider.isSystemClosed() || parent.isDeleted() || name == null || name.length() == 0 || getAccess(parent, userService.getGroups(token)) != Access.RW) {
             return MessageDto.builder().message("ive4").build();
         }
         byte[] encryptedLogin = cryptoProvider.encryptDbEntry(login);
@@ -185,7 +187,7 @@ public class ContainerServiceImpl implements ContainerService {
     public PasswordDto getPwdEnv(Token token, long pwdId) {
         Password password = passwordRepository.getOne(pwdId);
         Container parent = password.getParent();
-        if (getAccess(parent, userService.getGroups(token)) != Access.RW && getAccess(parent, userService.getGroups(token)) != Access.RO) {
+        if (cryptoProvider.isSystemClosed() || getAccess(parent, userService.getGroups(token)) != Access.RW && getAccess(parent, userService.getGroups(token)) != Access.RO) {
             return PasswordDto.builder().build();
         }
         return PasswordDto.builder()
@@ -199,12 +201,41 @@ public class ContainerServiceImpl implements ContainerService {
     public PasswordDto getPwdBody(Token token, long pwdId) {
         Password password = passwordRepository.getOne(pwdId);
         Container parent = password.getParent();
-        if (getAccess(parent, userService.getGroups(token)) != Access.RW && getAccess(parent, userService.getGroups(token)) != Access.RO) {
+        if (cryptoProvider.isSystemClosed() || getAccess(parent, userService.getGroups(token)) != Access.RW && getAccess(parent, userService.getGroups(token)) != Access.RO) {
             return PasswordDto.builder().build();
         }
         return PasswordDto.builder()
                 .password(cryptoProvider.decryptDbEntry(password.getEncryptedPass()))
                 .build();
+    }
+
+    @Override
+    @Transactional
+    public MessageDto editPassword(Token token, long pwdId, String name, String login, String pass, String note) {
+        Password password = passwordRepository.getOne(pwdId);
+        Container parent = password.getParent();
+        if (cryptoProvider.isSystemClosed() || parent.isDeleted() || getAccess(parent, userService.getGroups(token)) != Access.RW || name == null || name.length() == 0) {
+            return MessageDto.builder().message("ive8").build();
+        }
+        password.setName(name);
+        password.setEncryptedLogin(cryptoProvider.encryptDbEntry(login));
+        password.setEncryptedNote(cryptoProvider.encryptDbEntry(note));
+        if (pass.length() > 0) {
+            password.setEncryptedPass(cryptoProvider.encryptDbEntry(pass));
+        }
+        return MessageDto.builder().build();
+    }
+
+    @Override
+    @Transactional
+    public MessageDto removePassword(Token token, long pwdId) {
+        Password password = passwordRepository.getOne(pwdId);
+        Container parent = password.getParent();
+        if (getAccess(parent, userService.getGroups(token)) != Access.RW) {
+            return MessageDto.builder().message("ive9").build();
+        }
+        password.setDeleted(true);
+        return MessageDto.builder().build();
     }
 
     private ContainerDto buildTree(Container container, Set<Group> groups) {
@@ -221,14 +252,16 @@ public class ContainerServiceImpl implements ContainerService {
                 }
             }
         }
-        Set<NoteDto> notes = container.getNotes().stream()
+        List<NoteDto> notes = container.getNotes().stream()
                 .filter(n -> !n.isDeleted())
                 .map(n -> NoteDto.builder().id(n.getId()).name(n.getName()).build())
-                .collect(Collectors.toCollection(TreeSet::new));
-        Set<PasswordDto> passwords = container.getPasswords().stream()
+                .sorted()
+                .collect(Collectors.toCollection(ArrayList::new));
+        List<PasswordDto> passwords = container.getPasswords().stream()
                 .filter(p -> !p.isDeleted())
                 .map(p -> PasswordDto.builder().id(p.getId()).name(p.getName()).build())
-                .collect(Collectors.toCollection(TreeSet::new));
+                .sorted()
+                .collect(Collectors.toCollection(ArrayList::new));
         return ContainerDto.builder()
                 .id(container.getId())
                 .name(container.getName())
