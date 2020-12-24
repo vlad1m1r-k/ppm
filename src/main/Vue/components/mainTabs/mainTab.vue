@@ -6,7 +6,8 @@
                 <tree-item :item="tree" :selected-item="selectedItem" @item-select="selectItem"></tree-item>
             </div>
             <div class="col p-0">
-                <item-view :item="selectedItem"></item-view>
+                <item-view :item="selectedItem" v-if="!trash"></item-view>
+                <trash-view :item="selectedItem" v-if="trash"></trash-view>
             </div>
         </div>
     </div>
@@ -15,12 +16,14 @@
 <script>
 import treeItem from "./mainTab/treeItem.vue";
 import itemView from "./mainTab/itemView.vue";
+import trashView from "./mainTab/trashView.vue";
 
 export default {
     name: "mainTab",
     components: {
         'tree-item': treeItem,
-        'item-view': itemView
+        'item-view': itemView,
+        'trash-view': trashView
     },
     data() {
         return {
@@ -28,6 +31,7 @@ export default {
             language: this.$root.$data.language,
             tree: {},
             selectedItem: {},
+            trash: false
         }
     },
     methods: {
@@ -48,6 +52,9 @@ export default {
         },
         selectItem(evt) {
             this.selectedItem = evt;
+        },
+        toggleTrash() {
+            this.trash = !this.trash;
         }
     },
     watch: {
@@ -64,9 +71,11 @@ export default {
     },
     created() {
         this.$eventHub.$on("update-tree", this.updateTree);
+        this.$eventHub.$on("toggle-trash", this.toggleTrash);
     },
     beforeDestroy() {
         this.$eventHub.$off("update-tree");
+        this.$eventHub.$off("toggle-trash");
     }
 }
 </script>

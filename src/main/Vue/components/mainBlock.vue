@@ -5,6 +5,7 @@
                 <div class="col-sm mr-auto">
                     <button class="btn btn-sm btn-outline-secondary" @click="currentTab = 'mainTab'">{{ language.data.mp1 }}</button>
                     <button class="btn btn-sm btn-outline-danger" @click="currentTab = 'adminSettings'" v-if="tokenProvider.adminSettings">{{ language.data.as1 }}</button>
+                    <button class="btn btn-sm btn-outline-danger" @click="$eventHub.$emit('toggle-trash')" v-if="tokenProvider.adminSettings" :title="language.data.di1">&#x1f5d1;</button>
                 </div>
                 <div class="col-sm-auto">
                     <div class="row">

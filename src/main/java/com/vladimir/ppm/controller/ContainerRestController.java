@@ -270,4 +270,20 @@ public class ContainerRestController {
         }
         return null;
     }
+
+    @PostMapping("/getDeletedItems")
+    public CryptoDto getDeletedItems(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+        if (validatorService.validateCrypto(key, data)) {
+            JSONObject json = new JSONObject(cryptoProvider.decrypt(key, data));
+            String publicKeyPEM = json.getString("publicKey");
+            String token = json.getString("token");
+            long containerId = json.getLong("item");
+            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            if (decryptedToken != null) {
+                ContainerDto container = containerService
+                return cryptoProvider.encrypt(publicKeyPEM, container.toJson());
+            }
+        }
+        return null;
+    }
 }

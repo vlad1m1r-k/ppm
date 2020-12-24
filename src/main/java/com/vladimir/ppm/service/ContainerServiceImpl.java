@@ -238,6 +238,16 @@ public class ContainerServiceImpl implements ContainerService {
         return MessageDto.builder().build();
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public ContainerDto getDeletedItems(Token token, long containerId) {
+        Container container = containerRepository.getOne(containerId);
+        if (cryptoProvider.isSystemClosed() || container.isDeleted() || !userService.isAdmin(token)) {
+            return ContainerDto.builder().build();
+        }
+        //TODO
+    }
+
     private ContainerDto buildTree(Container container, Set<Group> groups) {
         Access access = getAccess(container, groups);
         if (access == Access.NA || container.isDeleted()) {

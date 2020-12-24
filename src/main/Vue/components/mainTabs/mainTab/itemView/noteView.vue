@@ -6,7 +6,7 @@
             <span class="btn-dc" v-show="show && access === 'RW'" :title="language.data.cm2" @click="edit = true">&#x1f589;</span>
             <span class="btn-dc" v-show="show && access === 'RW' && edit" :title="language.data.cm3" @click="save">&#x2705;</span>
             <span class="btn-dc" v-show="show && access === 'RW' && edit" :title="language.data.cm4" @click="cancel">&#x274c;</span>
-            <span class="btn-dc float-right" v-show="access === 'RW'" :title="language.data.cm5" @click="remove">&#x1f5d1</span>
+            <span class="btn-dc float-right" v-show="access === 'RW'" :title="language.data.cm5" @click="remove">&#x1f5d1;</span>
         </div>
         <input class="form-control" v-show="show && edit" v-model="name">
         <textarea class="form-control" rows="4" :readonly="!edit" v-show="show" v-model="text"></textarea>
