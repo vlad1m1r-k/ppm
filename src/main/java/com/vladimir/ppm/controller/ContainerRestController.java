@@ -280,7 +280,7 @@ public class ContainerRestController {
             long containerId = json.getLong("item");
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null) {
-                ContainerDto container = containerService
+                ContainerDto container = containerService.getDeletedItems(decryptedToken, containerId);
                 return cryptoProvider.encrypt(publicKeyPEM, container.toJson());
             }
         }

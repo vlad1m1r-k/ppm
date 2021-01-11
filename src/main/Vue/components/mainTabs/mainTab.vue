@@ -53,8 +53,12 @@ export default {
         selectItem(evt) {
             this.selectedItem = evt;
         },
-        toggleTrash() {
-            this.trash = !this.trash;
+        toggleTrash(currentTab) {
+            if (currentTab === "mainTab") {
+                this.trash = !this.trash;
+            } else {
+                this.trash = true;
+            }
         }
     },
     watch: {

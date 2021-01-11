@@ -160,7 +160,11 @@ public class ContainerServiceImpl implements ContainerService {
         if (getAccess(parent, userService.getGroups(token)) != Access.RW) {
             return MessageDto.builder().message("ive6").build();
         }
-        note.setDeleted(true);
+        if (note.isDeleted()) {
+            noteRepository.delete(note);
+        } else {
+            note.setDeleted(true);
+        }
         return MessageDto.builder().build();
     }
 
@@ -245,7 +249,21 @@ public class ContainerServiceImpl implements ContainerService {
         if (cryptoProvider.isSystemClosed() || container.isDeleted() || !userService.isAdmin(token)) {
             return ContainerDto.builder().build();
         }
-        //TODO
+        Set<Note> deletedNotes = noteRepository.getAllByParentAndDeleted(container, true);
+        Set<Password> deletedPasswords = passwordRepository.getAllByParentAndDeleted(container, true);
+        return ContainerDto.builder()
+                .id(containerId)
+                .notes(deletedNotes.stream().map(n -> NoteDto.builder()
+                        .id(n.getId())
+                        .name(n.getName())
+                        .build())
+                        .collect(Collectors.toList()))
+                .passwords(deletedPasswords.stream().map(p -> PasswordDto.builder()
+                        .id(p.getId())
+                        .name(p.getName())
+                        .build())
+                        .collect(Collectors.toList()))
+                .build();
     }
 
     private ContainerDto buildTree(Container container, Set<Group> groups) {
