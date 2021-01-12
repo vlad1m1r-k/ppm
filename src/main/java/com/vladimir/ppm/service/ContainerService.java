@@ -21,4 +21,6 @@ public interface ContainerService {
     MessageDto editPassword(Token token, long pwdId, String name, String login, String pass, String note);
     MessageDto removePassword(Token token, long pwdId);
     ContainerDto getDeletedItems(Token token, long containerId);
+    MessageDto restoreNote(Token token, long noteId);
+    MessageDto restorePasswd(Token token, long pwdId);
 }

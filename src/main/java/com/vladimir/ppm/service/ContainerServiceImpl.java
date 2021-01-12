@@ -238,7 +238,11 @@ public class ContainerServiceImpl implements ContainerService {
         if (getAccess(parent, userService.getGroups(token)) != Access.RW) {
             return MessageDto.builder().message("ive9").build();
         }
-        password.setDeleted(true);
+        if (password.isDeleted()) {
+            passwordRepository.delete(password);
+        } else {
+            password.setDeleted(true);
+        }
         return MessageDto.builder().build();
     }
 
@@ -264,6 +268,28 @@ public class ContainerServiceImpl implements ContainerService {
                         .build())
                         .collect(Collectors.toList()))
                 .build();
+    }
+
+    @Override
+    @Transactional
+    public MessageDto restoreNote(Token token, long noteId) {
+        if (!userService.isAdmin(token)) {
+            return MessageDto.builder().message("di4").build();
+        }
+        Note note = noteRepository.getOne(noteId);
+        note.setDeleted(false);
+        return MessageDto.builder().build();
+    }
+
+    @Override
+    @Transactional
+    public MessageDto restorePasswd(Token token, long pwdId) {
+        if (!userService.isAdmin(token)) {
+            return MessageDto.builder().message("di5").build();
+        }
+        Password password = passwordRepository.getOne(pwdId);
+        password.setDeleted(false);
+        return MessageDto.builder().build();
     }
 
     private ContainerDto buildTree(Container container, Set<Group> groups) {

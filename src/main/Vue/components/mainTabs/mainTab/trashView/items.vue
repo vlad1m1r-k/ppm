@@ -1,19 +1,20 @@
 <template>
     <div>
         {{ language.data.iv7 }} <br>
-        <note-view v-for="note in items.notes" :note="note" @update-items="getItems"></note-view>
+        <note-view v-for="note in items.notes" :note="note" @update-items="getItems" :key="'DN' + note.id"></note-view>
         {{ language.data.iv8 }} <br>
-        <div v-for="pwd in items.passwords">{{pwd.id}} {{pwd.name}}</div>
+        <pwd-view v-for="pwd in items.passwords" :pwd="pwd" @update-items="getItems" :key="'DP' + pwd.id"></pwd-view>
     </div>
 </template>
 
 <script>
 import noteView from "./noteView.vue";
+import pwdView from "./pwdView.vue";
 
 export default {
     name: "items",
     components: {
-        noteView
+        noteView, pwdView
     },
     props: {
         item: Object

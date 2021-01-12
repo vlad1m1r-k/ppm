@@ -53,6 +53,8 @@
     "us1": "Users",
     "di1": "Deleted items",
     "di2": "Containers",
-    "di3": "Items"
+    "di3": "Items",
+    "di4": "Error restoring note",
+    "di5": "Error restoring password"
   }
 }

@@ -7,6 +7,7 @@ import com.vladimir.ppm.dto.PublicKeyDto;
 import org.apache.commons.lang3.ArrayUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
+import org.hibernate.annotations.Synchronize;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -92,7 +93,7 @@ public class CryptoProviderImpl implements CryptoProvider {
     }
 
     @Override
-    public CryptoDto encrypt(String publicKey, String data) {
+    synchronized public CryptoDto encrypt(String publicKey, String data) {
         byte[] aesKey = new byte[32];
         byte[] aesIv = new byte[16];
         random.nextBytes(aesKey);
@@ -131,7 +132,7 @@ public class CryptoProviderImpl implements CryptoProvider {
     }
 
     @Override
-    public String decrypt(String key, String data) {
+    synchronized public String decrypt(String key, String data) {
         byte[] keyBytes = Base64.getDecoder().decode(key);
         byte[] dataBytes = Base64.getDecoder().decode(data);
         String decryptedString = "";
@@ -150,7 +151,7 @@ public class CryptoProviderImpl implements CryptoProvider {
     }
 
     @Override
-    public String encryptToken(Token token) {
+    synchronized public String encryptToken(Token token) {
         String encryptedB64Token = null;
         byte[] iv = generateIV();
         IvParameterSpec aesIv = new IvParameterSpec(iv);
@@ -166,7 +167,7 @@ public class CryptoProviderImpl implements CryptoProvider {
     }
 
     @Override
-    public Token decryptToken(String token) {
+    synchronized public Token decryptToken(String token) {
         String tokenStr = "";
         Map<String, byte[]> tokenMap = extractIv(Base64.getDecoder().decode(token));
         IvParameterSpec aesIv = new IvParameterSpec(tokenMap.get("iv"));

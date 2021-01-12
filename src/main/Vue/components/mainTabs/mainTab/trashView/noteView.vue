@@ -4,7 +4,7 @@
             {{ note.name }} &nbsp;
             <span class="btn-dc" @click="toggle" :title="language.data.cm1">&#x1f441;</span>
             <span class="btn-dc float-right" :title="language.data.cm5" @click="remove">&#x1f5d1;</span>
-            <div class="btn-dc float-right text-success" :title="language.data.di4" @click="restore">&#x21ba;</div>
+            <div class="btn-dc float-right text-success" :title="language.data.cm7" @click="restore">&#x21ba;</div>
         </div>
         <textarea class="form-control" rows="4" readonly v-show="show" v-model="text"></textarea>
     </div>
@@ -78,7 +78,29 @@ export default {
             }
         },
         async restore() {
-            //TODO
+            if (confirm(this.language.data.cm7 + " " + this.note.name + "?")) {
+                this.$eventHub.$emit("show-msg", "");
+                try {
+                    const token = await this.tokenProvider.getToken();
+                    const encryptedData = await Vue.cryptoProvider.encrypt({
+                        token: token,
+                        noteId: this.note.id
+                    });
+                    const answer = await $.ajax({
+                        url: "/container/restoreNote",
+                        method: "POST",
+                        data: encryptedData
+                    });
+                    const data = Vue.cryptoProvider.decrypt(answer);
+                    if (data.message) {
+                        this.$eventHub.$emit("show-msg", this.language.data[data.message]);
+                    }
+                    this.$emit("update-items");
+                    this.$eventHub.$emit("update-tree");
+                } catch (e) {
+                    this.$eventHub.$emit("show-msg", Vue.errorParser(e));
+                }
+            }
         }
     }
 }
