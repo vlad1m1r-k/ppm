@@ -7,6 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.util.Date;
 import java.util.Objects;
 
 @Entity
@@ -18,6 +19,12 @@ public class Password {
 
     private String name;
     private boolean deleted = false;
+    private Date createdDate;
+    private String createdBy;
+    private Date editedDate;
+    private String editedBy;
+    private Date deletedDate;
+    private String deletedBy;
 
     @Lob
     private byte[] encryptedLogin;
@@ -33,9 +40,11 @@ public class Password {
 
     public Password() {}
 
-    public Password(String name, Container parent) {
+    public Password(String name, Container parent, String createdBy) {
         this.name = name;
         this.parent = parent;
+        this.createdBy = createdBy;
+        this.createdDate = new Date();
     }
 
     public Long getId() {
@@ -48,6 +57,30 @@ public class Password {
 
     public boolean isDeleted() {
         return deleted;
+    }
+
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public Date getEditedDate() {
+        return editedDate;
+    }
+
+    public String getEditedBy() {
+        return editedBy;
+    }
+
+    public Date getDeletedDate() {
+        return deletedDate;
+    }
+
+    public String getDeletedBy() {
+        return deletedBy;
     }
 
     public byte[] getEncryptedLogin() {
@@ -72,6 +105,22 @@ public class Password {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public void setEditedDate(Date editedDate) {
+        this.editedDate = editedDate;
+    }
+
+    public void setEditedBy(String editedBy) {
+        this.editedBy = editedBy;
+    }
+
+    public void setDeletedDate(Date deletedDate) {
+        this.deletedDate = deletedDate;
+    }
+
+    public void setDeletedBy(String deletedBy) {
+        this.deletedBy = deletedBy;
     }
 
     public void setEncryptedLogin(byte[] encryptedLogin) {

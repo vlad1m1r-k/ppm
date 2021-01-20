@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -121,7 +122,7 @@ public class ContainerServiceImpl implements ContainerService {
             return MessageDto.builder().message("ive4").build();
         }
         byte[] encryptedText = cryptoProvider.encryptDbEntry(text);
-        Note note = new Note(container, name, encryptedText);
+        Note note = new Note(container, name, encryptedText, token.getLogin());
         noteRepository.save(note);
         return MessageDto.builder().build();
     }
@@ -149,6 +150,8 @@ public class ContainerServiceImpl implements ContainerService {
         }
         note.setName(name);
         note.setEncryptedText(cryptoProvider.encryptDbEntry(text));
+        note.setEditedDate(new Date());
+        note.setEditedBy(token.getLogin());
         return MessageDto.builder().build();
     }
 
@@ -164,6 +167,8 @@ public class ContainerServiceImpl implements ContainerService {
             noteRepository.delete(note);
         } else {
             note.setDeleted(true);
+            note.setDeletedDate(new Date());
+            note.setDeletedBy(token.getLogin());
         }
         return MessageDto.builder().build();
     }
@@ -178,7 +183,7 @@ public class ContainerServiceImpl implements ContainerService {
         byte[] encryptedLogin = cryptoProvider.encryptDbEntry(login);
         byte[] encryptedPasswd = cryptoProvider.encryptDbEntry(passwd);
         byte[] encryptedNote = cryptoProvider.encryptDbEntry(note);
-        Password password = new Password(name, parent);
+        Password password = new Password(name, parent, token.getLogin());
         password.setEncryptedLogin(encryptedLogin);
         password.setEncryptedPass(encryptedPasswd);
         password.setEncryptedNote(encryptedNote);
@@ -227,6 +232,8 @@ public class ContainerServiceImpl implements ContainerService {
         if (pass.length() > 0) {
             password.setEncryptedPass(cryptoProvider.encryptDbEntry(pass));
         }
+        password.setEditedDate(new Date());
+        password.setEditedBy(token.getLogin());
         return MessageDto.builder().build();
     }
 
@@ -242,6 +249,8 @@ public class ContainerServiceImpl implements ContainerService {
             passwordRepository.delete(password);
         } else {
             password.setDeleted(true);
+            password.setDeletedDate(new Date());
+            password.setDeletedBy(token.getLogin());
         }
         return MessageDto.builder().build();
     }
@@ -260,11 +269,23 @@ public class ContainerServiceImpl implements ContainerService {
                 .notes(deletedNotes.stream().map(n -> NoteDto.builder()
                         .id(n.getId())
                         .name(n.getName())
+                        .createdDate(n.getCreatedDate())
+                        .createdBy(n.getCreatedBy())
+                        .editedDate(n.getEditedDate())
+                        .editedBy(n.getEditedBy())
+                        .deletedDate(n.getDeletedDate())
+                        .deletedBy(n.getDeletedBy())
                         .build())
                         .collect(Collectors.toList()))
                 .passwords(deletedPasswords.stream().map(p -> PasswordDto.builder()
                         .id(p.getId())
                         .name(p.getName())
+                        .createdDate(p.getCreatedDate())
+                        .createdBy(p.getCreatedBy())
+                        .editedDate(p.getEditedDate())
+                        .editedBy(p.getEditedBy())
+                        .deletedDate(p.getDeletedDate())
+                        .deletedBy(p.getDeletedBy())
                         .build())
                         .collect(Collectors.toList()))
                 .build();
@@ -309,13 +330,13 @@ public class ContainerServiceImpl implements ContainerService {
         List<NoteDto> notes = container.getNotes().stream()
                 .filter(n -> !n.isDeleted())
                 .map(n -> NoteDto.builder().id(n.getId()).name(n.getName()).build())
-                .sorted()
-                .collect(Collectors.toCollection(ArrayList::new));
+                .sorted(Comparator.comparing(NoteDto::getName))
+                .collect(Collectors.toList());
         List<PasswordDto> passwords = container.getPasswords().stream()
                 .filter(p -> !p.isDeleted())
                 .map(p -> PasswordDto.builder().id(p.getId()).name(p.getName()).build())
-                .sorted()
-                .collect(Collectors.toCollection(ArrayList::new));
+                .sorted(Comparator.comparing(PasswordDto::getName))
+                .collect(Collectors.toList());
         return ContainerDto.builder()
                 .id(container.getId())
                 .name(container.getName())

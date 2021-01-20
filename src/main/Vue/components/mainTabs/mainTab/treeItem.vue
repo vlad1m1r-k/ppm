@@ -9,7 +9,7 @@
         </li>
         <li v-show="isOpen">
             <tree-item :item="child" :selected-item="selectedItem" v-for="child in item.children"
-                       @item-select="$emit('item-select', $event)"></tree-item>
+                       @item-select="$emit('item-select', $event)" :key="'TREE' + child.id"></tree-item>
         </li>
     </ul>
 </template>

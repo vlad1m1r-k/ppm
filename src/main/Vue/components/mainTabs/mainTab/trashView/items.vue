@@ -1,9 +1,13 @@
 <template>
     <div>
-        {{ language.data.iv7 }} <br>
-        <note-view v-for="note in items.notes" :note="note" @update-items="getItems" :key="'DN' + note.id"></note-view>
-        {{ language.data.iv8 }} <br>
-        <pwd-view v-for="pwd in items.passwords" :pwd="pwd" @update-items="getItems" :key="'DP' + pwd.id"></pwd-view>
+        <div class="decor" @click="showNotes = !showNotes">{{ items.notes.length }} {{ language.data.iv7 }}</div>
+        <div v-show="showNotes">
+            <note-view v-for="note in items.notes" :note="note" @update-items="getItems" :key="'DN' + note.id"></note-view>
+        </div>
+        <div class="decor" @click="showPass = !showPass">{{ items.passwords.length }} {{ language.data.iv8 }}</div>
+        <div v-show="showPass">
+            <pwd-view v-for="pwd in items.passwords" :pwd="pwd" @update-items="getItems" :key="'DP' + pwd.id"></pwd-view>
+        </div>
     </div>
 </template>
 
@@ -23,7 +27,9 @@ export default {
         return {
             language: this.$root.$data.language,
             tokenProvider: this.$root.$data.tokenProvider,
-            items: {}
+            items: {notes: [], passwords: []},
+            showNotes: true,
+            showPass: true
         }
     },
     watch: {
@@ -58,5 +64,11 @@ export default {
 </script>
 
 <style scoped>
-
+.decor {
+    white-space: nowrap;
+    border: 2px solid #ffab03;
+    border-radius: 10px;
+    padding-left: 5px;
+    cursor: pointer;
+}
 </style>

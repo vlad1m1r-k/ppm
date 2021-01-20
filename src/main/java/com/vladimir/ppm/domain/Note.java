@@ -7,6 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.util.Date;
 import java.util.Objects;
 
 @Entity
@@ -21,6 +22,12 @@ public class Note {
     @Lob
     private byte[] encryptedText;
 
+    private Date createdDate;
+    private String createdBy;
+    private Date editedDate;
+    private String editedBy;
+    private Date deletedDate;
+    private String deletedBy;
     private boolean deleted = false;
 
     @ManyToOne
@@ -28,10 +35,12 @@ public class Note {
 
     public Note () {}
 
-    public Note(Container parent, String name, byte[] encryptedText) {
+    public Note(Container parent, String name, byte[] encryptedText, String createdBy) {
         this.parent = parent;
         this.name = name;
         this.encryptedText = encryptedText;
+        this.createdBy = createdBy;
+        createdDate = new Date();
     }
 
     public Long getId() {
@@ -50,6 +59,30 @@ public class Note {
         return parent;
     }
 
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public Date getEditedDate() {
+        return editedDate;
+    }
+
+    public String getEditedBy() {
+        return editedBy;
+    }
+
+    public Date getDeletedDate() {
+        return deletedDate;
+    }
+
+    public String getDeletedBy() {
+        return deletedBy;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -60,6 +93,22 @@ public class Note {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public void setEditedDate(Date editedDate) {
+        this.editedDate = editedDate;
+    }
+
+    public void setEditedBy(String editedBy) {
+        this.editedBy = editedBy;
+    }
+
+    public void setDeletedDate(Date deletedDate) {
+        this.deletedDate = deletedDate;
+    }
+
+    public void setDeletedBy(String deletedBy) {
+        this.deletedBy = deletedBy;
     }
 
     @Override
