@@ -1,18 +1,42 @@
 <template>
-    <div>
-        <div class="decor">
-            {{ note.name }} &nbsp;
-            <span class="btn-dc" @click="toggle" :title="language.data.cm1">&#x1f441;</span>
-            <span class="btn-dc float-right" :title="language.data.cm5" @click="remove">&#x1f5d1;</span>
-            <div class="btn-dc float-right text-success" :title="language.data.cm7" @click="restore">&#x21ba;</div>
-        </div>
-        <textarea class="form-control" rows="4" readonly v-show="show" v-model="text"></textarea>
-    </div>
+    <fragment>
+        <tr>
+            <td>
+                <input type="checkbox" :value="note.id" v-model="$parent.$data.checkedNotes">
+            </td>
+            <td>
+                <span class="btn-dc" @click="toggle" :title="language.data.cm1">&#x1f441;</span>
+            </td>
+            <td>{{ note.name }}</td>
+            <td>{{ note.createdDate }}</td>
+            <td>{{ note.createdBy }}</td>
+            <td>{{ note.editedDate }}</td>
+            <td>{{ note.editedBy }}</td>
+            <td>{{ note.deletedDate }}</td>
+            <td>{{ note.deletedBy }}</td>
+            <td>
+                <div class="btn-dc float-right text-success" :title="language.data.cm7" @click="restore">&#x21ba;</div>
+            </td>
+            <td>
+                <span class="btn-dc float-right" :title="language.data.cm5" @click="remove">&#x1f5d1;</span>
+            </td>
+        </tr>
+        <tr v-show="show">
+            <td colspan="10">
+                <textarea class="form-control" rows="4" readonly v-model="text"></textarea>
+            </td>
+        </tr>
+    </fragment>
 </template>
 
 <script>
+import { Fragment } from "vue-fragment";
+
 export default {
     name: "noteView",
+    components: {
+        Fragment
+    },
     props: {
         note: Object
     },
@@ -107,13 +131,6 @@ export default {
 </script>
 
 <style scoped>
-.decor {
-    white-space: nowrap;
-    border: 2px solid #ffab03;
-    border-radius: 10px;
-    padding-left: 5px;
-}
-
 .btn-dc {
     cursor: pointer;
     user-select: none;

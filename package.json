@@ -11,6 +11,7 @@
     "vue-loader": "15.9.6",
     "vue-template-compiler": "2.6.12",
     "node-forge": "~0.10.0",
-    "copy-webpack-plugin": "7.0.0"
+    "copy-webpack-plugin": "7.0.0",
+    "vue-fragment": "1.5.1"
   }
 }
