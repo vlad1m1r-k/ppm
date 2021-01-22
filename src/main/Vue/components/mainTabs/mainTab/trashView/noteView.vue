@@ -1,42 +1,35 @@
 <template>
-    <fragment>
-        <tr>
-            <td>
-                <input type="checkbox" :value="note.id" v-model="$parent.$data.checkedNotes">
-            </td>
-            <td>
-                <span class="btn-dc" @click="toggle" :title="language.data.cm1">&#x1f441;</span>
-            </td>
-            <td>{{ note.name }}</td>
-            <td>{{ note.createdDate }}</td>
-            <td>{{ note.createdBy }}</td>
-            <td>{{ note.editedDate }}</td>
-            <td>{{ note.editedBy }}</td>
-            <td>{{ note.deletedDate }}</td>
-            <td>{{ note.deletedBy }}</td>
-            <td>
-                <div class="btn-dc float-right text-success" :title="language.data.cm7" @click="restore">&#x21ba;</div>
-            </td>
-            <td>
-                <span class="btn-dc float-right" :title="language.data.cm5" @click="remove">&#x1f5d1;</span>
-            </td>
-        </tr>
-        <tr v-show="show">
-            <td colspan="10">
-                <textarea class="form-control" rows="4" readonly v-model="text"></textarea>
-            </td>
-        </tr>
-    </fragment>
+    <tr>
+        <td>
+            <input type="checkbox" :value="note.id" v-model="$parent.$data.checkedNotes">
+        </td>
+        <td>
+            <span class="btn-dc" @click="toggle" :title="language.data.cm1">&#x1f441;</span>
+        </td>
+        <td>{{ note.name }}</td>
+        <td>{{ note.createdDate }}</td>
+        <td>{{ note.createdBy }}</td>
+        <td>{{ note.editedDate }}</td>
+        <td>{{ note.editedBy }}</td>
+        <td>{{ note.deletedDate }}</td>
+        <td>{{ note.deletedBy }}</td>
+        <td>
+            <div class="btn-dc float-right text-success" :title="language.data.cm7" @click="restore">&#x21ba;</div>
+        </td>
+        <td>
+            <span class="btn-dc float-right" :title="language.data.cm5" @click="remove">&#x1f5d1;</span>
+        </td>
+    </tr>
+    <tr v-show="show">
+        <td colspan="15">
+            <textarea class="form-control" rows="4" readonly v-model="text"></textarea>
+        </td>
+    </tr>
 </template>
 
 <script>
-import { Fragment } from "vue-fragment";
-
 export default {
     name: "noteView",
-    components: {
-        Fragment
-    },
     props: {
         note: Object
     },

@@ -6,9 +6,11 @@
                 <thead class="tab-header-area">
                 <tr>
                     <th><input type="checkbox" @change="checkToggle($event.target.checked, 'notes')"></th>
-<!--                    TODO move to lang-->
+                    <!--                    TODO move to lang-->
                     <th>view</th>
-                    <th>name</th>
+                    <th>
+                        <button class="btn btn-sm btn-link" @click="setNotesSort('name')">name</button>
+                    </th>
                     <th>created</th>
                     <th>created by</th>
                     <th>edited</th>
@@ -36,6 +38,7 @@
 <script>
 import noteView from "./noteView.vue";
 import pwdView from "./pwdView.vue";
+import Sort from "../../../../sort";
 
 export default {
     name: "items",
@@ -52,6 +55,8 @@ export default {
             items: {notes: [], passwords: []},
             showNotes: true,
             showPass: true,
+            sortNotes: new Sort("name", "desc"),
+            sortPwd: new Sort("name", "desc"),
             checkedNotes: []
         }
     },
@@ -67,7 +72,9 @@ export default {
                 const token = await this.tokenProvider.getToken();
                 const encryptedData = await Vue.cryptoProvider.encrypt({
                     token: token,
-                    item: this.item.id
+                    item: this.item.id,
+                    sortNotes: this.sortNotes.toString(),
+                    sortPwd: this.sortPwd.toString()
                 });
                 const answer = await $.ajax({
                     url: "/container/getDeletedItems",
@@ -90,6 +97,13 @@ export default {
             } else {
                 //TODO passwords
             }
+        },
+        setNotesSort(field) {
+            this.sortNotes.setField(field);
+            this.getItems();
+        },
+        setPwdSort(field) {
+            //TODO
         }
     },
     mounted() {

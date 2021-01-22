@@ -278,9 +278,11 @@ public class ContainerRestController {
             String publicKeyPEM = json.getString("publicKey");
             String token = json.getString("token");
             long containerId = json.getLong("item");
+            String sortNotes = json.getString("sortNotes");
+            String sortPwd = json.getString("sortPwd");
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null) {
-                ContainerDto container = containerService.getDeletedItems(decryptedToken, containerId);
+                ContainerDto container = containerService.getDeletedItems(decryptedToken, containerId, sortNotes, sortPwd);
                 return cryptoProvider.encrypt(publicKeyPEM, container.toJson());
             }
         }

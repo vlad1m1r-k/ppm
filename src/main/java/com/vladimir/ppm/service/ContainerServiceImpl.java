@@ -13,10 +13,13 @@ import com.vladimir.ppm.dto.PasswordDto;
 import com.vladimir.ppm.repository.ContainerRepository;
 import com.vladimir.ppm.repository.NoteRepository;
 import com.vladimir.ppm.repository.PasswordRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
@@ -257,12 +260,14 @@ public class ContainerServiceImpl implements ContainerService {
 
     @Override
     @Transactional(readOnly = true)
-    public ContainerDto getDeletedItems(Token token, long containerId) {
+    public ContainerDto getDeletedItems(Token token, long containerId, String sortNotes, String sortPwd) {
         Container container = containerRepository.getOne(containerId);
         if (cryptoProvider.isSystemClosed() || container.isDeleted() || !userService.isAdmin(token)) {
             return ContainerDto.builder().build();
         }
-        Set<Note> deletedNotes = noteRepository.getAllByParentAndDeleted(container, true);
+        String notesSortField = sortNotes.substring(0, sortNotes.indexOf(","));
+        Sort.Direction notesSortDirection = Sort.Direction.fromString(sortNotes.substring(sortNotes.indexOf(",") + 1));
+        List<Note> deletedNotes = noteRepository.getAllByParentAndDeleted(container, true, Sort.by(notesSortDirection, notesSortField));
         Set<Password> deletedPasswords = passwordRepository.getAllByParentAndDeleted(container, true);
         return ContainerDto.builder()
                 .id(containerId)
