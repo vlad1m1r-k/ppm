@@ -3,12 +3,8 @@ import loginForm from "./components/loginForm.vue";
 import tokenProvider from "./provider/tokenProvider";
 import cryptoProvider from "./provider/cryptoProvider";
 
-Vue.use({
-    install(Vue) {
-        Vue.cryptoProvider = cryptoProvider;
-    }
-});
-Vue.use({
+
+Vue.createApp({}).use({
     install(Vue) {
         Vue.errorParser = function (error) {
             if (error.responseJSON) {
@@ -18,23 +14,24 @@ Vue.use({
         }
     }
 });
-Vue.prototype.$eventHub = new Vue();
+Vue.createApp({}).config.globalProperties.$eventHub = Vue.createApp({});
 
 Vue.cryptoProvider.init();
 
-new Vue({
-    el: '#app',
+const app = Vue.createApp({
     components: {
         'main-block': MainBlock,
         'login-form': loginForm
     },
-    data: {
-        tokenProvider: tokenProvider,
-        language: {
-            name: "",
-            data: {}
-        },
-        langLoadStatus: false
+    data() {
+        return {
+            tokenProvider: tokenProvider,
+            language: {
+                name: "",
+                data: {}
+            },
+            langLoadStatus: false
+        }
     },
     methods: {
         getPreferredLang() {
@@ -68,3 +65,11 @@ new Vue({
         this.loadLanguage(this.getPreferredLang());
     }
 });
+
+app.use({
+    install(app) {
+        app.cryptoProvider = cryptoProvider;
+    }
+});
+
+app.mount("#app");
