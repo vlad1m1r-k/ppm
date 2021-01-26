@@ -67,10 +67,10 @@ export default {
     },
     methods: {
         async getItems() {
-            this.$eventHub.$emit("show-msg", "");
+            this.eventHub.emit("show-msg", "");
             try {
                 const token = await this.tokenProvider.getToken();
-                const encryptedData = await Vue.cryptoProvider.encrypt({
+                const encryptedData = await this.cryptoProvider.encrypt({
                     token: token,
                     item: this.item.id,
                     sortNotes: this.sortNotes.toString(),
@@ -81,9 +81,9 @@ export default {
                     method: "POST",
                     data: encryptedData
                 });
-                this.items = Vue.cryptoProvider.decrypt(answer);
+                this.items = this.cryptoProvider.decrypt(answer);
             } catch (e) {
-                this.$eventHub.$emit("show-msg", Vue.errorParser(e));
+                this.eventHub.emit("show-msg", this.errorParser(e));
             }
         },
         checkToggle(checked, item) {

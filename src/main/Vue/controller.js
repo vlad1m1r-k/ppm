@@ -2,26 +2,12 @@ import MainBlock from './components/mainBlock.vue';
 import loginForm from "./components/loginForm.vue";
 import tokenProvider from "./provider/tokenProvider";
 import cryptoProvider from "./provider/cryptoProvider";
-
-
-Vue.createApp({}).use({
-    install(Vue) {
-        Vue.errorParser = function (error) {
-            if (error.responseJSON) {
-                return 'Error ' + error.responseJSON.status + ' ' + error.responseJSON.error + ' ' + error.responseJSON.message;
-            }
-            return 'Error ' + error.status;
-        }
-    }
-});
-Vue.createApp({}).config.globalProperties.$eventHub = Vue.createApp({});
-
-Vue.cryptoProvider.init();
+import mitt from "mitt";
 
 const app = Vue.createApp({
     components: {
-        'main-block': MainBlock,
-        'login-form': loginForm
+        MainBlock,
+        loginForm
     },
     data() {
         return {
@@ -71,5 +57,16 @@ app.use({
         app.cryptoProvider = cryptoProvider;
     }
 });
-
+app.use({
+    install(app) {
+        app.errorParser = function (error) {
+            if (error.responseJSON) {
+                return 'Error ' + error.responseJSON.status + ' ' + error.responseJSON.error + ' ' + error.responseJSON.message;
+            }
+            return 'Error ' + error.status;
+        }
+    }
+});
+app.config.globalProperties.eventHub = mitt();
+app.cryptoProvider.init();
 app.mount("#app");

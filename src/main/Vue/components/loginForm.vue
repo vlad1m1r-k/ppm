@@ -38,13 +38,13 @@ export default {
                 try {
                     const answer = await this.tokenProvider.login(this.login, this.password);
                     if (answer) {
-                        this.$eventHub.$emit("show-msg", this.language.data.lfe2);
+                        this.eventHub.emit("show-msg", this.language.data.lfe2);
                     }
                 } catch (e) {
                     if (e.message) {
                         this.message = this.language.data[e.message];
                     } else {
-                        this.message = Vue.errorParser(e);
+                        this.message = this.errorParser(e);
                     }
                 } finally {
                     this.password = "";

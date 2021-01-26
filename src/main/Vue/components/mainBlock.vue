@@ -71,15 +71,15 @@ export default {
             this.message = msg;
         },
         showTrash() {
-            this.$eventHub.$emit('toggle-trash', this.currentTab);
+            this.eventHub.emit('toggle-trash', this.currentTab);
             this.setTab('mainTab');
         }
     },
     created() {
-        this.$eventHub.$on("show-msg", this.showMsg);
+        this.eventHub.on("show-msg", this.showMsg);
     },
-    beforeDestroy() {
-        this.$eventHub.$off("show-msg");
+    beforeUnmount() {
+        this.eventHub.off("show-msg");
     }
 }
 </script>

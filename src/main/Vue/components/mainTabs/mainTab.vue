@@ -36,18 +36,18 @@ export default {
     },
     methods: {
         async updateTree() {
-            this.$eventHub.$emit("show-msg", "");
+            this.eventHub.emit("show-msg", "");
             try {
                 const token = await this.tokenProvider.getToken();
-                const encryptedData = await Vue.cryptoProvider.encrypt({token: token});
+                const encryptedData = await this.cryptoProvider.encrypt({token: token});
                 const answer = await $.ajax({
                     url: "/container/getTree",
                     method: "POST",
                     data: encryptedData
                 });
-                this.tree = Vue.cryptoProvider.decrypt(answer);
+                this.tree = this.cryptoProvider.decrypt(answer);
             } catch (e) {
-                this.$eventHub.$emit("show-msg", Vue.errorParser(e));
+                this.eventHub.emit("show-msg", this.errorParser(e));
             }
         },
         selectItem(evt) {
@@ -74,12 +74,12 @@ export default {
         }
     },
     created() {
-        this.$eventHub.$on("update-tree", this.updateTree);
-        this.$eventHub.$on("toggle-trash", this.toggleTrash);
+        this.eventHub.on("update-tree", this.updateTree);
+        this.eventHub.on("toggle-trash", this.toggleTrash);
     },
-    beforeDestroy() {
-        this.$eventHub.$off("update-tree");
-        this.$eventHub.$off("toggle-trash");
+    beforeUnmount() {
+        this.eventHub.off("update-tree");
+        this.eventHub.off("toggle-trash");
     }
 }
 </script>

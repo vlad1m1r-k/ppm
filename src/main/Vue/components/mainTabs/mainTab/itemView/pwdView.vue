@@ -53,10 +53,10 @@ export default {
             }
         },
         async loadPwdEnv() {
-            this.$eventHub.$emit("show-msg", "");
+            this.eventHub.emit("show-msg", "");
             try {
                 const token = await this.tokenProvider.getToken();
-                const encryptedData = await Vue.cryptoProvider.encrypt({
+                const encryptedData = await this.cryptoProvider.encrypt({
                     token: token,
                     pwd: this.pwd.id,
                 });
@@ -65,21 +65,21 @@ export default {
                     method: "POST",
                     data: encryptedData
                 });
-                const data = Vue.cryptoProvider.decrypt(answer);
+                const data = this.cryptoProvider.decrypt(answer);
                 this.login = data.login;
                 this.note = data.note;
             } catch (e) {
-                this.$eventHub.$emit("show-msg", Vue.errorParser(e));
+                this.eventHub.emit("show-msg", this.errorParser(e));
             }
         },
         async loadPwdBody() {
             if (this.pass) {
                 this.pass = "";
             } else {
-                this.$eventHub.$emit("show-msg", "");
+                this.eventHub.emit("show-msg", "");
                 try {
                     const token = await this.tokenProvider.getToken();
-                    const encryptedData = await Vue.cryptoProvider.encrypt({
+                    const encryptedData = await this.cryptoProvider.encrypt({
                         token: token,
                         pwd: this.pwd.id,
                     });
@@ -88,19 +88,19 @@ export default {
                         method: "POST",
                         data: encryptedData
                     });
-                    const data = Vue.cryptoProvider.decrypt(answer);
+                    const data = this.cryptoProvider.decrypt(answer);
                     this.pass = data.password;
                     setTimeout(this.clearPwd, 10000);
                 } catch (e) {
-                    this.$eventHub.$emit("show-msg", Vue.errorParser(e));
+                    this.eventHub.emit("show-msg", this.errorParser(e));
                 }
             }
         },
         async pwdToClipboard() {
-            this.$eventHub.$emit("show-msg", "");
+            this.eventHub.emit("show-msg", "");
             try {
                 const token = await this.tokenProvider.getToken();
-                const encryptedData = await Vue.cryptoProvider.encrypt({
+                const encryptedData = await this.cryptoProvider.encrypt({
                     token: token,
                     pwd: this.pwd.id,
                 });
@@ -109,18 +109,18 @@ export default {
                     method: "POST",
                     data: encryptedData
                 });
-                const data = Vue.cryptoProvider.decrypt(answer);
+                const data = this.cryptoProvider.decrypt(answer);
                 navigator.clipboard.writeText(data.password);
             } catch (e) {
-                this.$eventHub.$emit("show-msg", Vue.errorParser(e));
+                this.eventHub.emit("show-msg", this.errorParser(e));
             }
         },
         async save() {
             if (this.name && confirm(this.language.data.cm3 + " " + this.pwd.name + "?")) {
-                this.$eventHub.$emit("show-msg", "");
+                this.eventHub.emit("show-msg", "");
                 try {
                     const token = await this.tokenProvider.getToken();
-                    const encryptedData = await Vue.cryptoProvider.encrypt({
+                    const encryptedData = await this.cryptoProvider.encrypt({
                         token: token,
                         pwd: this.pwd.id,
                         name: this.name,
@@ -133,15 +133,15 @@ export default {
                         method: "POST",
                         data: encryptedData
                     });
-                    const data = Vue.cryptoProvider.decrypt(answer);
+                    const data = this.cryptoProvider.decrypt(answer);
                     if (data.message) {
-                        this.$eventHub.$emit("show-msg", this.language.data[data.message]);
+                        this.eventHub.emit("show-msg", this.language.data[data.message]);
                     }
                     this.edit = false;
                     this.pass = "";
-                    this.$eventHub.$emit("update-tree");
+                    this.eventHub.emit("update-tree");
                 } catch (e) {
-                    this.$eventHub.$emit("show-msg", Vue.errorParser(e));
+                    this.eventHub.emit("show-msg", this.errorParser(e));
                 }
             }
         },
@@ -153,10 +153,10 @@ export default {
         },
         async remove() {
             if (this.name && confirm(this.language.data.cm5 + " " + this.pwd.name + "?")) {
-                this.$eventHub.$emit("show-msg", "");
+                this.eventHub.emit("show-msg", "");
                 try {
                     const token = await this.tokenProvider.getToken();
-                    const encryptedData = await Vue.cryptoProvider.encrypt({
+                    const encryptedData = await this.cryptoProvider.encrypt({
                         token: token,
                         pwd: this.pwd.id
                     });
@@ -165,13 +165,13 @@ export default {
                         method: "POST",
                         data: encryptedData
                     });
-                    const data = Vue.cryptoProvider.decrypt(answer);
+                    const data = this.cryptoProvider.decrypt(answer);
                     if (data.message) {
-                        this.$eventHub.$emit("show-msg", this.language.data[data.message]);
+                        this.eventHub.emit("show-msg", this.language.data[data.message]);
                     }
-                    this.$eventHub.$emit("update-tree");
+                    this.eventHub.emit("update-tree");
                 } catch (e) {
-                    this.$eventHub.$emit("show-msg", Vue.errorParser(e));
+                    this.eventHub.emit("show-msg", this.errorParser(e));
                 }
             }
         },

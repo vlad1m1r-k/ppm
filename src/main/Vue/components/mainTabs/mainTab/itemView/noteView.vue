@@ -43,10 +43,10 @@ export default {
             }
         },
         async loadNote() {
-            this.$eventHub.$emit("show-msg", "");
+            this.eventHub.emit("show-msg", "");
             try {
                 const token = await this.tokenProvider.getToken();
-                const encryptedData = await Vue.cryptoProvider.encrypt({
+                const encryptedData = await this.cryptoProvider.encrypt({
                     token: token,
                     note: this.note.id,
                 });
@@ -55,18 +55,18 @@ export default {
                     method: "POST",
                     data: encryptedData
                 });
-                const data = Vue.cryptoProvider.decrypt(answer);
+                const data = this.cryptoProvider.decrypt(answer);
                 this.text = data.message;
             } catch (e) {
-                this.$eventHub.$emit("show-msg", Vue.errorParser(e));
+                this.eventHub.emit("show-msg", this.errorParser(e));
             }
         },
         async save() {
             if (this.name && confirm(this.language.data.iv9)) {
-                this.$eventHub.$emit("show-msg", "");
+                this.eventHub.emit("show-msg", "");
                 try {
                     const token = await this.tokenProvider.getToken();
-                    const encryptedData = await Vue.cryptoProvider.encrypt({
+                    const encryptedData = await this.cryptoProvider.encrypt({
                         token: token,
                         note: this.note.id,
                         name: this.name,
@@ -77,14 +77,14 @@ export default {
                         method: "POST",
                         data: encryptedData
                     });
-                    const data = Vue.cryptoProvider.decrypt(answer);
+                    const data = this.cryptoProvider.decrypt(answer);
                     if (data.message) {
-                        this.$eventHub.$emit("show-msg", this.language.data[data.message]);
+                        this.eventHub.emit("show-msg", this.language.data[data.message]);
                     }
                     this.edit = false;
-                    this.$eventHub.$emit("update-tree");
+                    this.eventHub.emit("update-tree");
                 } catch (e) {
-                    this.$eventHub.$emit("show-msg", Vue.errorParser(e));
+                    this.eventHub.emit("show-msg", this.errorParser(e));
                 }
             }
         },
@@ -95,10 +95,10 @@ export default {
         },
         async remove() {
             if (this.name && confirm(this.language.data.iv10 + this.note.name + "?")) {
-                this.$eventHub.$emit("show-msg", "");
+                this.eventHub.emit("show-msg", "");
                 try {
                     const token = await this.tokenProvider.getToken();
-                    const encryptedData = await Vue.cryptoProvider.encrypt({
+                    const encryptedData = await this.cryptoProvider.encrypt({
                         token: token,
                         note: this.note.id
                     });
@@ -107,13 +107,13 @@ export default {
                         method: "POST",
                         data: encryptedData
                     });
-                    const data = Vue.cryptoProvider.decrypt(answer);
+                    const data = this.cryptoProvider.decrypt(answer);
                     if (data.message) {
-                        this.$eventHub.$emit("show-msg", this.language.data[data.message]);
+                        this.eventHub.emit("show-msg", this.language.data[data.message]);
                     }
-                    this.$eventHub.$emit("update-tree");
+                    this.eventHub.emit("update-tree");
                 } catch (e) {
-                    this.$eventHub.$emit("show-msg", Vue.errorParser(e));
+                    this.eventHub.emit("show-msg", this.errorParser(e));
                 }
             }
         }
