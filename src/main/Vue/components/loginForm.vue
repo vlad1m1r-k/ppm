@@ -24,7 +24,7 @@ export default {
     name: "loginForm",
     data() {
         return {
-            tokenProvider: this.$root.tokenProvider,
+            tokenProvider: this.$root.$data.tokenProvider,
             language: this.$root.$data.language,
             message: "",
             login: "",

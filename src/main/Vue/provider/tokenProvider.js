@@ -8,13 +8,13 @@ export default {
         let data = {login: "", password: ""};
         data.login = login;
         data.password = password;
-        const encryptedData = await this.cryptoProvider.encrypt(data);
+        const encryptedData = await cryptoProvider.encrypt(data);
         const answer = await $.ajax({
             url: "/user/login",
             method: "POST",
             data: encryptedData
         });
-        const decryptedAnswer = this.cryptoProvider.decrypt(answer);
+        const decryptedAnswer = cryptoProvider.decrypt(answer);
         if (decryptedAnswer.message) {
             throw new Error(decryptedAnswer.message);
         }
@@ -42,7 +42,7 @@ export default {
     },
     async renewToken(token) {
         const data = {token: token};
-        const encryptedData = await this.cryptoProvider.encrypt(data);
+        const encryptedData = await cryptoProvider.encrypt(data);
         const answer = await $.ajax({
             url: "/user/renewToken",
             method: "POST",
@@ -51,7 +51,7 @@ export default {
                 data: encryptedData.data
             }
         });
-        const decryptedAnswer = this.cryptoProvider.decrypt(answer);
+        const decryptedAnswer = cryptoProvider.decrypt(answer);
         this.lifeTime = decryptedAnswer.lifeTime;
         this.token = decryptedAnswer.token;
         this.adminSettings = decryptedAnswer.adminSettings;

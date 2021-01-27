@@ -17,11 +17,10 @@
 
     <properties>
         <mysql.connector.version>8.0.22</mysql.connector.version>
-        <liqubase.version>4.1.1</liqubase.version>
+        <liquibase.version>4.1.1</liquibase.version>
         <frontend.plugin.version>1.10.0</frontend.plugin.version>
-        <node.version>v12.18.4</node.version>
+        <node.version>v14.15.4</node.version>
         <webjars.locator.version>0.40</webjars.locator.version>
-        <vue.version>3.0.5</vue.version>
         <bootstrap.version>4.5.3</bootstrap.version>
         <jquery.version>3.5.1</jquery.version>
         <bc.version>1.66</bc.version>
@@ -64,18 +63,13 @@
 <!--        <dependency>-->
 <!--            <groupId>org.liquibase</groupId>-->
 <!--            <artifactId>liquibase-core</artifactId>-->
-<!--            <version>${liqubase.version}</version>-->
+<!--            <version>${liquibase.version}</version>-->
 <!--            <scope>compile</scope>-->
 <!--        </dependency>-->
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>webjars-locator</artifactId>
             <version>${webjars.locator.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.webjars.npm</groupId>
-            <artifactId>vue</artifactId>
-            <version>${vue.version}</version>
         </dependency>
         <dependency>
             <groupId>org.webjars</groupId>

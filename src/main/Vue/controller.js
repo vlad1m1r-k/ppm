@@ -3,12 +3,16 @@ import loginForm from "./components/loginForm.vue";
 import tokenProvider from "./provider/tokenProvider";
 import cryptoProvider from "./provider/cryptoProvider";
 import mitt from "mitt";
+import { createApp } from "vue/dist/vue.esm-bundler";
 
-const app = Vue.createApp({
+window.cryptoProvider = cryptoProvider;
+
+const app = createApp({
     components: {
         MainBlock,
         loginForm
     },
+    template: "<login-form></login-form><main-block></main-block>",
     data() {
         return {
             tokenProvider: tokenProvider,
@@ -54,7 +58,7 @@ const app = Vue.createApp({
 
 app.use({
     install(app) {
-        app.cryptoProvider = cryptoProvider;
+        app.cryptoProvider = window.cryptoProvider;
     }
 });
 app.use({

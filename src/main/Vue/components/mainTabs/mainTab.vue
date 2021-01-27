@@ -78,8 +78,8 @@ export default {
         this.eventHub.on("toggle-trash", this.toggleTrash);
     },
     beforeUnmount() {
-        this.eventHub.off("update-tree");
-        this.eventHub.off("toggle-trash");
+        this.eventHub.off("update-tree", this.updateTree);
+        this.eventHub.off("toggle-trash", this.toggleTrash);
     }
 }
 </script>

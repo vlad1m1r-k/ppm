@@ -30,9 +30,10 @@
             </div>
             <div class="row">
                 <div class="col">
-                    <keep-alive>
+<!--                    TODO rt
+                    <keep-alive>-->
                         <component :is="currentTab"></component>
-                    </keep-alive>
+<!--                    </keep-alive>-->
                 </div>
             </div>
         </div>
@@ -79,7 +80,7 @@ export default {
         this.eventHub.on("show-msg", this.showMsg);
     },
     beforeUnmount() {
-        this.eventHub.off("show-msg");
+        this.eventHub.off("show-msg", this.showMsg);
     }
 }
 </script>
