@@ -27,7 +27,7 @@ export default {
             if (confResult && this.item.name !== "root") {
                 try {
                     const token = await this.tokenProvider.getToken();
-                    const encryptedData = await this.cryptoProvider.encrypt({
+                    const encryptedData = await cryptoProvider.encrypt({
                         token: token,
                         item: this.item.id,
                         name: this.name
@@ -37,7 +37,7 @@ export default {
                         method: "POST",
                         data: encryptedData
                     });
-                    const data = this.cryptoProvider.decrypt(answer);
+                    const data = cryptoProvider.decrypt(answer);
                     if (data.message) {
                         this.eventHub.emit("show-msg", this.language.data[data.message]);
                     } else {

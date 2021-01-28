@@ -30,10 +30,9 @@
             </div>
             <div class="row">
                 <div class="col">
-<!--                    TODO rt
-                    <keep-alive>-->
+                    <keep-alive>
                         <component :is="currentTab"></component>
-<!--                    </keep-alive>-->
+                    </keep-alive>
                 </div>
             </div>
         </div>

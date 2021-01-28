@@ -16,7 +16,7 @@
                         <span :title="item.children.length > 0 ? language.data.iv3 : false"
                               :class="{'cursor-stop': item.children.length > 0}" v-if="item.name !== 'root'">
                         <a class="dropdown-item text-danger"
-                           :class="{disabled: this.item.children.length > 0 || item.name === 'root'}"
+                           :class="{disabled: item.children.length > 0 || item.name === 'root'}"
                            @click="deleteContainer">
                             {{ language.data.iv2 }}
                         </a>
@@ -88,7 +88,7 @@ export default {
                 if (confResult) {
                     try {
                         const token = await this.tokenProvider.getToken();
-                        const encryptedData = await this.cryptoProvider.encrypt({
+                        const encryptedData = await cryptoProvider.encrypt({
                             token: token,
                             item: this.item.id,
                         });
@@ -97,7 +97,7 @@ export default {
                             method: "POST",
                             data: encryptedData
                         });
-                        const data = this.cryptoProvider.decrypt(answer);
+                        const data = cryptoProvider.decrypt(answer);
                         if (data.message) {
                             this.eventHub.emit("show-msg", this.language.data[data.message]);
                         } else {

@@ -55,6 +55,13 @@
     "di2": "Containers",
     "di3": "Items",
     "di4": "Error restoring note",
-    "di5": "Error restoring password"
+    "di5": "Error restoring password",
+    "div1": "Name",
+    "div2": "Created",
+    "div3": "Created by",
+    "div4": "Edited",
+    "div5": "Edited by",
+    "div6": "Deleted",
+    "div7": "Deleted by"
   }
 }

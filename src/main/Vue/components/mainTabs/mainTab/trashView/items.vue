@@ -7,7 +7,7 @@
                 <tr>
                     <th><input type="checkbox" @change="checkToggle($event.target.checked, 'notes')"></th>
                     <!--                    TODO move to lang-->
-                    <th>view</th>
+                    <th></th>
                     <th>
                         <button class="btn btn-sm btn-link" @click="setNotesSort('name')">name</button>
                     </th>
@@ -70,7 +70,7 @@ export default {
             this.eventHub.emit("show-msg", "");
             try {
                 const token = await this.tokenProvider.getToken();
-                const encryptedData = await this.cryptoProvider.encrypt({
+                const encryptedData = await cryptoProvider.encrypt({
                     token: token,
                     item: this.item.id,
                     sortNotes: this.sortNotes.toString(),
@@ -81,7 +81,7 @@ export default {
                     method: "POST",
                     data: encryptedData
                 });
-                this.items = this.cryptoProvider.decrypt(answer);
+                this.items = cryptoProvider.decrypt(answer);
             } catch (e) {
                 this.eventHub.emit("show-msg", this.errorParser(e));
             }

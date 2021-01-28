@@ -12,6 +12,7 @@
                        @item-select="$emit('item-select', $event)" :key="'TREE' + child.id"></tree-item>
         </li>
     </ul>
+<!--    TODO Delete item name restrictions-->
 </template>
 
 <script>
@@ -54,7 +55,7 @@ export default {
             if (confResult) {
                 try {
                     const token = await this.tokenProvider.getToken();
-                    const encryptedData = await this.cryptoProvider.encrypt({
+                    const encryptedData = await cryptoProvider.encrypt({
                         token: token,
                         item: evt.dataTransfer.getData("id"),
                         moveTo: item.id
@@ -64,7 +65,7 @@ export default {
                         method: "POST",
                         data: encryptedData
                     });
-                    const data = this.cryptoProvider.decrypt(answer);
+                    const data = cryptoProvider.decrypt(answer);
                     if (data.message) {
                         this.eventHub.emit("show-msg", this.language.data[data.message]);
                     } else {

@@ -30,7 +30,7 @@ export default {
     data() {
         return {
             language: this.$root.$data.language,
-            currentTab: "",
+            currentTab: "users",
         }
     }
 }

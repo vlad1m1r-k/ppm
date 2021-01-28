@@ -39,13 +39,13 @@ export default {
             this.eventHub.emit("show-msg", "");
             try {
                 const token = await this.tokenProvider.getToken();
-                const encryptedData = await this.cryptoProvider.encrypt({token: token});
+                const encryptedData = await cryptoProvider.encrypt({token: token});
                 const answer = await $.ajax({
                     url: "/container/getTree",
                     method: "POST",
                     data: encryptedData
                 });
-                this.tree = this.cryptoProvider.decrypt(answer);
+                this.tree = cryptoProvider.decrypt(answer);
             } catch (e) {
                 this.eventHub.emit("show-msg", this.errorParser(e));
             }

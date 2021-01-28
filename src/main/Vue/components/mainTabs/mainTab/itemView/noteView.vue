@@ -46,7 +46,7 @@ export default {
             this.eventHub.emit("show-msg", "");
             try {
                 const token = await this.tokenProvider.getToken();
-                const encryptedData = await this.cryptoProvider.encrypt({
+                const encryptedData = await cryptoProvider.encrypt({
                     token: token,
                     note: this.note.id,
                 });
@@ -55,7 +55,7 @@ export default {
                     method: "POST",
                     data: encryptedData
                 });
-                const data = this.cryptoProvider.decrypt(answer);
+                const data = cryptoProvider.decrypt(answer);
                 this.text = data.message;
             } catch (e) {
                 this.eventHub.emit("show-msg", this.errorParser(e));
@@ -66,7 +66,7 @@ export default {
                 this.eventHub.emit("show-msg", "");
                 try {
                     const token = await this.tokenProvider.getToken();
-                    const encryptedData = await this.cryptoProvider.encrypt({
+                    const encryptedData = await cryptoProvider.encrypt({
                         token: token,
                         note: this.note.id,
                         name: this.name,
@@ -77,7 +77,7 @@ export default {
                         method: "POST",
                         data: encryptedData
                     });
-                    const data = this.cryptoProvider.decrypt(answer);
+                    const data = cryptoProvider.decrypt(answer);
                     if (data.message) {
                         this.eventHub.emit("show-msg", this.language.data[data.message]);
                     }
@@ -98,7 +98,7 @@ export default {
                 this.eventHub.emit("show-msg", "");
                 try {
                     const token = await this.tokenProvider.getToken();
-                    const encryptedData = await this.cryptoProvider.encrypt({
+                    const encryptedData = await cryptoProvider.encrypt({
                         token: token,
                         note: this.note.id
                     });
@@ -107,7 +107,7 @@ export default {
                         method: "POST",
                         data: encryptedData
                     });
-                    const data = this.cryptoProvider.decrypt(answer);
+                    const data = cryptoProvider.decrypt(answer);
                     if (data.message) {
                         this.eventHub.emit("show-msg", this.language.data[data.message]);
                     }
