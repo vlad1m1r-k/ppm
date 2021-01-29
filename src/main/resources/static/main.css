@@ -143,6 +143,16 @@ ul[data-v-8ef25f0e] {
     padding-left: 5px;
     cursor: pointer;
 }
+.btn-dc[data-v-43192036] {
+    cursor: pointer;
+    user-select: none;
+    padding-left: 2px;
+    padding-right: 2px;
+}
+.btn-dc[data-v-43192036]:hover {
+    background-color: darkgray;
+    border-radius: 4px;
+}
 
 
 .decor-iv[data-v-1afe0cf6] {

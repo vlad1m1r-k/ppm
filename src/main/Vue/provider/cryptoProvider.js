@@ -1,3 +1,5 @@
+import forge from "node-forge";
+
 export default {
     serverKeyExpireDate: null,
     serverPublicKey: null,

@@ -1,22 +1,26 @@
 <template>
     <div>
-        <div class="decor" @click="showNotes = !showNotes">{{ items.notes.length }} {{ language.data.iv7 }}</div>
+        <div class="decor" @click="showNotes = !showNotes">
+            {{ items.notes.length }} {{ language.data.iv7 }}
+            <span class="btn-dc text-success" :title="language.data.cm7" @click="">&#x21ba;</span>
+            <span class="btn-dc" :title="language.data.cm5" @click="">&#x1f5d1;</span>
+<!--            TODO mass delete-->
+        </div>
         <div v-show="showNotes">
             <table class="table table-bordered table-striped table-sm">
                 <thead class="tab-header-area">
                 <tr>
                     <th><input type="checkbox" @change="checkToggle($event.target.checked, 'notes')"></th>
-                    <!--                    TODO move to lang-->
                     <th></th>
                     <th>
-                        <button class="btn btn-sm btn-link" @click="setNotesSort('name')">name</button>
+                        <button class="btn btn-sm btn-link" @click="setNotesSort('name')">{{ language.data.div1 }}</button>
                     </th>
-                    <th>created</th>
-                    <th>created by</th>
-                    <th>edited</th>
-                    <th>edited by</th>
-                    <th>deleted</th>
-                    <th>deleted by</th>
+                    <th><button class="btn btn-sm btn-link" @click="setNotesSort('createdDate')">{{ language.data.div2 }}</button></th>
+                    <th><button class="btn btn-sm btn-link" @click="setNotesSort('createdBy')">{{ language.data.div3 }}</button></th>
+                    <th><button class="btn btn-sm btn-link" @click="setNotesSort('editedDate')">{{ language.data.div4 }}</button></th>
+                    <th><button class="btn btn-sm btn-link" @click="setNotesSort('editedBy')">{{ language.data.div5 }}</button></th>
+                    <th><button class="btn btn-sm btn-link" @click="setNotesSort('deletedDate')">{{ language.data.div6 }}</button></th>
+                    <th><button class="btn btn-sm btn-link" @click="setNotesSort('deletedBy')">{{ language.data.div7 }}</button></th>
                     <th></th>
                     <th></th>
                 </tr>
@@ -119,5 +123,16 @@ export default {
     border-radius: 10px;
     padding-left: 5px;
     cursor: pointer;
+}
+.btn-dc {
+    cursor: pointer;
+    user-select: none;
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+.btn-dc:hover {
+    background-color: darkgray;
+    border-radius: 4px;
 }
 </style>
