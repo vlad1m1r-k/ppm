@@ -269,6 +269,7 @@ public class ContainerServiceImpl implements ContainerService {
         Sort.Direction notesSortDirection = Sort.Direction.fromString(sortNotes.substring(sortNotes.indexOf(",") + 1));
         List<Note> deletedNotes = noteRepository.getAllByParentAndDeleted(container, true, Sort.by(notesSortDirection, notesSortField));
         Set<Password> deletedPasswords = passwordRepository.getAllByParentAndDeleted(container, true);
+        //TODO sort password implement
         return ContainerDto.builder()
                 .id(containerId)
                 .notes(deletedNotes.stream().map(n -> NoteDto.builder()

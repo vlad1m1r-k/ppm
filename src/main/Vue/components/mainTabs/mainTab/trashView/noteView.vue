@@ -14,10 +14,10 @@
         <td>{{ note.deletedDate }}</td>
         <td>{{ note.deletedBy }}</td>
         <td>
-            <div class="btn-dc float-right text-success" :title="language.data.cm7" @click="restore">&#x21ba;</div>
+            <span class="btn-dc text-success" :title="language.data.cm7" @click="restore">&#x21ba;</span>
         </td>
         <td>
-            <span class="btn-dc float-right" :title="language.data.cm5" @click="remove">&#x1f5d1;</span>
+            <span class="btn-dc" :title="language.data.cm5" @click="remove">&#x1f5d1;</span>
         </td>
     </tr>
     <tr v-show="show">
@@ -71,8 +71,8 @@ export default {
                 this.eventHub.emit("show-msg", this.errorParser(e));
             }
         },
-        async remove() {
-            if (confirm(this.language.data.iv10 + this.note.name + "?")) {
+        async remove(event, mass) {
+            if (mass || confirm(this.language.data.iv10 + this.note.name + "?")) {
                 this.eventHub.emit("show-msg", "");
                 try {
                     const token = await this.tokenProvider.getToken();
@@ -95,8 +95,8 @@ export default {
                 }
             }
         },
-        async restore() {
-            if (confirm(this.language.data.cm7 + " " + this.note.name + "?")) {
+        async restore(event, mass) {
+            if (mass || confirm(this.language.data.cm7 + " " + this.note.name + "?")) {
                 this.eventHub.emit("show-msg", "");
                 try {
                     const token = await this.tokenProvider.getToken();
@@ -119,7 +119,25 @@ export default {
                     this.eventHub.emit("show-msg", this.errorParser(e));
                 }
             }
+        },
+        removeNotes(notes) {
+            if (notes.includes(this.note.id)) {
+                this.remove(null, true);
+            }
+        },
+        restoreNotes(notes) {
+            if (notes.includes(this.note.id)) {
+                this.restore(null, true);
+            }
         }
+    },
+    mounted() {
+        this.eventHub.on("remove-notes", this.removeNotes);
+        this.eventHub.on("restore-notes", this.restoreNotes);
+    },
+    beforeUnmount() {
+        this.eventHub.off("remove-notes", this.removeNotes);
+        this.eventHub.off("restore-notes", this.restoreNotes);
     }
 }
 </script>

@@ -1,19 +1,52 @@
 <template>
-    <div>
-        <div class="decor">
-            {{ pwd.name }} &nbsp;
+    <tr>
+        <td>
+            <input type="checkbox" :value="pwd.id" v-model="$parent.$data.checkedPass">
+        </td>
+        <td>
             <span class="btn-dc" @click="toggle" :title="language.data.cm1">&#x1f441;</span>
-            <span class="btn-dc float-right" :title="language.data.cm5" @click="remove">&#x1f5d1;</span>
-            <div class="btn-dc float-right text-success" :title="language.data.cm7" @click="restore">&#x21ba;</div>
-        </div>
-        <input class="form-control" v-show="show" v-model="login" readonly>
-        <div v-show="show" style="display: flex">
-            <div class="btn-st fs" @click="loadPwdBody" :title="language.data.cm1">&#x1f441;</div>
-            <div class="btn-st" :title="language.data.cm6" @click="pwdToClipboard">&#x1f4cb;</div>
-            <input class="form-control er" v-model="pass" readonly placeholder="******">
-        </div>
-        <textarea class="form-control" rows="4" readonly v-show="show" v-model="note"></textarea>
-    </div>
+        </td>
+        <td>{{ pwd.name }}</td>
+        <td>{{ pwd.createdDate }}</td>
+        <td>{{ pwd.createdBy }}</td>
+        <td>{{ pwd.editedDate }}</td>
+        <td>{{ pwd.editedBy }}</td>
+        <td>{{ pwd.deletedDate }}</td>
+        <td>{{ pwd.deletedBy }}</td>
+        <td>
+            <span class="btn-dc text-success" :title="language.data.cm7" @click="restore">&#x21ba;</span>
+        </td>
+        <td>
+            <span class="btn-dc" :title="language.data.cm5" @click="remove">&#x1f5d1;</span>
+        </td>
+    </tr>
+    <tr v-show="show">
+        <td colspan="15">
+            <input class="form-control" v-model="login" readonly>
+            <div style="display: flex">
+                <div class="btn-st fs" @click="loadPwdBody" :title="language.data.cm1">&#x1f441;</div>
+                <div class="btn-st" :title="language.data.cm6" @click="pwdToClipboard">&#x1f4cb;</div>
+                <input class="form-control er" v-model="pass" readonly placeholder="******">
+            </div>
+            <textarea class="form-control" rows="4" readonly v-model="note"></textarea>
+        </td>
+    </tr>
+
+<!--    <div>-->
+<!--        <div class="decor">-->
+<!--            {{ pwd.name }} &nbsp;-->
+<!--            <span class="btn-dc" @click="toggle" :title="language.data.cm1">&#x1f441;</span>-->
+<!--            <span class="btn-dc float-right" :title="language.data.cm5" @click="remove">&#x1f5d1;</span>-->
+<!--            <div class="btn-dc float-right text-success" :title="language.data.cm7" @click="restore">&#x21ba;</div>-->
+<!--        </div>-->
+<!--        <input class="form-control" v-show="show" v-model="login" readonly>-->
+<!--        <div v-show="show" style="display: flex">-->
+<!--            <div class="btn-st fs" @click="loadPwdBody" :title="language.data.cm1">&#x1f441;</div>-->
+<!--            <div class="btn-st" :title="language.data.cm6" @click="pwdToClipboard">&#x1f4cb;</div>-->
+<!--            <input class="form-control er" v-model="pass" readonly placeholder="******">-->
+<!--        </div>-->
+<!--        <textarea class="form-control" rows="4" readonly v-show="show" v-model="note"></textarea>-->
+<!--    </div>-->
 </template>
 
 <script>
@@ -22,6 +55,7 @@ export default {
     props: {
         pwd: Object
     },
+    emits: ['update-items'],
     data() {
         return {
             language: this.$root.$data.language,
@@ -107,8 +141,8 @@ export default {
                 this.eventHub.emit("show-msg", this.errorParser(e));
             }
         },
-        async remove() {
-            if (confirm(this.language.data.cm5 + " " + this.pwd.name + "?")) {
+        async remove(event, mass) {
+            if (mass || confirm(this.language.data.cm5 + " " + this.pwd.name + "?")) {
                 this.eventHub.emit("show-msg", "");
                 try {
                     const token = await this.tokenProvider.getToken();
@@ -131,8 +165,8 @@ export default {
                 }
             }
         },
-        async restore() {
-            if (confirm(this.language.data.cm7 + " " + this.pwd.name + "?")) {
+        async restore(event, mass) {
+            if (mass || confirm(this.language.data.cm7 + " " + this.pwd.name + "?")) {
                 this.eventHub.emit("show-msg", "");
                 try {
                     const token = await this.tokenProvider.getToken();
@@ -158,29 +192,40 @@ export default {
         },
         clearPwd() {
             this.pass = "";
+        },
+        removePass(pass) {
+            if (pass.includes(this.pwd.id)) {
+                this.remove(null, true);
+            }
+        },
+        restorePass(pass) {
+            if (pass.includes(this.pwd.id)) {
+                this.restore(null, true);
+            }
         }
+    },
+    mounted() {
+        this.eventHub.on("remove-passwords", this.removePass);
+        this.eventHub.on("restore-passwords", this.restorePass);
+    },
+    beforeUnmount() {
+        this.eventHub.off("remove-passwords", this.removePass);
+        this.eventHub.off("restore-passwords", this.restorePass);
     }
 }
 </script>
 
 <style scoped>
-.decor {
-    white-space: nowrap;
-    border: 2px solid #ffab03;
-    border-radius: 10px;
-    padding-left: 5px;
-}
-
 .btn-dc {
     cursor: pointer;
     user-select: none;
+    padding-left: 2px;
+    padding-right: 2px;
 }
 
 .btn-dc:hover {
     background-color: darkgray;
     border-radius: 4px;
-    padding-left: 2px;
-    padding-right: 2px;
 }
 
 .btn-st {

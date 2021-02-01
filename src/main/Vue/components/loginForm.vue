@@ -5,7 +5,7 @@
                 {{ message }}
             </div>
             <div class="form-group">
-                <input type="text" class="form-control" :placeholder="language.data.lf1" v-model="login">
+                <input type="text" class="form-control" :placeholder="language.data.lf1" v-model="login" autofocus>
             </div>
             <div class="form-group">
                 <input type="password" class="form-control" :placeholder="language.data.lf2" v-model="password" @keypress.enter="doLogin">

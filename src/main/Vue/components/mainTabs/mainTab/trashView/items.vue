@@ -2,9 +2,8 @@
     <div>
         <div class="decor" @click="showNotes = !showNotes">
             {{ items.notes.length }} {{ language.data.iv7 }}
-            <span class="btn-dc text-success" :title="language.data.cm7" @click="">&#x21ba;</span>
-            <span class="btn-dc" :title="language.data.cm5" @click="">&#x1f5d1;</span>
-<!--            TODO mass delete-->
+            <span class="btn-dc text-success" :title="language.data.cm7" @click.stop="restoreNotes">&#x21ba;</span>
+            <span class="btn-dc" :title="language.data.cm5" @click.stop="removeNotes">&#x1f5d1;</span>
         </div>
         <div v-show="showNotes">
             <table class="table table-bordered table-striped table-sm">
@@ -31,10 +30,35 @@
                 </tbody>
             </table>
         </div>
-        <div class="decor" @click="showPass = !showPass">{{ items.passwords.length }} {{ language.data.iv8 }}</div>
+        <div class="decor" @click="showPass = !showPass">
+            {{ items.passwords.length }} {{ language.data.iv8 }}
+            <span class="btn-dc text-success" :title="language.data.cm7" @click.stop="restorePass">&#x21ba;</span>
+            <span class="btn-dc" :title="language.data.cm5" @click.stop="removePass">&#x1f5d1;</span>
+        </div>
         <div v-show="showPass">
-            <pwd-view v-for="pwd in items.passwords" :pwd="pwd" @update-items="getItems"
-                      :key="'DP' + pwd.id"></pwd-view>
+            <table class="table table-bordered table-striped table-sm">
+                <thead class="tab-header-area">
+                <tr>
+                    <th><input type="checkbox" @change="checkToggle($event.target.checked, 'pass')"></th>
+                    <th></th>
+                    <th>
+                        <button class="btn btn-sm btn-link" @click="setPwdSort('name')">{{ language.data.div1 }}</button>
+                    </th>
+                    <th><button class="btn btn-sm btn-link" @click="setPwdSort('createdDate')">{{ language.data.div2 }}</button></th>
+                    <th><button class="btn btn-sm btn-link" @click="setPwdSort('createdBy')">{{ language.data.div3 }}</button></th>
+                    <th><button class="btn btn-sm btn-link" @click="setPwdSort('editedDate')">{{ language.data.div4 }}</button></th>
+                    <th><button class="btn btn-sm btn-link" @click="setPwdSort('editedBy')">{{ language.data.div5 }}</button></th>
+                    <th><button class="btn btn-sm btn-link" @click="setPwdSort('deletedDate')">{{ language.data.div6 }}</button></th>
+                    <th><button class="btn btn-sm btn-link" @click="setPwdSort('deletedBy')">{{ language.data.div7 }}</button></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                    <pwd-view v-for="pwd in items.passwords" :pwd="pwd" @update-items="getItems"
+                          :key="'DP' + pwd.id"></pwd-view>
+                </tbody>
+            </table>
         </div>
     </div>
 </template>
@@ -61,7 +85,8 @@ export default {
             showPass: true,
             sortNotes: new Sort("name", "desc"),
             sortPwd: new Sort("name", "desc"),
-            checkedNotes: []
+            checkedNotes: [],
+            checkedPass: []
         }
     },
     watch: {
@@ -99,7 +124,12 @@ export default {
                     })
                 }
             } else {
-                //TODO passwords
+                this.checkedPass = [];
+                if (checked) {
+                    this.items.passwords.forEach(pwd => {
+                        this.checkedPass.push(pwd.id);
+                    })
+                }
             }
         },
         setNotesSort(field) {
@@ -107,7 +137,28 @@ export default {
             this.getItems();
         },
         setPwdSort(field) {
-            //TODO
+            this.sortPwd.setField(field);
+            this.getItems();
+        },
+        removeNotes() {
+            if (this.checkedNotes.length && confirm(this.language.data.di7)) {
+                this.eventHub.emit("remove-notes", this.checkedNotes);
+            }
+        },
+        restoreNotes() {
+            if (this.checkedNotes.length && confirm(this.language.data.di6)) {
+                this.eventHub.emit("restore-notes", this.checkedNotes);
+            }
+        },
+        removePass() {
+            if (this.checkedPass.length && confirm(this.language.data.di9)) {
+                this.eventHub.emit("remove-passwords", this.checkedPass);
+            }
+        },
+        restorePass() {
+            if (this.checkedPass.length && confirm(this.language.data.di8)) {
+                this.eventHub.emit("restore-passwords", this.checkedPass);
+            }
         }
     },
     mounted() {
