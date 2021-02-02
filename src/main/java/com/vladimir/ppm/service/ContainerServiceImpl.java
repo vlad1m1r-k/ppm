@@ -268,8 +268,9 @@ public class ContainerServiceImpl implements ContainerService {
         String notesSortField = sortNotes.substring(0, sortNotes.indexOf(","));
         Sort.Direction notesSortDirection = Sort.Direction.fromString(sortNotes.substring(sortNotes.indexOf(",") + 1));
         List<Note> deletedNotes = noteRepository.getAllByParentAndDeleted(container, true, Sort.by(notesSortDirection, notesSortField));
-        Set<Password> deletedPasswords = passwordRepository.getAllByParentAndDeleted(container, true);
-        //TODO sort password implement
+        String pwdSortField = sortPwd.substring(0, sortPwd.indexOf(","));
+        Sort.Direction pwdSortDirection = Sort.Direction.fromString(sortPwd.substring(sortPwd.indexOf(",") + 1));
+        List<Password> deletedPasswords = passwordRepository.getAllByParentAndDeleted(container, true, Sort.by(pwdSortDirection, pwdSortField));
         return ContainerDto.builder()
                 .id(containerId)
                 .notes(deletedNotes.stream().map(n -> NoteDto.builder()
@@ -333,16 +334,49 @@ public class ContainerServiceImpl implements ContainerService {
                 }
             }
         }
-        List<NoteDto> notes = container.getNotes().stream()
-                .filter(n -> !n.isDeleted())
-                .map(n -> NoteDto.builder().id(n.getId()).name(n.getName()).build())
-                .sorted(Comparator.comparing(NoteDto::getName))
-                .collect(Collectors.toList());
-        List<PasswordDto> passwords = container.getPasswords().stream()
-                .filter(p -> !p.isDeleted())
-                .map(p -> PasswordDto.builder().id(p.getId()).name(p.getName()).build())
-                .sorted(Comparator.comparing(PasswordDto::getName))
-                .collect(Collectors.toList());
+        List<NoteDto> notes;
+        List<PasswordDto> passwords;
+        if (access == Access.RW) {
+            notes = container.getNotes().stream()
+                    .filter(n -> !n.isDeleted())
+                    .map(n -> NoteDto.builder()
+                            .id(n.getId())
+                            .name(n.getName())
+                            .createdDate(n.getCreatedDate())
+                            .createdBy(n.getCreatedBy())
+                            .editedDate(n.getEditedDate())
+                            .editedBy(n.getEditedBy())
+                            .deletedDate(n.getDeletedDate())
+                            .deletedBy(n.getDeletedBy())
+                            .build())
+                    .sorted(Comparator.comparing(NoteDto::getName))
+                    .collect(Collectors.toList());
+            passwords = container.getPasswords().stream()
+                    .filter(p -> !p.isDeleted())
+                    .map(p -> PasswordDto.builder()
+                            .id(p.getId())
+                            .name(p.getName())
+                            .createdDate(p.getCreatedDate())
+                            .createdBy(p.getCreatedBy())
+                            .editedDate(p.getEditedDate())
+                            .editedBy(p.getEditedBy())
+                            .deletedDate(p.getDeletedDate())
+                            .deletedBy(p.getDeletedBy())
+                            .build())
+                    .sorted(Comparator.comparing(PasswordDto::getName))
+                    .collect(Collectors.toList());
+        } else {
+            notes = container.getNotes().stream()
+                    .filter(n -> !n.isDeleted())
+                    .map(n -> NoteDto.builder().id(n.getId()).name(n.getName()).build())
+                    .sorted(Comparator.comparing(NoteDto::getName))
+                    .collect(Collectors.toList());
+            passwords = container.getPasswords().stream()
+                    .filter(p -> !p.isDeleted())
+                    .map(p -> PasswordDto.builder().id(p.getId()).name(p.getName()).build())
+                    .sorted(Comparator.comparing(PasswordDto::getName))
+                    .collect(Collectors.toList());
+        }
         return ContainerDto.builder()
                 .id(container.getId())
                 .name(container.getName())

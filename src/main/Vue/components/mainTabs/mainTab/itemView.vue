@@ -36,7 +36,6 @@
                 <note-view v-for="note in item.notes" :note="note" :access="item.access" :key="'N' + note.id"></note-view>
                 {{ language.data.iv8 }} <br>
                 <pwd-view v-for="pwd in item.passwords" :pwd="pwd" :access="item.access" :key="'P' + pwd.id"></pwd-view>
-<!--                TODO show info about items-->
             </div>
         </div>
     </div>

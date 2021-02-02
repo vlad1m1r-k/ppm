@@ -13,6 +13,7 @@
             <textarea class="form-control" rows="3" v-model="key"></textarea>
             <button class="btn btn-sm btn-warning" @click="sendKey" :disabled="!key">{{ language.data.db9 }}</button>
         </div>
+<!--        TODO Load key from file-->
     </div>
 </template>
 
