@@ -51,6 +51,7 @@
     "db8": "Save the key! <br> You will have to input the key after the server rebooted. <br> You will lose your data if the key is lost.",
     "db9": "Send",
     "db10": "Incorrect database encryption key",
+    "db11": "Load from file",
     "us1": "Users",
     "di1": "Deleted items",
     "di2": "Containers",

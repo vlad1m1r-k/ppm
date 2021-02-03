@@ -19,7 +19,6 @@
         </div>
         <textarea class="form-control" rows="4" :readonly="!edit" v-show="show" v-model="note"></textarea>
     </div>
-<!--    TODO Show info about-->
 </template>
 
 <script>

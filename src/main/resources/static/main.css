@@ -37,7 +37,7 @@ ul[data-v-8ef25f0e] {
 }
 .info-box[data-v-69401c40] {
     margin-left: 15px;
-    padding: 0;
+    padding: 10px;
     display: inline;
     position: absolute;
     z-index: 1000000;
@@ -47,6 +47,7 @@ ul[data-v-8ef25f0e] {
     "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
     border-radius: 4px;
+    user-select: none;
 }
 
 

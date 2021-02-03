@@ -65,8 +65,8 @@ public class CryptoProviderImpl implements CryptoProvider {
             tokenAESKey = new SecretKeySpec(aesKey, "AES");
 
             //TODO remove it
-            byte[] dbKey = {25, 126, -91, 78, 87, 110, -25, -27, 6, 121, 44, 96, -63, 17, 32, -69, -29, -8, 51, -12, 80, -44, 61, 108, 120, 36, -55, -86, 2, -117, -119, -123};
-            dbAESKey = new SecretKeySpec(dbKey, "AES");
+//            byte[] dbKey = {25, 126, -91, 78, 87, 110, -25, -27, 6, 121, 44, 96, -63, 17, 32, -69, -29, -8, 51, -12, 80, -44, 61, 108, 120, 36, -55, -86, 2, -117, -119, -123};
+//            dbAESKey = new SecretKeySpec(dbKey, "AES");
 
         } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
             e.printStackTrace();

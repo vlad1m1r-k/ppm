@@ -12,8 +12,9 @@
         <div v-if="status === 'NEED_KEY'">
             <textarea class="form-control" rows="3" v-model="key"></textarea>
             <button class="btn btn-sm btn-warning" @click="sendKey" :disabled="!key">{{ language.data.db9 }}</button>
+            <button class="btn btn-sm btn-secondary" @click="$refs.file.click()">{{ language.data.db11 }}</button>
+            <input type="file" style="display: none" ref="file" @change="loadFile">
         </div>
-<!--        TODO Load key from file-->
     </div>
 </template>
 
@@ -25,7 +26,8 @@ export default {
             tokenProvider: this.$root.$data.tokenProvider,
             language: this.$root.$data.language,
             status: null,
-            key: null
+            key: null,
+            file: null
         }
     },
     computed: {
@@ -95,6 +97,10 @@ export default {
             } catch (e) {
                 this.eventHub.emit("show-msg", this.errorParser(e));
             }
+        },
+        loadFile() {
+            console.log(this.$refs.file.value)
+            //TODO
         }
     },
     mounted() {

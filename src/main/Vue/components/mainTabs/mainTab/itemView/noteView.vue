@@ -13,7 +13,6 @@
         <input class="form-control" v-show="show && edit" v-model="name">
         <textarea class="form-control" rows="4" :readonly="!edit" v-show="show" v-model="text"></textarea>
     </div>
-    <!--    TODO Show info about-->
 </template>
 
 <script>
