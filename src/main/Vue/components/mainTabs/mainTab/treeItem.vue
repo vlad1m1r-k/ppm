@@ -12,7 +12,6 @@
                        @item-select="$emit('item-select', $event)" :key="'TREE' + child.id"></tree-item>
         </li>
     </ul>
-<!--    TODO Delete item name restrictions-->
 </template>
 
 <script>

@@ -4,7 +4,8 @@ import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.dto.ContainerDto;
 import com.vladimir.ppm.dto.MessageDto;
 import com.vladimir.ppm.dto.PasswordDto;
-import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 public interface ContainerService {
     ContainerDto getTree(Token token);
@@ -24,4 +25,5 @@ public interface ContainerService {
     ContainerDto getDeletedItems(Token token, long containerId, String sortNotes, String sortPwd);
     MessageDto restoreNote(Token token, long noteId);
     MessageDto restorePasswd(Token token, long pwdId);
+    List<ContainerDto> getDeletedContainers(Token token, String sort);
 }

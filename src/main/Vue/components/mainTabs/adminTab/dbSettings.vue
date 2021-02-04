@@ -99,8 +99,13 @@ export default {
             }
         },
         loadFile() {
-            console.log(this.$refs.file.value)
-            //TODO
+            if (this.$refs.file.files && this.$refs.file.files[0]) {
+                const reader = new FileReader();
+                reader.addEventListener('load', (data) => {
+                    this.key = data.target.result;
+                });
+                reader.readAsText(this.$refs.file.files[0], 'UTF-8');
+            }
         }
     },
     mounted() {

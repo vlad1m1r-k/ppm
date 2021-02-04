@@ -11,7 +11,6 @@ import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.Base64;
 
 @Service
@@ -56,7 +55,8 @@ public class SettingsServiceImpl implements SettingsService {
     @Transactional(readOnly = true)
     public MessageDto installDbKey(Token token, String key) {
         if (userService.isAdmin(token) && getDbStatus() == DbStatus.NEED_KEY) {
-            JSONObject json = new JSONObject(new String(Base64.getDecoder().decode(key.replaceAll("\n", ""))));
+            JSONObject json = new JSONObject(new String(Base64.getDecoder()
+                    .decode(key.replaceAll("\n", "").replaceAll("\r", ""))));
             long id = json.getLong("id");
             Byte[] dbKey = json.getJSONArray("key").toList().stream().map(o -> Byte.valueOf(String.valueOf(o))).toArray(Byte[]::new);
             Settings settings = settingsRepository.getOne(1L);

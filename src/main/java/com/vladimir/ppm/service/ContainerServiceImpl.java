@@ -18,14 +18,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 @Service
@@ -59,12 +56,13 @@ public class ContainerServiceImpl implements ContainerService {
         Container container = containerRepository.getOne(itemId);
         Container cntMoveTo = containerRepository.getOne(moveToId);
         if (getAccess(container, userService.getGroups(token)) != Access.RW || getAccess(cntMoveTo, userService.getGroups(token)) != Access.RW
-                || container.getName().equals("root") || container.equals(cntMoveTo) || cntMoveTo.getChildren().contains(container)
-                || container.isDeleted() || cntMoveTo.isDeleted()) {
+                || container.getName().equals("root") || container.equals(cntMoveTo) || container.isDeleted() || cntMoveTo.isDeleted()) {
             return MessageDto.builder().message("cfe1").build();
         }
         container.getParent().getChildren().remove(container);
         container.setParent(cntMoveTo);
+        container.setEditedBy(token.getLogin());
+        container.setEditedDate(new Date());
         cntMoveTo.addChild(container);
         return MessageDto.builder().build();
     }
@@ -74,10 +72,7 @@ public class ContainerServiceImpl implements ContainerService {
     public MessageDto add(Token token, long parentId, String name) {
         Container parent = containerRepository.getOne(parentId);
         if (getAccess(parent, userService.getGroups(token)) == Access.RW && name.length() > 0 && !parent.isDeleted()) {
-            Container container = new Container(name, parent);
-            if (parent.getChildren().contains(container)) {
-                return MessageDto.builder().message("ive1").build();
-            }
+            Container container = new Container(name, parent, token.getLogin());
             container.setGroupsRO(new HashSet<>(parent.getGroupsRO()));
             container.setGroupsRW(new HashSet<>(parent.getGroupsRW()));
             container = containerRepository.save(container);
@@ -95,8 +90,9 @@ public class ContainerServiceImpl implements ContainerService {
             return MessageDto.builder().message("ive2").build();
         }
         container.getParent().getChildren().remove(container);
+        container.setDeletedBy(token.getLogin());
+        container.setDeletedDate(new Date());
         container.setDeleted(true);
-        container.setName(container.getName() + "_Deleted_By_" + token.getLogin() + "_" + new Date());
         return MessageDto.builder().build();
     }
 
@@ -108,11 +104,8 @@ public class ContainerServiceImpl implements ContainerService {
                 || getAccess(container, userService.getGroups(token)) != Access.RW) {
             return MessageDto.builder().message("ive3").build();
         }
-        for (Container child : container.getParent().getChildren()) {
-            if (child.getName().equals(name)) {
-                return MessageDto.builder().message("ive1").build();
-            }
-        }
+        container.setEditedBy(token.getLogin());
+        container.setEditedDate(new Date());
         container.setName(name);
         return MessageDto.builder().build();
     }
@@ -320,12 +313,36 @@ public class ContainerServiceImpl implements ContainerService {
         return MessageDto.builder().build();
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<ContainerDto> getDeletedContainers(Token token, String sort) {
+        if (cryptoProvider.isSystemClosed() || !userService.isAdmin(token)) {
+            return new ArrayList<>();
+        }
+        String sortField = sort.substring(0, sort.indexOf(","));
+        Sort.Direction sortDirection = Sort.Direction.fromString(sort.substring(sort.indexOf(",") + 1));
+        List<Container> deletedContainers = containerRepository.getAllByDeleted(true, Sort.by(sortDirection, sortField));
+        return deletedContainers.stream().map(c -> ContainerDto.builder()
+                .id(c.getId())
+                .name(containerPathBuilder(c))
+                .notes(c.getNotes().stream().map(n -> NoteDto.builder().name(n.getName()).build()).collect(Collectors.toList()))
+                .passwords(c.getPasswords().stream().map(p -> PasswordDto.builder().name(p.getName()).build()).collect(Collectors.toList()))
+                .createdDate(c.getCreatedDate())
+                .createdBy(c.getCreatedBy())
+                .editedDate(c.getEditedDate())
+                .editedBy(c.getEditedBy())
+                .deletedDate(c.getDeletedDate())
+                .deletedBy(c.getDeletedBy())
+                .build())
+                .collect(Collectors.toList());
+    }
+
     private ContainerDto buildTree(Container container, Set<Group> groups) {
         Access access = getAccess(container, groups);
         if (access == Access.NA || container.isDeleted()) {
             return ContainerDto.builder().build();
         }
-        Set<ContainerDto> children = new TreeSet<>();
+        List<ContainerDto> children = new ArrayList<>();
         if (!container.getChildren().isEmpty()) {
             for (Container childContainer : container.getChildren()) {
                 ContainerDto childDto = buildTree(childContainer, groups);
@@ -334,6 +351,7 @@ public class ContainerServiceImpl implements ContainerService {
                 }
             }
         }
+        children.sort(Comparator.comparing(ContainerDto::getName));
         List<NoteDto> notes;
         List<PasswordDto> passwords;
         if (access == Access.RW) {
@@ -399,5 +417,12 @@ public class ContainerServiceImpl implements ContainerService {
             }
         }
         return Access.NA;
+    }
+
+    private String containerPathBuilder(Container container) {
+        if (container.getParent() != null) {
+            return containerPathBuilder(container.getParent()) + "/" + container.getName();
+        }
+        return container.getName();
     }
 }

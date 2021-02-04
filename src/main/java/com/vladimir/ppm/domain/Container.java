@@ -8,6 +8,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -19,6 +20,12 @@ public class Container {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    private Date createdDate;
+    private String createdBy;
+    private Date editedDate;
+    private String editedBy;
+    private Date deletedDate;
+    private String deletedBy;
     private boolean deleted = false;
 
     @ManyToOne
@@ -42,9 +49,11 @@ public class Container {
     public Container() {
     }
 
-    public Container(String name, Container parent) {
+    public Container(String name, Container parent, String createdBy) {
         this.name = name;
         this.parent = parent;
+        this.createdBy = createdBy;
+        createdDate = new Date();
     }
 
     public Long getId() {
@@ -79,6 +88,30 @@ public class Container {
         return passwords;
     }
 
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public Date getEditedDate() {
+        return editedDate;
+    }
+
+    public String getEditedBy() {
+        return editedBy;
+    }
+
+    public Date getDeletedDate() {
+        return deletedDate;
+    }
+
+    public String getDeletedBy() {
+        return deletedBy;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -97,6 +130,22 @@ public class Container {
 
     public void setGroupsRW(Set<Group> groupsRW) {
         this.groupsRW = groupsRW;
+    }
+
+    public void setEditedDate(Date editedDate) {
+        this.editedDate = editedDate;
+    }
+
+    public void setEditedBy(String editedBy) {
+        this.editedBy = editedBy;
+    }
+
+    public void setDeletedDate(Date deletedDate) {
+        this.deletedDate = deletedDate;
+    }
+
+    public void setDeletedBy(String deletedBy) {
+        this.deletedBy = deletedBy;
     }
 
     public boolean isDeleted() {
@@ -129,11 +178,11 @@ public class Container {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Container container = (Container) o;
-        return name.equals(container.name);
+        return id.equals(container.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name);
+        return Objects.hash(id);
     }
 }

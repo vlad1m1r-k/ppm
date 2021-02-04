@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 @RequestMapping("/container")
@@ -316,6 +317,22 @@ public class ContainerRestController {
             if (decryptedToken != null) {
                 MessageDto message = containerService.restorePasswd(decryptedToken, pwdId);
                 return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/getDeletedContainers")
+    public CryptoDto getDeletedContainers(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+        if (validatorService.validateCrypto(key, data)) {
+            JSONObject json = new JSONObject(cryptoProvider.decrypt(key, data));
+            String publicKeyPEM = json.getString("publicKey");
+            String token = json.getString("token");
+            String sort = json.getString("sort");
+            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            if (decryptedToken != null) {
+                List<ContainerDto> containers = containerService.getDeletedContainers(decryptedToken, sort);
+                return cryptoProvider.encrypt(publicKeyPEM, new JSONObject(containers).toString());
             }
         }
         return null;

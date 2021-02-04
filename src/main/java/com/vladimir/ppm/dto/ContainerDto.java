@@ -3,16 +3,22 @@ package com.vladimir.ppm.dto;
 import com.vladimir.ppm.domain.Access;
 import org.json.JSONObject;
 
+import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
-public class ContainerDto implements Comparable<ContainerDto>{
+public class ContainerDto {
     private final Long id;
     private final String name;
-    private final Set<ContainerDto> children;
+    private final List<ContainerDto> children;
     private final List<NoteDto> notes;
     private final List<PasswordDto> passwords;
     private final Access access;
+    private final String createdDate;
+    private final String createdBy;
+    private final String editedDate;
+    private final String editedBy;
+    private final String deletedDate;
+    private final String deletedBy;
 
     private ContainerDto(Builder builder) {
         this.id = builder.id;
@@ -21,6 +27,12 @@ public class ContainerDto implements Comparable<ContainerDto>{
         this.notes = builder.notes;
         this.passwords = builder.passwords;
         this.access = builder.access;
+        this.createdDate = builder.createdDate;
+        this.createdBy = builder.createdBy;
+        this.editedDate = builder.editedDate;
+        this.editedBy = builder.editedBy;
+        this.deletedDate = builder.deletedDate;
+        this.deletedBy = builder.deletedBy;
     }
 
     public Long getId() {
@@ -31,7 +43,7 @@ public class ContainerDto implements Comparable<ContainerDto>{
         return name;
     }
 
-    public Set<ContainerDto> getChildren() {
+    public List<ContainerDto> getChildren() {
         return children;
     }
 
@@ -47,6 +59,30 @@ public class ContainerDto implements Comparable<ContainerDto>{
         return access;
     }
 
+    public String getCreatedDate() {
+        return createdDate;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public String getEditedDate() {
+        return editedDate;
+    }
+
+    public String getEditedBy() {
+        return editedBy;
+    }
+
+    public String getDeletedDate() {
+        return deletedDate;
+    }
+
+    public String getDeletedBy() {
+        return deletedBy;
+    }
+
     public String toJson() {
         return new JSONObject(this).toString();
     }
@@ -55,18 +91,19 @@ public class ContainerDto implements Comparable<ContainerDto>{
         return new Builder();
     }
 
-    @Override
-    public int compareTo(ContainerDto cntDto) {
-        return this.name.compareTo(cntDto.getName());
-    }
-
     public static class Builder {
         private Long id;
         private String name;
-        private Set<ContainerDto> children;
+        private List<ContainerDto> children;
         private List<NoteDto> notes;
         private List<PasswordDto> passwords;
         private Access access;
+        private String createdDate;
+        private String createdBy;
+        private String editedDate;
+        private String editedBy;
+        private String deletedDate;
+        private String deletedBy;
 
         public Builder id(Long id) {
             this.id = id;
@@ -78,7 +115,7 @@ public class ContainerDto implements Comparable<ContainerDto>{
             return this;
         }
 
-        public Builder children(Set<ContainerDto> children) {
+        public Builder children(List<ContainerDto> children) {
             this.children = children;
             return this;
         }
@@ -95,6 +132,36 @@ public class ContainerDto implements Comparable<ContainerDto>{
 
         public Builder access(Access access) {
             this.access = access;
+            return this;
+        }
+
+        public Builder createdDate(Date createdDate) {
+            this.createdDate = String.format("%1$tF %1$tT", createdDate);
+            return this;
+        }
+
+        public Builder createdBy(String createdBy) {
+            this.createdBy = createdBy;
+            return this;
+        }
+
+        public Builder editedDate(Date editedDate) {
+            this.editedDate = String.format("%1$tF %1$tT", editedDate);
+            return this;
+        }
+
+        public Builder editedBy(String editedBy) {
+            this.editedBy = editedBy;
+            return this;
+        }
+
+        public Builder deletedDate(Date deletedDate) {
+            this.deletedDate = String.format("%1$tF %1$tT", deletedDate);
+            return this;
+        }
+
+        public Builder deletedBy(String deletedBy) {
+            this.deletedBy = deletedBy;
             return this;
         }
 
