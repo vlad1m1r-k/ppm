@@ -1,6 +1,7 @@
 package com.vladimir.ppm.dto;
 
-import org.json.JSONObject;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class MessageDto {
     private final String message;
@@ -13,8 +14,8 @@ public class MessageDto {
         return message;
     }
 
-    public String toJson() {
-        return new JSONObject(this).toString();
+    public String toJson() throws JsonProcessingException {
+        return new ObjectMapper().writeValueAsString(this);
     }
 
     public static Builder builder() {

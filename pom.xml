@@ -24,7 +24,6 @@
         <bootstrap.version>4.5.3</bootstrap.version>
         <jquery.version>3.5.1</jquery.version>
         <bc.version>1.66</bc.version>
-        <json.version>20200518</json.version>
         <spring.crypto.version>5.4.1</spring.crypto.version>
     </properties>
 
@@ -90,11 +89,6 @@
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcpkix-jdk15on</artifactId>
             <version>${bc.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>${json.version}</version>
         </dependency>
     </dependencies>
 
