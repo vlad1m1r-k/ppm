@@ -124,11 +124,11 @@ public class ContainerRestController {
     public CryptoDto addNote(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readValue(cryptoProvider.decrypt(key, data), JsonNode.class);
-            String publicKeyPEM = json.getString("publicKey");
-            String token = json.getString("token");
-            long parentId = json.getLong("parent");
-            String name = json.getString("name");
-            String text = json.getString("text");
+            String publicKeyPEM = json.get("publicKey").textValue();
+            String token = json.get("token").textValue();
+            long parentId = json.get("parent").longValue();
+            String name = json.get("name").textValue();
+            String text = json.get("text").textValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null) {
                 MessageDto message = containerService.addNote(decryptedToken, parentId, name, text);
@@ -139,12 +139,12 @@ public class ContainerRestController {
     }
 
     @PostMapping("/getNote")
-    public CryptoDto getNote(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+    public CryptoDto getNote(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
-            JSONObject json = new JSONObject(cryptoProvider.decrypt(key, data));
-            String publicKeyPEM = json.getString("publicKey");
-            String token = json.getString("token");
-            long noteId = json.getLong("note");
+            JsonNode json = mapper.readValue(cryptoProvider.decrypt(key, data), JsonNode.class);
+            String publicKeyPEM = json.get("publicKey").textValue();
+            String token = json.get("token").textValue();
+            long noteId = json.get("note").longValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null) {
                 MessageDto message = containerService.getNote(decryptedToken, noteId);
@@ -155,14 +155,14 @@ public class ContainerRestController {
     }
 
     @PostMapping("/editNote")
-    public CryptoDto editNote(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+    public CryptoDto editNote(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
-            JSONObject json = new JSONObject(cryptoProvider.decrypt(key, data));
-            String publicKeyPEM = json.getString("publicKey");
-            String token = json.getString("token");
-            long noteId = json.getLong("note");
-            String name = json.getString("name");
-            String text = json.getString("text");
+            JsonNode json = mapper.readValue(cryptoProvider.decrypt(key, data), JsonNode.class);
+            String publicKeyPEM = json.get("publicKey").textValue();
+            String token = json.get("token").textValue();
+            long noteId = json.get("note").longValue();
+            String name = json.get("name").textValue();
+            String text = json.get("text").textValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null) {
                 MessageDto message = containerService.editNote(decryptedToken, noteId, name, text);
@@ -173,12 +173,12 @@ public class ContainerRestController {
     }
 
     @PostMapping("/removeNote")
-    public CryptoDto removeNote(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+    public CryptoDto removeNote(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
-            JSONObject json = new JSONObject(cryptoProvider.decrypt(key, data));
-            String publicKeyPEM = json.getString("publicKey");
-            String token = json.getString("token");
-            long noteId = json.getLong("note");
+            JsonNode json = mapper.readValue(cryptoProvider.decrypt(key, data), JsonNode.class);
+            String publicKeyPEM = json.get("publicKey").textValue();
+            String token = json.get("token").textValue();
+            long noteId = json.get("note").longValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null) {
                 MessageDto message = containerService.removeNote(decryptedToken, noteId);
@@ -189,16 +189,16 @@ public class ContainerRestController {
     }
 
     @PostMapping("/addPasswd")
-    public CryptoDto addPasswd(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+    public CryptoDto addPasswd(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
-            JSONObject json = new JSONObject(cryptoProvider.decrypt(key, data));
-            String publicKeyPEM = json.getString("publicKey");
-            String token = json.getString("token");
-            long parentId = json.getLong("parent");
-            String name = json.getString("name");
-            String login = json.getString("login");
-            String pass = json.getString("pass");
-            String note = json.getString("note");
+            JsonNode json = mapper.readValue(cryptoProvider.decrypt(key, data), JsonNode.class);
+            String publicKeyPEM = json.get("publicKey").textValue();
+            String token = json.get("token").textValue();
+            long parentId = json.get("parent").longValue();
+            String name = json.get("name").textValue();
+            String login = json.get("login").textValue();
+            String pass = json.get("pass").textValue();
+            String note = json.get("note").textValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null) {
                 MessageDto message = containerService.addPasswd(decryptedToken, parentId, name, login, pass, note);
@@ -209,12 +209,12 @@ public class ContainerRestController {
     }
 
     @PostMapping("/getPwdEnv")
-    public CryptoDto getPwdEnv(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+    public CryptoDto getPwdEnv(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
-            JSONObject json = new JSONObject(cryptoProvider.decrypt(key, data));
-            String publicKeyPEM = json.getString("publicKey");
-            String token = json.getString("token");
-            long pwdId = json.getLong("pwd");
+            JsonNode json = mapper.readValue(cryptoProvider.decrypt(key, data), JsonNode.class);
+            String publicKeyPEM = json.get("publicKey").textValue();
+            String token = json.get("token").textValue();
+            long pwdId = json.get("pwd").longValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null) {
                 PasswordDto passwd = containerService.getPwdEnv(decryptedToken, pwdId);
@@ -225,12 +225,12 @@ public class ContainerRestController {
     }
 
     @PostMapping("/getPwdBody")
-    public CryptoDto getPwdBody(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+    public CryptoDto getPwdBody(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
-            JSONObject json = new JSONObject(cryptoProvider.decrypt(key, data));
-            String publicKeyPEM = json.getString("publicKey");
-            String token = json.getString("token");
-            long pwdId = json.getLong("pwd");
+            JsonNode json = mapper.readValue(cryptoProvider.decrypt(key, data), JsonNode.class);
+            String publicKeyPEM = json.get("publicKey").textValue();
+            String token = json.get("token").textValue();
+            long pwdId = json.get("pwd").longValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null) {
                 PasswordDto passwd = containerService.getPwdBody(decryptedToken, pwdId);
@@ -241,16 +241,16 @@ public class ContainerRestController {
     }
 
     @PostMapping("/editPassword")
-    public CryptoDto editPassword(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+    public CryptoDto editPassword(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
-            JSONObject json = new JSONObject(cryptoProvider.decrypt(key, data));
-            String publicKeyPEM = json.getString("publicKey");
-            String token = json.getString("token");
-            long pwdId = json.getLong("pwd");
-            String name = json.getString("name");
-            String login = json.getString("login");
-            String pass = json.getString("pass");
-            String note = json.getString("note");
+            JsonNode json = mapper.readValue(cryptoProvider.decrypt(key, data), JsonNode.class);
+            String publicKeyPEM = json.get("publicKey").textValue();
+            String token = json.get("token").textValue();
+            long pwdId = json.get("pwd").longValue();
+            String name = json.get("name").textValue();
+            String login = json.get("login").textValue();
+            String pass = json.get("pass").textValue();
+            String note = json.get("note").textValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null) {
                 MessageDto message = containerService.editPassword(decryptedToken, pwdId, name, login, pass, note);
@@ -261,12 +261,12 @@ public class ContainerRestController {
     }
 
     @PostMapping("/removePassword")
-    public CryptoDto removePassword(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+    public CryptoDto removePassword(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
-            JSONObject json = new JSONObject(cryptoProvider.decrypt(key, data));
-            String publicKeyPEM = json.getString("publicKey");
-            String token = json.getString("token");
-            long pwdId = json.getLong("pwd");
+            JsonNode json = mapper.readValue(cryptoProvider.decrypt(key, data), JsonNode.class);
+            String publicKeyPEM = json.get("publicKey").textValue();
+            String token = json.get("token").textValue();
+            long pwdId = json.get("pwd").longValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null) {
                 MessageDto message = containerService.removePassword(decryptedToken, pwdId);
@@ -279,12 +279,12 @@ public class ContainerRestController {
     @PostMapping("/getDeletedItems")
     public CryptoDto getDeletedItems(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
-            JSONObject json = new JSONObject(cryptoProvider.decrypt(key, data));
-            String publicKeyPEM = json.getString("publicKey");
-            String token = json.getString("token");
-            long containerId = json.getLong("item");
-            String sortNotes = json.getString("sortNotes");
-            String sortPwd = json.getString("sortPwd");
+            JsonNode json = mapper.readValue(cryptoProvider.decrypt(key, data), JsonNode.class);
+            String publicKeyPEM = json.get("publicKey").textValue();
+            String token = json.get("token").textValue();
+            long containerId = json.get("item").longValue();
+            String sortNotes = json.get("sortNotes").textValue();
+            String sortPwd = json.get("sortPwd").textValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null) {
                 ContainerDto container = containerService.getDeletedItems(decryptedToken, containerId, sortNotes, sortPwd);
