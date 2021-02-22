@@ -295,12 +295,12 @@ public class ContainerRestController {
     }
 
     @PostMapping("/restoreNote")
-    public CryptoDto restoreNote(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+    public CryptoDto restoreNote(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
-            JSONObject json = new JSONObject(cryptoProvider.decrypt(key, data));
-            String publicKeyPEM = json.getString("publicKey");
-            String token = json.getString("token");
-            long noteId = json.getLong("noteId");
+            JsonNode json = mapper.readValue(cryptoProvider.decrypt(key, data), JsonNode.class);
+            String publicKeyPEM = json.get("publicKey").textValue();
+            String token = json.get("token").textValue();
+            long noteId = json.get("noteId").longValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null) {
                 MessageDto message = containerService.restoreNote(decryptedToken, noteId);
@@ -311,11 +311,11 @@ public class ContainerRestController {
     }
 
     @PostMapping("/restorePasswd")
-    public CryptoDto restorePasswd(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+    public CryptoDto restorePasswd(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
-            JSONObject json = new JSONObject(cryptoProvider.decrypt(key, data));
-            String publicKeyPEM = json.getString("publicKey");
-            String token = json.getString("token");
+            JsonNode json = mapper.readValue(cryptoProvider.decrypt(key, data), JsonNode.class);
+            String publicKeyPEM = json.get("publicKey").textValue();
+            String token = json.get("token").textValue();
             long pwdId = json.getLong("pwdId");
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null) {
