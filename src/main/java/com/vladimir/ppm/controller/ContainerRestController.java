@@ -316,7 +316,7 @@ public class ContainerRestController {
             JsonNode json = mapper.readValue(cryptoProvider.decrypt(key, data), JsonNode.class);
             String publicKeyPEM = json.get("publicKey").textValue();
             String token = json.get("token").textValue();
-            long pwdId = json.getLong("pwdId");
+            long pwdId = json.get("pwdId").longValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null) {
                 MessageDto message = containerService.restorePasswd(decryptedToken, pwdId);
@@ -327,12 +327,12 @@ public class ContainerRestController {
     }
 
     @PostMapping("/getDeletedContainers")
-    public CryptoDto getDeletedContainers(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+    public CryptoDto getDeletedContainers(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
-            JSONObject json = new JSONObject(cryptoProvider.decrypt(key, data));
-            String publicKeyPEM = json.getString("publicKey");
-            String token = json.getString("token");
-            String sort = json.getString("sort");
+            JsonNode json = mapper.readValue(cryptoProvider.decrypt(key, data), JsonNode.class);
+            String publicKeyPEM = json.get("publicKey").textValue();
+            String token = json.get("token").textValue();
+            String sort = json.get("sort").textValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null) {
                 List<ContainerDto> containers = containerService.getDeletedContainers(decryptedToken, sort);
