@@ -1,6 +1,7 @@
 package com.vladimir.ppm.domain;
 
-import org.json.JSONObject;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class Token {
     private final String login;
@@ -31,7 +32,7 @@ public class Token {
         return userAgent;
     }
 
-    public String toJson() {
-        return new JSONObject(this).toString();
+    public String toJson() throws JsonProcessingException {
+        return new ObjectMapper().writeValueAsString(this);
     }
 }

@@ -336,7 +336,7 @@ public class ContainerRestController {
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null) {
                 List<ContainerDto> containers = containerService.getDeletedContainers(decryptedToken, sort);
-                return cryptoProvider.encrypt(publicKeyPEM, new JSONObject(containers).toString());
+                return cryptoProvider.encrypt(publicKeyPEM, mapper.writeValueAsString(containers));
             }
         }
         return null;

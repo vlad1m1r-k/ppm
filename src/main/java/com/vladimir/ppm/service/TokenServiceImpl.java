@@ -1,5 +1,6 @@
 package com.vladimir.ppm.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.domain.User;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,7 +28,7 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public Token validateToken(String token, String remoteAddr, String userAgent) {
+    public Token validateToken(String token, String remoteAddr, String userAgent) throws JsonProcessingException {
         Token decryptedToken = cryptoProvider.decryptToken(token);
         if (decryptedToken.getLifeTime() > System.currentTimeMillis() && decryptedToken.getRemoteAddr().equals(remoteAddr) &&
                 decryptedToken.getUserAgent().equals(userAgent)) {

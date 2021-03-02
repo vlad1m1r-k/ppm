@@ -1,6 +1,7 @@
 package com.vladimir.ppm.dto;
 
-import org.json.JSONObject;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Date;
 
@@ -75,8 +76,8 @@ public class PasswordDto {
         return deletedBy;
     }
 
-    public String toJson() {
-        return new JSONObject(this).toString();
+    public String toJson() throws JsonProcessingException {
+        return new ObjectMapper().writeValueAsString(this);
     }
 
     public static Builder builder() {

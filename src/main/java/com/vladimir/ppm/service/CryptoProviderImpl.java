@@ -1,5 +1,8 @@
 package com.vladimir.ppm.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vladimir.ppm.domain.DbKey;
 import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.dto.CryptoDto;
@@ -7,7 +10,6 @@ import com.vladimir.ppm.dto.PublicKeyDto;
 import org.apache.commons.lang3.ArrayUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -65,8 +67,8 @@ public class CryptoProviderImpl implements CryptoProvider {
             tokenAESKey = new SecretKeySpec(aesKey, "AES");
 
             //TODO remove it
-            byte[] dbKey = {25, 126, -91, 78, 87, 110, -25, -27, 6, 121, 44, 96, -63, 17, 32, -69, -29, -8, 51, -12, 80, -44, 61, 108, 120, 36, -55, -86, 2, -117, -119, -123};
-            dbAESKey = new SecretKeySpec(dbKey, "AES");
+//            byte[] dbKey = {25, 126, -91, 78, 87, 110, -25, -27, 6, 121, 44, 96, -63, 17, 32, -69, -29, -8, 51, -12, 80, -44, 61, 108, 120, 36, -55, -86, 2, -117, -119, -123};
+//            dbAESKey = new SecretKeySpec(dbKey, "AES");
 
         } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
             e.printStackTrace();
@@ -107,7 +109,7 @@ public class CryptoProviderImpl implements CryptoProvider {
         }
         String aesKeyB64 = Base64.getEncoder().encodeToString(aesKey);
         String aesIvB64 = Base64.getEncoder().encodeToString(aesIv);
-        JSONObject aesKeyBundle = new JSONObject();
+        Map<String, String> aesKeyBundle = new HashMap<>();
         aesKeyBundle.put("key", aesKeyB64);
         aesKeyBundle.put("iv", aesIvB64);
         byte[] publicKeyBytes = Base64.getDecoder().decode(publicKey
@@ -121,9 +123,9 @@ public class CryptoProviderImpl implements CryptoProvider {
             PublicKey frontPublicKey = keyFactory.generatePublic(keySpec);
             Cipher rsaCipher = Cipher.getInstance(RSACIPHER, PROVIDER);
             rsaCipher.init(Cipher.ENCRYPT_MODE, frontPublicKey);
-            encryptedAesKey = rsaCipher.doFinal(aesKeyBundle.toString().getBytes());
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException | InvalidKeyException | IllegalBlockSizeException |
-                BadPaddingException | NoSuchProviderException | NoSuchPaddingException e) {
+            encryptedAesKey = rsaCipher.doFinal(new ObjectMapper().writeValueAsString(aesKeyBundle).getBytes());
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException | InvalidKeyException | IllegalBlockSizeException
+                | BadPaddingException | NoSuchProviderException | NoSuchPaddingException | JsonProcessingException e) {
             e.printStackTrace();
         }
         return CryptoDto.builder()
@@ -140,15 +142,15 @@ public class CryptoProviderImpl implements CryptoProvider {
         try {
             Cipher rsaCipher = Cipher.getInstance(RSACIPHER, PROVIDER);
             rsaCipher.init(Cipher.DECRYPT_MODE, keyPair.getPrivate());
-            JSONObject json = new JSONObject(new String(rsaCipher.doFinal(keyBytes)));
-            byte[] aesKeyBytes = Base64.getDecoder().decode(json.getString("key"));
-            byte[] aesIVBytes = Base64.getDecoder().decode(json.getString("iv"));
+            JsonNode json = new ObjectMapper().readValue(new String(rsaCipher.doFinal(keyBytes)), JsonNode.class);
+            byte[] aesKeyBytes = Base64.getDecoder().decode(json.get("key").textValue());
+            byte[] aesIVBytes = Base64.getDecoder().decode(json.get("iv").textValue());
 
             Cipher aesCipher = Cipher.getInstance(AESCIPHER, PROVIDER);
             aesCipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(aesKeyBytes, "AES"), new IvParameterSpec(aesIVBytes));
             decryptedString = new String(aesCipher.doFinal(dataBytes), StandardCharsets.UTF_8);
-        } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException |
-                NoSuchAlgorithmException | NoSuchProviderException | NoSuchPaddingException e) {
+        } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException
+                | NoSuchAlgorithmException | NoSuchProviderException | NoSuchPaddingException | JsonProcessingException e) {
             e.printStackTrace();
         }
         return decryptedString;
@@ -165,15 +167,15 @@ public class CryptoProviderImpl implements CryptoProvider {
             byte[] encryptedToken = aesCipher.doFinal(token.toJson().getBytes(StandardCharsets.UTF_8));
             encryptedToken = insertIv(iv, encryptedToken);
             encryptedB64Token = Base64.getEncoder().encodeToString(encryptedToken);
-        } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException |
-                NoSuchAlgorithmException | NoSuchProviderException | NoSuchPaddingException e) {
+        } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException
+                | NoSuchAlgorithmException | NoSuchProviderException | NoSuchPaddingException | JsonProcessingException e) {
             e.printStackTrace();
         }
         return encryptedB64Token;
     }
 
     @Override
-    public Token decryptToken(String token) {
+    public Token decryptToken(String token) throws JsonProcessingException {
         String tokenStr = "";
         Map<String, byte[]> tokenMap = extractIv(Base64.getDecoder().decode(token));
         IvParameterSpec aesIv = new IvParameterSpec(tokenMap.get("iv"));
@@ -185,8 +187,8 @@ public class CryptoProviderImpl implements CryptoProvider {
                 NoSuchAlgorithmException | NoSuchProviderException | NoSuchPaddingException e) {
             e.printStackTrace();
         }
-        JSONObject json = new JSONObject(tokenStr);
-        return new Token(json.getString("login"), json.getLong("lifeTime"), json.getString("remoteAddr"), json.getString("userAgent"));
+        JsonNode json = new ObjectMapper().readValue(tokenStr, JsonNode.class);
+        return new Token(json.get("login").textValue(), json.get("lifeTime").longValue(), json.get("remoteAddr").textValue(), json.get("userAgent").textValue());
     }
 
     @Override

@@ -1,5 +1,8 @@
 package com.vladimir.ppm.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.dto.CryptoDto;
 import com.vladimir.ppm.dto.MessageDto;
@@ -7,13 +10,13 @@ import com.vladimir.ppm.service.CryptoProvider;
 import com.vladimir.ppm.service.SettingsService;
 import com.vladimir.ppm.service.TokenService;
 import com.vladimir.ppm.service.ValidatorService;
-import org.json.JSONObject;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/settings")
@@ -32,11 +35,11 @@ public class SettingsRestController {
     }
 
     @PostMapping("/dbStatus")
-    public CryptoDto getDbStatus(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+    public CryptoDto getDbStatus(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
-            JSONObject json = new JSONObject(cryptoProvider.decrypt(key, data));
-            String token = json.getString("token");
-            String publicKeyPEM = json.getString("publicKey");
+            JsonNode json = new ObjectMapper().readValue(cryptoProvider.decrypt(key, data), JsonNode.class);
+            String token = json.get("token").textValue();
+            String publicKeyPEM = json.get("publicKey").textValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null) {
                 MessageDto status = settingsService.getDbStatus(decryptedToken);
@@ -47,11 +50,11 @@ public class SettingsRestController {
     }
 
     @PostMapping("/keyGen")
-    public CryptoDto generateKey(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+    public CryptoDto generateKey(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
-            JSONObject json = new JSONObject(cryptoProvider.decrypt(key, data));
-            String token = json.getString("token");
-            String publicKeyPEM = json.getString("publicKey");
+            JsonNode json = new ObjectMapper().readValue(cryptoProvider.decrypt(key, data), JsonNode.class);
+            String token = json.get("token").textValue();
+            String publicKeyPEM = json.get("publicKey").textValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null) {
                 MessageDto dbKey = settingsService.generateDbKey(decryptedToken);
@@ -62,12 +65,12 @@ public class SettingsRestController {
     }
 
     @PostMapping("setKey")
-    public CryptoDto setKey(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+    public CryptoDto setKey(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws IOException {
         if (validatorService.validateCrypto(key, data)) {
-            JSONObject json = new JSONObject(cryptoProvider.decrypt(key, data));
-            String token = json.getString("token");
-            String publicKeyPEM = json.getString("publicKey");
-            String dbKey = json.getString("key");
+            JsonNode json = new ObjectMapper().readValue(cryptoProvider.decrypt(key, data), JsonNode.class);
+            String token = json.get("token").textValue();
+            String publicKeyPEM = json.get("publicKey").textValue();
+            String dbKey = json.get("key").textValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null) {
                 MessageDto answer = settingsService.installDbKey(decryptedToken, dbKey);

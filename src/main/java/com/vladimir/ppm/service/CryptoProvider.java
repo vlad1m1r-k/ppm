@@ -1,5 +1,6 @@
 package com.vladimir.ppm.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.vladimir.ppm.domain.DbKey;
 import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.dto.CryptoDto;
@@ -10,7 +11,7 @@ public interface CryptoProvider {
     CryptoDto encrypt(String publicKey, String data);
     String decrypt(String key, String data);
     String encryptToken(Token token);
-    Token decryptToken(String token);
+    Token decryptToken(String token) throws JsonProcessingException;
     boolean isSystemClosed();
     DbKey generateDbKey();
     void installDbKey(byte[] key);

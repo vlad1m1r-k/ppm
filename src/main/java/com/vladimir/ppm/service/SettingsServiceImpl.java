@@ -1,16 +1,17 @@
 package com.vladimir.ppm.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vladimir.ppm.domain.DbKey;
 import com.vladimir.ppm.domain.DbStatus;
 import com.vladimir.ppm.domain.Settings;
 import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.dto.MessageDto;
 import com.vladimir.ppm.repository.SettingsRepository;
-import org.apache.commons.lang3.ArrayUtils;
-import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.Base64;
 
 @Service
@@ -53,17 +54,19 @@ public class SettingsServiceImpl implements SettingsService {
 
     @Override
     @Transactional(readOnly = true)
-    public MessageDto installDbKey(Token token, String key) {
+    public MessageDto installDbKey(Token token, String key) throws IOException {
         if (userService.isAdmin(token) && getDbStatus() == DbStatus.NEED_KEY) {
-            JSONObject json = new JSONObject(new String(Base64.getDecoder()
-                    .decode(key.replaceAll("\n", "").replaceAll("\r", ""))));
-            long id = json.getLong("id");
-            Byte[] dbKey = json.getJSONArray("key").toList().stream().map(o -> Byte.valueOf(String.valueOf(o))).toArray(Byte[]::new);
+            JsonNode json = new ObjectMapper().readValue(new String(Base64.getDecoder()
+                    .decode(key.replaceAll("\n", "").replaceAll("\r", ""))), JsonNode.class);
+            long id = json.get("id").longValue();
+            //TODO test it
+//            Byte[] dbKey = json.getJSONArray("key").toList().stream().map(o -> Byte.valueOf(String.valueOf(o))).toArray(Byte[]::new);
+            byte[] dbKey = json.get("key", byte[].class);
             Settings settings = settingsRepository.getOne(1L);
             if (settings.getEncryptionKeyId() != id) {
                 return MessageDto.builder().message("db10").build();
             }
-            cryptoProvider.installDbKey(ArrayUtils.toPrimitive(dbKey));
+            cryptoProvider.installDbKey(dbKey);
         }
         return MessageDto.builder().build();
     }
