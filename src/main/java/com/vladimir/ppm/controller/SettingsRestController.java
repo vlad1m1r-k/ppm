@@ -37,7 +37,7 @@ public class SettingsRestController {
     @PostMapping("/dbStatus")
     public CryptoDto getDbStatus(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
-            JsonNode json = new ObjectMapper().readValue(cryptoProvider.decrypt(key, data), JsonNode.class);
+            JsonNode json = new ObjectMapper().readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").textValue();
             String publicKeyPEM = json.get("publicKey").textValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
@@ -52,7 +52,7 @@ public class SettingsRestController {
     @PostMapping("/keyGen")
     public CryptoDto generateKey(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
-            JsonNode json = new ObjectMapper().readValue(cryptoProvider.decrypt(key, data), JsonNode.class);
+            JsonNode json = new ObjectMapper().readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").textValue();
             String publicKeyPEM = json.get("publicKey").textValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
@@ -67,7 +67,7 @@ public class SettingsRestController {
     @PostMapping("setKey")
     public CryptoDto setKey(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws IOException {
         if (validatorService.validateCrypto(key, data)) {
-            JsonNode json = new ObjectMapper().readValue(cryptoProvider.decrypt(key, data), JsonNode.class);
+            JsonNode json = new ObjectMapper().readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").textValue();
             String publicKeyPEM = json.get("publicKey").textValue();
             String dbKey = json.get("key").textValue();

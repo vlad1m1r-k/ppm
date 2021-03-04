@@ -38,7 +38,7 @@ public class UserRestController {
     @PostMapping("/login")
     public CryptoDto login(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
-            JsonNode json = mapper.readValue(cryptoProvider.decrypt(key, data), JsonNode.class);
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String login = json.get("login").textValue();
             String password = json.get("password").textValue();
             String publicKeyPEM = json.get("publicKey").textValue();
@@ -51,7 +51,7 @@ public class UserRestController {
     @PostMapping("/renewToken")
     public CryptoDto renewToken(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
-            JsonNode json = mapper.readValue(cryptoProvider.decrypt(key, data), JsonNode.class);
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").textValue();
             String publicKeyPEM = json.get("publicKey").textValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));

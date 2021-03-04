@@ -8,11 +8,13 @@ import com.vladimir.ppm.domain.Settings;
 import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.dto.MessageDto;
 import com.vladimir.ppm.repository.SettingsRepository;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.Base64;
+import java.util.stream.StreamSupport;
 
 @Service
 public class SettingsServiceImpl implements SettingsService {
@@ -56,17 +58,15 @@ public class SettingsServiceImpl implements SettingsService {
     @Transactional(readOnly = true)
     public MessageDto installDbKey(Token token, String key) throws IOException {
         if (userService.isAdmin(token) && getDbStatus() == DbStatus.NEED_KEY) {
-            JsonNode json = new ObjectMapper().readValue(new String(Base64.getDecoder()
-                    .decode(key.replaceAll("\n", "").replaceAll("\r", ""))), JsonNode.class);
+            JsonNode json = new ObjectMapper().readTree(new String(Base64.getDecoder()
+                    .decode(key.replaceAll("\n", "").replaceAll("\r", ""))));
             long id = json.get("id").longValue();
-            //TODO test it
-//            Byte[] dbKey = json.getJSONArray("key").toList().stream().map(o -> Byte.valueOf(String.valueOf(o))).toArray(Byte[]::new);
-            byte[] dbKey = json.get("key", byte[].class);
+            Byte[] dbKey = StreamSupport.stream(json.get("key").spliterator(), false).map(o -> Byte.valueOf(String.valueOf(o))).toArray(Byte[]::new);
             Settings settings = settingsRepository.getOne(1L);
             if (settings.getEncryptionKeyId() != id) {
                 return MessageDto.builder().message("db10").build();
             }
-            cryptoProvider.installDbKey(dbKey);
+            cryptoProvider.installDbKey(ArrayUtils.toPrimitive(dbKey));
         }
         return MessageDto.builder().build();
     }

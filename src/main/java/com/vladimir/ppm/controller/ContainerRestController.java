@@ -41,7 +41,7 @@ public class ContainerRestController {
     @PostMapping("/getTree")
     public CryptoDto getTree(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
-            JsonNode json = mapper.readValue(cryptoProvider.decrypt(key, data), JsonNode.class);
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").textValue();
             String publicKeyPEM = json.get("publicKey").textValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
@@ -56,7 +56,7 @@ public class ContainerRestController {
     @PostMapping("/move")
     public CryptoDto move(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
-            JsonNode json = mapper.readValue(cryptoProvider.decrypt(key, data), JsonNode.class);
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String publicKeyPEM = json.get("publicKey").textValue();
             String token = json.get("token").textValue();
             long itemId = json.get("item").longValue();
@@ -73,7 +73,7 @@ public class ContainerRestController {
     @PostMapping("/add")
     public CryptoDto add(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
-            JsonNode json = mapper.readValue(cryptoProvider.decrypt(key, data), JsonNode.class);
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String publicKeyPEM = json.get("publicKey").textValue();
             String token = json.get("token").textValue();
             long parentId = json.get("parent").longValue();
@@ -90,7 +90,7 @@ public class ContainerRestController {
     @PostMapping("/delete")
     public CryptoDto delete(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
-            JsonNode json = mapper.readValue(cryptoProvider.decrypt(key, data), JsonNode.class);
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String publicKeyPEM = json.get("publicKey").textValue();
             String token = json.get("token").textValue();
             long itemId = json.get("item").longValue();
@@ -106,7 +106,7 @@ public class ContainerRestController {
     @PostMapping("/rename")
     public CryptoDto rename(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
-            JsonNode json = mapper.readValue(cryptoProvider.decrypt(key, data), JsonNode.class);
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String publicKeyPEM = json.get("publicKey").textValue();
             String token = json.get("token").textValue();
             long itemId = json.get("item").longValue();
@@ -123,7 +123,7 @@ public class ContainerRestController {
     @PostMapping("/addNote")
     public CryptoDto addNote(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
-            JsonNode json = mapper.readValue(cryptoProvider.decrypt(key, data), JsonNode.class);
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String publicKeyPEM = json.get("publicKey").textValue();
             String token = json.get("token").textValue();
             long parentId = json.get("parent").longValue();
@@ -141,7 +141,7 @@ public class ContainerRestController {
     @PostMapping("/getNote")
     public CryptoDto getNote(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
-            JsonNode json = mapper.readValue(cryptoProvider.decrypt(key, data), JsonNode.class);
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String publicKeyPEM = json.get("publicKey").textValue();
             String token = json.get("token").textValue();
             long noteId = json.get("note").longValue();
@@ -157,7 +157,7 @@ public class ContainerRestController {
     @PostMapping("/editNote")
     public CryptoDto editNote(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
-            JsonNode json = mapper.readValue(cryptoProvider.decrypt(key, data), JsonNode.class);
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String publicKeyPEM = json.get("publicKey").textValue();
             String token = json.get("token").textValue();
             long noteId = json.get("note").longValue();
@@ -175,7 +175,7 @@ public class ContainerRestController {
     @PostMapping("/removeNote")
     public CryptoDto removeNote(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
-            JsonNode json = mapper.readValue(cryptoProvider.decrypt(key, data), JsonNode.class);
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String publicKeyPEM = json.get("publicKey").textValue();
             String token = json.get("token").textValue();
             long noteId = json.get("note").longValue();
@@ -191,7 +191,7 @@ public class ContainerRestController {
     @PostMapping("/addPasswd")
     public CryptoDto addPasswd(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
-            JsonNode json = mapper.readValue(cryptoProvider.decrypt(key, data), JsonNode.class);
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String publicKeyPEM = json.get("publicKey").textValue();
             String token = json.get("token").textValue();
             long parentId = json.get("parent").longValue();
@@ -211,7 +211,7 @@ public class ContainerRestController {
     @PostMapping("/getPwdEnv")
     public CryptoDto getPwdEnv(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
-            JsonNode json = mapper.readValue(cryptoProvider.decrypt(key, data), JsonNode.class);
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String publicKeyPEM = json.get("publicKey").textValue();
             String token = json.get("token").textValue();
             long pwdId = json.get("pwd").longValue();
@@ -227,7 +227,7 @@ public class ContainerRestController {
     @PostMapping("/getPwdBody")
     public CryptoDto getPwdBody(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
-            JsonNode json = mapper.readValue(cryptoProvider.decrypt(key, data), JsonNode.class);
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String publicKeyPEM = json.get("publicKey").textValue();
             String token = json.get("token").textValue();
             long pwdId = json.get("pwd").longValue();
@@ -243,7 +243,7 @@ public class ContainerRestController {
     @PostMapping("/editPassword")
     public CryptoDto editPassword(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
-            JsonNode json = mapper.readValue(cryptoProvider.decrypt(key, data), JsonNode.class);
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String publicKeyPEM = json.get("publicKey").textValue();
             String token = json.get("token").textValue();
             long pwdId = json.get("pwd").longValue();
@@ -263,7 +263,7 @@ public class ContainerRestController {
     @PostMapping("/removePassword")
     public CryptoDto removePassword(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
-            JsonNode json = mapper.readValue(cryptoProvider.decrypt(key, data), JsonNode.class);
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String publicKeyPEM = json.get("publicKey").textValue();
             String token = json.get("token").textValue();
             long pwdId = json.get("pwd").longValue();
@@ -279,7 +279,7 @@ public class ContainerRestController {
     @PostMapping("/getDeletedItems")
     public CryptoDto getDeletedItems(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
-            JsonNode json = mapper.readValue(cryptoProvider.decrypt(key, data), JsonNode.class);
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String publicKeyPEM = json.get("publicKey").textValue();
             String token = json.get("token").textValue();
             long containerId = json.get("item").longValue();
@@ -297,7 +297,7 @@ public class ContainerRestController {
     @PostMapping("/restoreNote")
     public CryptoDto restoreNote(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
-            JsonNode json = mapper.readValue(cryptoProvider.decrypt(key, data), JsonNode.class);
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String publicKeyPEM = json.get("publicKey").textValue();
             String token = json.get("token").textValue();
             long noteId = json.get("noteId").longValue();
@@ -313,7 +313,7 @@ public class ContainerRestController {
     @PostMapping("/restorePasswd")
     public CryptoDto restorePasswd(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
-            JsonNode json = mapper.readValue(cryptoProvider.decrypt(key, data), JsonNode.class);
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String publicKeyPEM = json.get("publicKey").textValue();
             String token = json.get("token").textValue();
             long pwdId = json.get("pwdId").longValue();
@@ -329,7 +329,7 @@ public class ContainerRestController {
     @PostMapping("/getDeletedContainers")
     public CryptoDto getDeletedContainers(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
-            JsonNode json = mapper.readValue(cryptoProvider.decrypt(key, data), JsonNode.class);
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String publicKeyPEM = json.get("publicKey").textValue();
             String token = json.get("token").textValue();
             String sort = json.get("sort").textValue();

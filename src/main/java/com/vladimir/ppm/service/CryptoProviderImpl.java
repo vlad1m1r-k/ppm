@@ -67,8 +67,8 @@ public class CryptoProviderImpl implements CryptoProvider {
             tokenAESKey = new SecretKeySpec(aesKey, "AES");
 
             //TODO remove it
-//            byte[] dbKey = {25, 126, -91, 78, 87, 110, -25, -27, 6, 121, 44, 96, -63, 17, 32, -69, -29, -8, 51, -12, 80, -44, 61, 108, 120, 36, -55, -86, 2, -117, -119, -123};
-//            dbAESKey = new SecretKeySpec(dbKey, "AES");
+            byte[] dbKey = {25, 126, -91, 78, 87, 110, -25, -27, 6, 121, 44, 96, -63, 17, 32, -69, -29, -8, 51, -12, 80, -44, 61, 108, 120, 36, -55, -86, 2, -117, -119, -123};
+            dbAESKey = new SecretKeySpec(dbKey, "AES");
 
         } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
             e.printStackTrace();
@@ -142,7 +142,7 @@ public class CryptoProviderImpl implements CryptoProvider {
         try {
             Cipher rsaCipher = Cipher.getInstance(RSACIPHER, PROVIDER);
             rsaCipher.init(Cipher.DECRYPT_MODE, keyPair.getPrivate());
-            JsonNode json = new ObjectMapper().readValue(new String(rsaCipher.doFinal(keyBytes)), JsonNode.class);
+            JsonNode json = new ObjectMapper().readTree(new String(rsaCipher.doFinal(keyBytes)));
             byte[] aesKeyBytes = Base64.getDecoder().decode(json.get("key").textValue());
             byte[] aesIVBytes = Base64.getDecoder().decode(json.get("iv").textValue());
 
@@ -187,7 +187,7 @@ public class CryptoProviderImpl implements CryptoProvider {
                 NoSuchAlgorithmException | NoSuchProviderException | NoSuchPaddingException e) {
             e.printStackTrace();
         }
-        JsonNode json = new ObjectMapper().readValue(tokenStr, JsonNode.class);
+        JsonNode json = new ObjectMapper().readTree(tokenStr);
         return new Token(json.get("login").textValue(), json.get("lifeTime").longValue(), json.get("remoteAddr").textValue(), json.get("userAgent").textValue());
     }
 
