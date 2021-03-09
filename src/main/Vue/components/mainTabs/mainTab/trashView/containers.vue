@@ -1,5 +1,14 @@
 <template>
-    {{containers.length}}
+    <table class="table table-bordered table-striped table-sm">
+        <thead class="tab-header-area">
+        <tr>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+    </table>
     <div v-for="cont in containers">
         {{ cont.id }}
     </div>
