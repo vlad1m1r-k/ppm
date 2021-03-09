@@ -78,7 +78,8 @@ export default {
                     const token = await this.tokenProvider.getToken();
                     const encryptedData = await cryptoProvider.encrypt({
                         token: token,
-                        note: this.note.id
+                        note: this.note.id,
+                        permanent: true
                     });
                     const answer = await $.ajax({
                         url: "/container/removeNote",

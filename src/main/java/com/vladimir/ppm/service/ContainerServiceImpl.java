@@ -153,13 +153,13 @@ public class ContainerServiceImpl implements ContainerService {
 
     @Override
     @Transactional
-    public MessageDto removeNote(Token token, long noteId) {
+    public MessageDto removeNote(Token token, long noteId, boolean permanent) {
         Note note = noteRepository.getOne(noteId);
         Container parent = note.getParent();
         if (getAccess(parent, userService.getGroups(token)) != Access.RW) {
             return MessageDto.builder().message("ive6").build();
         }
-        if (note.isDeleted()) {
+        if (note.isDeleted() && userService.isAdmin(token) && permanent) {
             noteRepository.delete(note);
         } else {
             note.setDeleted(true);
@@ -235,13 +235,13 @@ public class ContainerServiceImpl implements ContainerService {
 
     @Override
     @Transactional
-    public MessageDto removePassword(Token token, long pwdId) {
+    public MessageDto removePassword(Token token, long pwdId, boolean permanent) {
         Password password = passwordRepository.getOne(pwdId);
         Container parent = password.getParent();
         if (getAccess(parent, userService.getGroups(token)) != Access.RW) {
             return MessageDto.builder().message("ive9").build();
         }
-        if (password.isDeleted()) {
+        if (password.isDeleted() && userService.isAdmin(token) && permanent) {
             passwordRepository.delete(password);
         } else {
             password.setDeleted(true);

@@ -16,12 +16,12 @@ public interface ContainerService {
     MessageDto addNote(Token token, long parentId, String name, String text);
     MessageDto getNote(Token token, long noteId);
     MessageDto editNote(Token token, long noteId, String name, String text);
-    MessageDto removeNote(Token token, long noteId);
+    MessageDto removeNote(Token token, long noteId, boolean permanent);
     MessageDto addPasswd(Token token, long parentId, String name, String login, String passwd, String note);
     PasswordDto getPwdEnv(Token token, long pwdId);
     PasswordDto getPwdBody(Token token, long pwdId);
     MessageDto editPassword(Token token, long pwdId, String name, String login, String pass, String note);
-    MessageDto removePassword(Token token, long pwdId);
+    MessageDto removePassword(Token token, long pwdId, boolean permanent);
     ContainerDto getDeletedItems(Token token, long containerId, String sortNotes, String sortPwd);
     MessageDto restoreNote(Token token, long noteId);
     MessageDto restorePasswd(Token token, long pwdId);

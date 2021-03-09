@@ -148,7 +148,8 @@ export default {
                     const token = await this.tokenProvider.getToken();
                     const encryptedData = await cryptoProvider.encrypt({
                         token: token,
-                        pwd: this.pwd.id
+                        pwd: this.pwd.id,
+                        permanent: true
                     });
                     const answer = await $.ajax({
                         url: "/container/removePassword",

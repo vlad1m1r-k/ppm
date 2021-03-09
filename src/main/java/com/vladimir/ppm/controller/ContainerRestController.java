@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/container")
@@ -179,9 +180,10 @@ public class ContainerRestController {
             String publicKeyPEM = json.get("publicKey").textValue();
             String token = json.get("token").textValue();
             long noteId = json.get("note").longValue();
+            boolean permanent = Optional.ofNullable(json.get("permanent")).orElse(new ObjectMapper().createObjectNode().booleanNode(false)).asBoolean();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null) {
-                MessageDto message = containerService.removeNote(decryptedToken, noteId);
+                MessageDto message = containerService.removeNote(decryptedToken, noteId, permanent);
                 return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
             }
         }
@@ -267,9 +269,10 @@ public class ContainerRestController {
             String publicKeyPEM = json.get("publicKey").textValue();
             String token = json.get("token").textValue();
             long pwdId = json.get("pwd").longValue();
+            boolean permanent = Optional.ofNullable(json.get("permanent")).orElse(new ObjectMapper().createObjectNode().booleanNode(false)).asBoolean();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null) {
-                MessageDto message = containerService.removePassword(decryptedToken, pwdId);
+                MessageDto message = containerService.removePassword(decryptedToken, pwdId, permanent);
                 return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
             }
         }
