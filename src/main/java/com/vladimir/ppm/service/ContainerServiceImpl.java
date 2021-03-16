@@ -83,6 +83,16 @@ public class ContainerServiceImpl implements ContainerService {
 
     @Override
     @Transactional
+    public MessageDto restore(Token decryptedToken, long contId, long restoreToId) {
+        Container container = containerRepository.getOne(contId);
+        Container cntMoveTo = containerRepository.getOne(restoreToId);
+        if () {
+
+        }
+    }
+
+    @Override
+    @Transactional
     public MessageDto delete(Token token, long itemId) {
         Container container = containerRepository.getOne(itemId);
         if (container.isDeleted() || container.getName().equals("root") || container.getChildren().size() != 0
@@ -295,7 +305,7 @@ public class ContainerServiceImpl implements ContainerService {
     @Transactional
     public MessageDto restoreNote(Token token, long noteId) {
         if (!userService.isAdmin(token)) {
-            return MessageDto.builder().message("di4").build();
+            return MessageDto.builder().message("die1").build();
         }
         Note note = noteRepository.getOne(noteId);
         note.setDeleted(false);
@@ -306,7 +316,7 @@ public class ContainerServiceImpl implements ContainerService {
     @Transactional
     public MessageDto restorePasswd(Token token, long pwdId) {
         if (!userService.isAdmin(token)) {
-            return MessageDto.builder().message("di5").build();
+            return MessageDto.builder().message("die2").build();
         }
         Password password = passwordRepository.getOne(pwdId);
         password.setDeleted(false);

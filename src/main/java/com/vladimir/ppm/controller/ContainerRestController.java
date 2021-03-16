@@ -88,6 +88,23 @@ public class ContainerRestController {
         return null;
     }
 
+    @PostMapping("/restore")
+    public CryptoDto restore(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String publicKeyPEM = json.get("publicKey").textValue();
+            String token = json.get("token").textValue();
+            long contId = json.get("contId").longValue();
+            long restoreToId = json.get("restoreToId").longValue();
+            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            if (decryptedToken != null) {
+                MessageDto message = containerService.restore(decryptedToken, contId, restoreToId);
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
+            }
+        }
+        return null;
+    }
+
     @PostMapping("/delete")
     public CryptoDto delete(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {

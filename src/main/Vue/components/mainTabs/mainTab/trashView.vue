@@ -29,7 +29,7 @@ export default {
     data() {
         return {
             language: this.$root.$data.language,
-            currentTab: "items",
+            currentTab: "containers",
         }
     }
 }

@@ -38,8 +38,8 @@
                 <td>{{ cont.editedBy }}</td>
                 <td>{{ cont.deletedDate }}</td>
                 <td>{{ cont.deletedBy }}</td>
-                <td>restore</td>
-                <td>delete</td>
+                <td><span class="btn-dc text-success" :title="language.data.cm7" @click="restore(cont.id, cont.name)">&#x21ba;</span></td>
+                <td><span class="btn-dc" :title="language.data.cm5" @click="">&#x1f5d1;</span></td>
             </tr>
         </tbody>
     </table>
@@ -83,8 +83,33 @@ export default {
         setSort(field) {
             this.sort.setField(field);
             this.getContainers();
+        },
+        async restore(id, name) {
+            if (confirm(this.language.data.cm7 + " " + name + " " + this.language.data.cf2 + " " + this.item.name + "?")) {
+                this.eventHub.emit("show-msg", "");
+                try {
+                    const token = await this.tokenProvider.getToken();
+                    const encryptedData = await cryptoProvider.encrypt({
+                        token: token,
+                        contId: id,
+                        restoreToId: this.item.id
+                    });
+                    const answer = await $.ajax({
+                        url: "/container/restore",
+                        method: "POST",
+                        data: encryptedData
+                    });
+                    const data = cryptoProvider.decrypt(answer);
+                    if (data.message) {
+                        this.eventHub.emit("show-msg", this.language.data[data.message]);
+                    }
+                    this.getContainers();
+                    this.eventHub.emit("update-tree");
+                } catch (e) {
+                    this.eventHub.emit("show-msg", this.errorParser(e));
+                }
+            }
         }
-        //TODO restore containers
         //TODO remove containers
     },
     mounted() {
@@ -94,5 +119,15 @@ export default {
 </script>
 
 <style scoped>
+.btn-dc {
+    cursor: pointer;
+    user-select: none;
+    padding-left: 2px;
+    padding-right: 2px;
+}
 
+.btn-dc:hover {
+    background-color: darkgray;
+    border-radius: 4px;
+}
 </style>
