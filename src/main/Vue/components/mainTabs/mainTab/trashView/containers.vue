@@ -39,7 +39,7 @@
                 <td>{{ cont.deletedDate }}</td>
                 <td>{{ cont.deletedBy }}</td>
                 <td><span class="btn-dc text-success" :title="language.data.cm7" @click="restore(cont.id, cont.name)">&#x21ba;</span></td>
-                <td><span class="btn-dc" :title="language.data.cm5" @click="">&#x1f5d1;</span></td>
+                <td><span class="btn-dc" :title="language.data.cm5" @click="delete(cont.id)">&#x1f5d1;</span></td>
             </tr>
         </tbody>
     </table>
@@ -109,8 +109,11 @@ export default {
                     this.eventHub.emit("show-msg", this.errorParser(e));
                 }
             }
+        },
+        async delete(id) {
+            //TODO remove containers
+
         }
-        //TODO remove containers
     },
     mounted() {
         this.getContainers();
