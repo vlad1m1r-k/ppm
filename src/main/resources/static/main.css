@@ -112,6 +112,18 @@ ul[data-v-8ef25f0e] {
 }
 
 
+.btn-dc[data-v-a5719ae8] {
+    cursor: pointer;
+    user-select: none;
+    padding-left: 2px;
+    padding-right: 2px;
+}
+.btn-dc[data-v-a5719ae8]:hover {
+    background-color: darkgray;
+    border-radius: 4px;
+}
+
+
 .btn-dc[data-v-f6b30b9e] {
     cursor: pointer;
     user-select: none;

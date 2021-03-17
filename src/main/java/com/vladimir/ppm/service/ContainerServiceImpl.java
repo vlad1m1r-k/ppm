@@ -60,7 +60,6 @@ public class ContainerServiceImpl implements ContainerService {
             return MessageDto.builder().message("cfe1").build();
         }
         container.getParent().getChildren().remove(container);
-        container.setParent(cntMoveTo);
         container.setEditedBy(token.getLogin());
         container.setEditedDate(new Date());
         cntMoveTo.addChild(container);
@@ -85,10 +84,14 @@ public class ContainerServiceImpl implements ContainerService {
     @Transactional
     public MessageDto restore(Token decryptedToken, long contId, long restoreToId) {
         Container container = containerRepository.getOne(contId);
-        Container cntMoveTo = containerRepository.getOne(restoreToId);
-        if () {
-
+        Container cntRestoreTo = containerRepository.getOne(restoreToId);
+        if (!userService.isAdmin(decryptedToken) || !container.isDeleted() || cntRestoreTo.isDeleted() || container.equals(cntRestoreTo)) {
+            return MessageDto.builder().message("die3").build();
         }
+        container.getParent().getChildren().remove(container);
+        cntRestoreTo.addChild(container);
+        container.setDeleted(false);
+        return MessageDto.builder().build();
     }
 
     @Override
