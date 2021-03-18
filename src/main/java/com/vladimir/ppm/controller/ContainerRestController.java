@@ -112,9 +112,10 @@ public class ContainerRestController {
             String publicKeyPEM = json.get("publicKey").textValue();
             String token = json.get("token").textValue();
             long itemId = json.get("item").longValue();
+            boolean permanent = Optional.ofNullable(json.get("permanent")).orElse(new ObjectMapper().createObjectNode().booleanNode(false)).asBoolean();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null) {
-                MessageDto message = containerService.delete(decryptedToken, itemId);
+                MessageDto message = containerService.delete(decryptedToken, itemId, permanent);
                 return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
             }
         }

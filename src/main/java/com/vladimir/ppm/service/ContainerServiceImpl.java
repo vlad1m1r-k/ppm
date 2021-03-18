@@ -96,16 +96,22 @@ public class ContainerServiceImpl implements ContainerService {
 
     @Override
     @Transactional
-    public MessageDto delete(Token token, long itemId) {
+    public MessageDto delete(Token token, long itemId, boolean permanent) {
         Container container = containerRepository.getOne(itemId);
-        if (container.isDeleted() || container.getName().equals("root") || container.getChildren().size() != 0
+        if (container.getName().equals("root") || container.getChildren().size() != 0
                 || getAccess(container, userService.getGroups(token)) != Access.RW) {
             return MessageDto.builder().message("ive2").build();
         }
-        container.getParent().getChildren().remove(container);
-        container.setDeletedBy(token.getLogin());
-        container.setDeletedDate(new Date());
-        container.setDeleted(true);
+        if (container.isDeleted() && userService.isAdmin(token) && permanent) {
+            container.getNotes().forEach(noteRepository::delete);
+            container.getPasswords().forEach(passwordRepository::delete);
+            containerRepository.delete(container);
+        } else {
+            container.getParent().getChildren().remove(container);
+            container.setDeletedBy(token.getLogin());
+            container.setDeletedDate(new Date());
+            container.setDeleted(true);
+        }
         return MessageDto.builder().build();
     }
 

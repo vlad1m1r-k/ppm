@@ -12,7 +12,7 @@ public interface ContainerService {
     MessageDto moveContainer(Token token, long itemId, long moveToId);
     MessageDto add(Token token, long parentId, String name);
     MessageDto restore(Token decryptedToken, long contId, long restoreToId);
-    MessageDto delete(Token token, long itemId);
+    MessageDto delete(Token token, long itemId, boolean permanent);
     MessageDto rename(Token token, long itemId, String name);
     MessageDto addNote(Token token, long parentId, String name, String text);
     MessageDto getNote(Token token, long noteId);
