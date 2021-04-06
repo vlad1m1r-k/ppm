@@ -103,6 +103,7 @@ public class ContainerServiceImpl implements ContainerService {
             return MessageDto.builder().message("ive2").build();
         }
         if (container.isDeleted() && userService.isAdmin(token) && permanent) {
+            containerRepository.getContainersByParent(container).forEach(c -> c.setParent(null));
             containerRepository.delete(container);
         } else {
             container.getParent().getChildren().remove(container);
