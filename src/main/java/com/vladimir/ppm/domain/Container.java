@@ -1,5 +1,6 @@
 package com.vladimir.ppm.domain;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -40,10 +41,10 @@ public class Container {
     @ManyToMany
     private Set<Group> groupsRW = new HashSet<>();
 
-    @OneToMany(mappedBy = "parent")
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.REMOVE)
     private Set<Note> notes = new HashSet<>();
 
-    @OneToMany(mappedBy = "parent")
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.REMOVE)
     private Set<Password> passwords = new HashSet<>();
 
     public Container() {
