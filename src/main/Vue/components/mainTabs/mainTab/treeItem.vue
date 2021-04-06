@@ -56,7 +56,7 @@ export default {
                     const token = await this.tokenProvider.getToken();
                     const encryptedData = await cryptoProvider.encrypt({
                         token: token,
-                        item: evt.dataTransfer.getData("id"),
+                        item: parseInt(evt.dataTransfer.getData("id")),
                         moveTo: item.id
                     });
                     const answer = await $.ajax({
