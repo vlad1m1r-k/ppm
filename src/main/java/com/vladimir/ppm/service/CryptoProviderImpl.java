@@ -72,7 +72,7 @@ public class CryptoProviderImpl implements CryptoProvider {
     }
 
     @Scheduled(fixedRate = 60 * 1000, initialDelay = 10 * 60 * 60 * 1000)
-    public void renewServerKeypair() throws NoSuchAlgorithmException, NoSuchProviderException {
+    private void renewServerKeypair() throws NoSuchAlgorithmException, NoSuchProviderException {
         if (System.currentTimeMillis() > keyPairExpireDate) {
             generateServerKeypair();
         }
