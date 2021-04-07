@@ -11,6 +11,8 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -36,42 +38,43 @@ import java.security.Security;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 @Service
+@EnableScheduling
 public class CryptoProviderImpl implements CryptoProvider {
     private final String RSACIPHER = "RSA/ECB/PKCS1Padding";
     private final String AESCIPHER = "AES/CBC/PKCS7Padding";
     private final String PROVIDER = "BC";
     private KeyPair keyPair;
-    private Long keyPairExpireDate; //TODO renew keypair
+    private Long keyPairExpireDate;
     private SecretKeySpec tokenAESKey;
     private SecretKeySpec dbAESKey;
     SecureRandom random = new SecureRandom();
 
     @Value("${keyLifeTimeDays}")
-    private int keyLifeTimeDays;
+    private int keyLifeTimeDays; //TODO move to settings
 
     @PostConstruct
-    public void init() {
+    public void init() throws NoSuchAlgorithmException, NoSuchProviderException {
         Security.addProvider(new BouncyCastleProvider());
-        try {
-            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA", PROVIDER);
-            keyPairGenerator.initialize(2048, random);
-            keyPair = keyPairGenerator.generateKeyPair();
-            keyPairExpireDate = System.currentTimeMillis() + (long) keyLifeTimeDays * 24 * 60 * 60 * 1000;
+        generateServerKeypair();
 
-            byte[] aesKey = new byte[32];
-            random.nextBytes(aesKey);
-            tokenAESKey = new SecretKeySpec(aesKey, "AES");
+        byte[] aesKey = new byte[32];
+        random.nextBytes(aesKey);
+        tokenAESKey = new SecretKeySpec(aesKey, "AES");
 
-            //TODO remove it
-            byte[] dbKey = {25, 126, -91, 78, 87, 110, -25, -27, 6, 121, 44, 96, -63, 17, 32, -69, -29, -8, 51, -12, 80, -44, 61, 108, 120, 36, -55, -86, 2, -117, -119, -123};
-            dbAESKey = new SecretKeySpec(dbKey, "AES");
+        //TODO remove it
+        byte[] dbKey = {25, 126, -91, 78, 87, 110, -25, -27, 6, 121, 44, 96, -63, 17, 32, -69, -29, -8, 51, -12, 80, -44, 61, 108, 120, 36, -55, -86, 2, -117, -119, -123};
+        dbAESKey = new SecretKeySpec(dbKey, "AES");
+    }
 
-        } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
-            e.printStackTrace();
+    @Scheduled(fixedRate = 60 * 1000, initialDelay = 10 * 60 * 60 * 1000)
+    public void renewServerKeypair() throws NoSuchAlgorithmException, NoSuchProviderException {
+        if (System.currentTimeMillis() > keyPairExpireDate) {
+            generateServerKeypair();
         }
     }
 
@@ -258,5 +261,12 @@ public class CryptoProviderImpl implements CryptoProvider {
         result.put("iv", iv);
         result.put("data", body);
         return result;
+    }
+
+    private void generateServerKeypair() throws NoSuchAlgorithmException, NoSuchProviderException {
+        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA", PROVIDER);
+        keyPairGenerator.initialize(2048, random);
+        keyPair = keyPairGenerator.generateKeyPair();
+        keyPairExpireDate = System.currentTimeMillis() + (long) keyLifeTimeDays * 24 * 60 * 60 * 1000;
     }
 }

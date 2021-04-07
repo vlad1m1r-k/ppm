@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class TokenServiceImpl implements TokenService {
     @Value("${tokenLifeTimeMinutes}")
-    private int tokenLifeTimeMinutes;
+    private int tokenLifeTimeMinutes; //TODO Move to settings
     private final CryptoProvider cryptoProvider;
 
     public TokenServiceImpl(CryptoProvider cryptoProvider) {
@@ -18,7 +18,7 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public Token getToken(User user, String remoteAddr, String userAgent) {
-        long tokenLifeTime = System.currentTimeMillis() + tokenLifeTimeMinutes * 60 * 1000;
+        long tokenLifeTime = System.currentTimeMillis() + (long) tokenLifeTimeMinutes * 60 * 1000;
         return new Token(user.getLogin(), tokenLifeTime, remoteAddr, userAgent);
     }
 
