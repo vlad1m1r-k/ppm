@@ -25,14 +25,12 @@ import java.util.stream.StreamSupport;
 @Service
 public class SettingsServiceImpl implements SettingsService {
     private final UserService userService;
-    private final CryptoProvider cryptoProvider;
     private final SettingsRepository settingsRepository;
     private final EntityManagerFactory managerFactory;
     private Settings settings;
 
-    public SettingsServiceImpl(@Lazy UserService userService, @Lazy CryptoProvider cryptoProvider, SettingsRepository settingsRepository, EntityManagerFactory managerFactory) {
+    public SettingsServiceImpl(@Lazy UserService userService, SettingsRepository settingsRepository, EntityManagerFactory managerFactory) {
         this.userService = userService;
-        this.cryptoProvider = cryptoProvider;
         this.settingsRepository = settingsRepository;
         this.managerFactory = managerFactory;
     }
@@ -43,47 +41,6 @@ public class SettingsServiceImpl implements SettingsService {
         Session session = sessionFactory.openSession();
         this.settings = Hibernate.unproxy(session.get(Settings.class, 1L), Settings.class);
         session.close();
-    }
-
-    @Override
-    public MessageDto getDbStatus(Token token) {
-        if (userService.isAdmin(token)) {
-            return MessageDto.builder()
-                    .message(getDbStatus().name())
-                    .build();
-        }
-        return null;
-    }
-
-    @Override
-    @Transactional
-    public MessageDto generateDbKey(Token token) {
-        if (userService.isAdmin(token) && getDbStatus() == DbStatus.NEW_DB) {
-            DbKey key = cryptoProvider.generateDbKey();
-            Settings settings = settingsRepository.getOne(1L);
-            this.settings.setEncryptionKeyId(key.getId());
-            settings.setEncryptionKeyId(key.getId());
-            cryptoProvider.installDbKey(key.getKey());
-            return MessageDto.builder()
-                    .message(key.toString())
-                    .build();
-        }
-        return null;
-    }
-
-    @Override
-    public MessageDto installDbKey(Token token, String key) throws IOException {
-        if (userService.isAdmin(token) && getDbStatus() == DbStatus.NEED_KEY) {
-            JsonNode json = new ObjectMapper().readTree(new String(Base64.getDecoder()
-                    .decode(key.replaceAll("\n", "").replaceAll("\r", ""))));
-            long id = json.get("id").longValue();
-            Byte[] dbKey = StreamSupport.stream(json.get("key").spliterator(), false).map(o -> Byte.valueOf(String.valueOf(o))).toArray(Byte[]::new);
-            if (settings.getEncryptionKeyId() != id) {
-                return MessageDto.builder().message("db10").build();
-            }
-            cryptoProvider.installDbKey(ArrayUtils.toPrimitive(dbKey));
-        }
-        return MessageDto.builder().build();
     }
 
     @Override
@@ -113,24 +70,15 @@ public class SettingsServiceImpl implements SettingsService {
     }
 
     @Override
-    public long getDBEncryptionKeyId() {
-        //TODO
-        return 0;
+    public Long getDBEncryptionKeyId() {
+        return settings.getEncryptionKeyId();
     }
 
     @Override
-    public boolean setDBEncryptionKeyId(long id) {
-        //TODO
-        return false;
-    }
-
-    private DbStatus getDbStatus() {
-        if (!cryptoProvider.isSystemClosed()) {
-            return DbStatus.OK;
-        }
-        if (settings.getEncryptionKeyId() == null) {
-            return DbStatus.NEW_DB;
-        }
-        return DbStatus.NEED_KEY;
+    @Transactional
+    public void setDBEncryptionKeyId(long id) {
+        Settings settings = settingsRepository.getOne(1L);
+        this.settings.setEncryptionKeyId(id);
+        settings.setEncryptionKeyId(id);
     }
 }

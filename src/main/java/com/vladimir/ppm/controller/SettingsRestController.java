@@ -42,7 +42,7 @@ public class SettingsRestController {
             String publicKeyPEM = json.get("publicKey").textValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null) {
-                MessageDto status = settingsService.getDbStatus(decryptedToken);
+                MessageDto status = cryptoProvider.getDBStatus(decryptedToken);
                 return cryptoProvider.encrypt(publicKeyPEM, status.toJson());
             }
         }
@@ -57,7 +57,7 @@ public class SettingsRestController {
             String publicKeyPEM = json.get("publicKey").textValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null) {
-                MessageDto dbKey = settingsService.generateDbKey(decryptedToken);
+                MessageDto dbKey = cryptoProvider.generateDbKey(decryptedToken);
                 return cryptoProvider.encrypt(publicKeyPEM, dbKey.toJson());
             }
         }
@@ -73,7 +73,7 @@ public class SettingsRestController {
             String dbKey = json.get("key").textValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null) {
-                MessageDto answer = settingsService.installDbKey(decryptedToken, dbKey);
+                MessageDto answer = cryptoProvider.installDbKey(decryptedToken, dbKey);
                 return cryptoProvider.encrypt(publicKeyPEM, answer.toJson());
             }
         }

@@ -4,8 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vladimir.ppm.domain.DbKey;
+import com.vladimir.ppm.domain.DbStatus;
+import com.vladimir.ppm.domain.Settings;
 import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.dto.CryptoDto;
+import com.vladimir.ppm.dto.MessageDto;
 import com.vladimir.ppm.dto.PublicKeyDto;
 import org.apache.commons.lang3.ArrayUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -41,11 +44,13 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.StreamSupport;
 
 @Service
 @EnableScheduling
 public class CryptoProviderImpl implements CryptoProvider {
     private final SettingsService settingsService;
+    private final UserService userService;
     private final String RSACIPHER = "RSA/ECB/PKCS1Padding";
     private final String AESCIPHER = "AES/CBC/PKCS7Padding";
     private final String PROVIDER = "BC";
@@ -55,8 +60,9 @@ public class CryptoProviderImpl implements CryptoProvider {
     private SecretKeySpec dbAESKey;
     SecureRandom random = new SecureRandom();
 
-    public CryptoProviderImpl(SettingsService settingsService) {
+    public CryptoProviderImpl(SettingsService settingsService, UserService userService) {
         this.settingsService = settingsService;
+        this.userService = userService;
     }
 
     @PostConstruct
@@ -202,15 +208,43 @@ public class CryptoProviderImpl implements CryptoProvider {
     }
 
     @Override
-    public DbKey generateDbKey() {
-        byte[] key = new byte[32];
-        random.nextBytes(key);
-        return new DbKey(System.currentTimeMillis(), key);
+    public MessageDto getDBStatus(Token token) {
+        if (userService.isAdmin(token)) {
+            return MessageDto.builder()
+                    .message(getDBEncryptionStatus().name())
+                    .build();
+        }
+        return null;
     }
 
     @Override
-    public void installDbKey(byte[] key) {
-        dbAESKey = new SecretKeySpec(key, "AES");
+    public MessageDto generateDbKey(Token token) {
+        if (userService.isAdmin(token) && getDBEncryptionStatus() == DbStatus.NEW_DB) {
+            byte[] keyBytes = new byte[32];
+            random.nextBytes(keyBytes);
+            DbKey key = new DbKey(System.currentTimeMillis(), keyBytes);
+            settingsService.setDBEncryptionKeyId(key.getId());
+            dbAESKey = new SecretKeySpec(key.getKey(), "AES");
+            return MessageDto.builder()
+                    .message(key.toString())
+                    .build();
+        }
+        return null;
+    }
+
+    @Override
+    public MessageDto installDbKey(Token token, String key) throws IOException {
+        if (userService.isAdmin(token) && getDBEncryptionStatus() == DbStatus.NEED_KEY) {
+            JsonNode json = new ObjectMapper().readTree(new String(Base64.getDecoder()
+                    .decode(key.replaceAll("\n", "").replaceAll("\r", ""))));
+            long id = json.get("id").longValue();
+            if (settingsService.getDBEncryptionKeyId() != id) {
+                return MessageDto.builder().message("db10").build();
+            }
+            Byte[] dbKey = StreamSupport.stream(json.get("key").spliterator(), false).map(o -> Byte.valueOf(String.valueOf(o))).toArray(Byte[]::new);
+            dbAESKey = new SecretKeySpec(ArrayUtils.toPrimitive(dbKey), "AES");
+        }
+        return MessageDto.builder().build();
     }
 
     @Override
@@ -270,5 +304,15 @@ public class CryptoProviderImpl implements CryptoProvider {
         keyPairGenerator.initialize(2048, random);
         keyPair = keyPairGenerator.generateKeyPair();
         keyPairExpireDate = System.currentTimeMillis() + (long) settingsService.getServerKeyLifeTimeDays() * 24 * 60 * 60 * 1000;
+    }
+
+    private DbStatus getDBEncryptionStatus() {
+        if (isSystemClosed()) {
+            return DbStatus.OK;
+        }
+        if (settingsService.getDBEncryptionKeyId() == null) {
+            return DbStatus.NEW_DB;
+        }
+        return DbStatus.NEED_KEY;
     }
 }
