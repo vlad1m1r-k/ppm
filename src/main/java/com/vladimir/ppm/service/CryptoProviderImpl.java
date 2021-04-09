@@ -45,6 +45,7 @@ import java.util.Map;
 @Service
 @EnableScheduling
 public class CryptoProviderImpl implements CryptoProvider {
+    private final SettingsService settingsService;
     private final String RSACIPHER = "RSA/ECB/PKCS1Padding";
     private final String AESCIPHER = "AES/CBC/PKCS7Padding";
     private final String PROVIDER = "BC";
@@ -54,11 +55,12 @@ public class CryptoProviderImpl implements CryptoProvider {
     private SecretKeySpec dbAESKey;
     SecureRandom random = new SecureRandom();
 
-    @Value("${keyLifeTimeDays}")
-    private int keyLifeTimeDays; //TODO move to settings
+    public CryptoProviderImpl(SettingsService settingsService) {
+        this.settingsService = settingsService;
+    }
 
     @PostConstruct
-    public void init() throws NoSuchAlgorithmException, NoSuchProviderException {
+    private void init() throws NoSuchAlgorithmException, NoSuchProviderException {
         Security.addProvider(new BouncyCastleProvider());
         generateServerKeypair();
 
@@ -267,6 +269,6 @@ public class CryptoProviderImpl implements CryptoProvider {
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA", PROVIDER);
         keyPairGenerator.initialize(2048, random);
         keyPair = keyPairGenerator.generateKeyPair();
-        keyPairExpireDate = System.currentTimeMillis() + (long) keyLifeTimeDays * 24 * 60 * 60 * 1000;
+        keyPairExpireDate = System.currentTimeMillis() + (long) settingsService.getServerKeyLifeTimeDays() * 24 * 60 * 60 * 1000;
     }
 }

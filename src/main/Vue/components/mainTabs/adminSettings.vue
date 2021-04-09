@@ -8,6 +8,9 @@
                 <button class="btn btn-sm btn-outline-primary" @click="currentTab = 'dbSettings'" :class="{selected: currentTab === 'dbSettings'}">
                     {{ language.data.db1 }}
                 </button>
+              <button class="btn btn-sm btn-outline-primary" @click="currentTab = 'srvSettings'" :class="{selected: currentTab === 'srvSettings'}">
+                {{ language.data.srv1 }}
+              </button>
             </div>
         </div>
         <div class="row">
@@ -21,11 +24,12 @@
 <script>
 import dbSettings from "./adminTab/dbSettings.vue";
 import users from "./adminTab/users.vue";
+import srvSettings from "./adminTab/srvSettings.vue";
 
 export default {
     name: "adminSettings",
     components: {
-        dbSettings, users
+        dbSettings, users, srvSettings
     },
     data() {
         return {
