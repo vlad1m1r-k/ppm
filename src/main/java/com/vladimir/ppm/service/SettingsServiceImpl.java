@@ -24,13 +24,11 @@ import java.util.stream.StreamSupport;
 
 @Service
 public class SettingsServiceImpl implements SettingsService {
-    private final UserService userService;
     private final SettingsRepository settingsRepository;
     private final EntityManagerFactory managerFactory;
     private Settings settings;
 
-    public SettingsServiceImpl(@Lazy UserService userService, SettingsRepository settingsRepository, EntityManagerFactory managerFactory) {
-        this.userService = userService;
+    public SettingsServiceImpl(SettingsRepository settingsRepository, EntityManagerFactory managerFactory) {
         this.settingsRepository = settingsRepository;
         this.managerFactory = managerFactory;
     }
