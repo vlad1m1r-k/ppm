@@ -1,7 +1,5 @@
 package com.vladimir.ppm.domain;
 
-import org.hibernate.Hibernate;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;

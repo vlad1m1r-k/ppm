@@ -3,7 +3,6 @@ package com.vladimir.ppm.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.domain.User;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service

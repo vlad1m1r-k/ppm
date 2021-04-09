@@ -1,26 +1,15 @@
 package com.vladimir.ppm.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vladimir.ppm.domain.DbKey;
-import com.vladimir.ppm.domain.DbStatus;
 import com.vladimir.ppm.domain.Settings;
-import com.vladimir.ppm.domain.Token;
-import com.vladimir.ppm.dto.MessageDto;
 import com.vladimir.ppm.repository.SettingsRepository;
-import org.apache.commons.lang3.ArrayUtils;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManagerFactory;
-import java.io.IOException;
-import java.util.Base64;
-import java.util.stream.StreamSupport;
 
 @Service
 public class SettingsServiceImpl implements SettingsService {

@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vladimir.ppm.domain.DbKey;
 import com.vladimir.ppm.domain.DbStatus;
-import com.vladimir.ppm.domain.Settings;
 import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.dto.CryptoDto;
 import com.vladimir.ppm.dto.MessageDto;
@@ -13,7 +12,7 @@ import com.vladimir.ppm.dto.PublicKeyDto;
 import org.apache.commons.lang3.ArrayUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -41,7 +40,6 @@ import java.security.Security;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.StreamSupport;
@@ -60,7 +58,7 @@ public class CryptoProviderImpl implements CryptoProvider {
     private SecretKeySpec dbAESKey;
     SecureRandom random = new SecureRandom();
 
-    public CryptoProviderImpl(SettingsService settingsService, UserService userService) {
+    public CryptoProviderImpl(SettingsService settingsService, @Lazy UserService userService) {
         this.settingsService = settingsService;
         this.userService = userService;
     }
