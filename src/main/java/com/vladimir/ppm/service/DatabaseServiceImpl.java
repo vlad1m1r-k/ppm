@@ -17,12 +17,12 @@ import java.util.stream.StreamSupport;
 public class DatabaseServiceImpl implements DatabaseService {
     private final UserService userService;
     private final CryptoProvider cryptoProvider;
-    private final SettingsService settingsService;
+    private final SettingsProvider settingsProvider;
 
-    public DatabaseServiceImpl(UserService userService, CryptoProvider cryptoProvider, SettingsService settingsService) {
+    public DatabaseServiceImpl(UserService userService, CryptoProvider cryptoProvider, SettingsProvider settingsProvider) {
         this.userService = userService;
         this.cryptoProvider = cryptoProvider;
-        this.settingsService = settingsService;
+        this.settingsProvider = settingsProvider;
     }
 
     @Override
@@ -39,7 +39,7 @@ public class DatabaseServiceImpl implements DatabaseService {
     public MessageDto generateDbKey(Token token) {
         if (userService.isAdmin(token) && getDBEncryptionStatus() == DbStatus.NEW_DB) {
             DbKey key = cryptoProvider.generateDbKey();
-            settingsService.setDBEncryptionKeyId(key.getId());
+            settingsProvider.setDBEncryptionKeyId(key.getId());
             cryptoProvider.installDbKey(key.getKey());
             return MessageDto.builder()
                     .message(key.toString())
@@ -54,7 +54,7 @@ public class DatabaseServiceImpl implements DatabaseService {
             JsonNode json = new ObjectMapper().readTree(new String(Base64.getDecoder()
                     .decode(key.replaceAll("\n", "").replaceAll("\r", ""))));
             long id = json.get("id").longValue();
-            if (settingsService.getDBEncryptionKeyId() != id) {
+            if (settingsProvider.getDBEncryptionKeyId() != id) {
                 return MessageDto.builder().message("db10").build();
             }
             Byte[] dbKey = StreamSupport.stream(json.get("key").spliterator(), false).map(o -> Byte.valueOf(String.valueOf(o))).toArray(Byte[]::new);
@@ -67,7 +67,7 @@ public class DatabaseServiceImpl implements DatabaseService {
         if (!cryptoProvider.isSystemClosed()) {
             return DbStatus.OK;
         }
-        if (settingsService.getDBEncryptionKeyId() == null) {
+        if (settingsProvider.getDBEncryptionKeyId() == null) {
             return DbStatus.NEW_DB;
         }
         return DbStatus.NEED_KEY;

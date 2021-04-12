@@ -6,6 +6,9 @@ import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.dto.CryptoDto;
 import com.vladimir.ppm.dto.PublicKeyDto;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+
 public interface CryptoProvider {
     PublicKeyDto getPublicKey();
     CryptoDto encrypt(String publicKey, String data);
@@ -17,4 +20,5 @@ public interface CryptoProvider {
     void installDbKey(byte[] dbKey);
     byte[] encryptDbEntry(String text);
     String decryptDbEntry(byte[] bytes);
+    void generateServerKeypair() throws NoSuchAlgorithmException, NoSuchProviderException;
 }

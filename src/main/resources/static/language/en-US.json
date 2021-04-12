@@ -18,6 +18,7 @@
     "um2": "Logout",
     "mp1": "Main",
     "as1": "Admin",
+    "as2": "Save settings?",
     "cf1": "Move",
     "cf2": "to",
     "cfe1": "Error moving container",
@@ -72,6 +73,10 @@
     "div5": "Edited by",
     "div6": "Deleted",
     "div7": "Deleted by",
-    "srv1": "Server"
+    "srv1": "Server",
+    "srv2": "Server RSA key life time, Days",
+    "srv3": "User token life time, Minutes",
+    "srv4": "If parameter is reduced, the server key will be renew! \nUpdate your browser page.",
+    "srve1": "Error saving settings."
   }
 }
