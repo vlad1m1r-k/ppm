@@ -7,7 +7,7 @@ import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.dto.CryptoDto;
 import com.vladimir.ppm.dto.MessageDto;
 import com.vladimir.ppm.service.CryptoProvider;
-import com.vladimir.ppm.service.SettingsService;
+import com.vladimir.ppm.service.DatabaseService;
 import com.vladimir.ppm.service.TokenService;
 import com.vladimir.ppm.service.ValidatorService;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,14 +24,14 @@ public class SettingsRestController {
     private final ValidatorService validatorService;
     private final CryptoProvider cryptoProvider;
     private final TokenService tokenService;
-    private final SettingsService settingsService;
+    private final DatabaseService databaseService;
 
-    public SettingsRestController(ValidatorService validatorService, CryptoProvider cryptoProvider,
-                                  TokenService tokenService, SettingsService settingsService) {
+    public SettingsRestController(ValidatorService validatorService, CryptoProvider cryptoProvider, TokenService tokenService,
+                                  DatabaseService databaseService) {
         this.validatorService = validatorService;
         this.cryptoProvider = cryptoProvider;
         this.tokenService = tokenService;
-        this.settingsService = settingsService;
+        this.databaseService = databaseService;
     }
 
     @PostMapping("/dbStatus")
@@ -42,7 +42,7 @@ public class SettingsRestController {
             String publicKeyPEM = json.get("publicKey").textValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null) {
-                MessageDto status = cryptoProvider.getDBStatus(decryptedToken);
+                MessageDto status = databaseService.getDBStatus(decryptedToken);
                 return cryptoProvider.encrypt(publicKeyPEM, status.toJson());
             }
         }
@@ -57,7 +57,7 @@ public class SettingsRestController {
             String publicKeyPEM = json.get("publicKey").textValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null) {
-                MessageDto dbKey = cryptoProvider.generateDbKey(decryptedToken);
+                MessageDto dbKey = databaseService.generateDbKey(decryptedToken);
                 return cryptoProvider.encrypt(publicKeyPEM, dbKey.toJson());
             }
         }
@@ -73,7 +73,7 @@ public class SettingsRestController {
             String dbKey = json.get("key").textValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null) {
-                MessageDto answer = cryptoProvider.installDbKey(decryptedToken, dbKey);
+                MessageDto answer = databaseService.installDbKey(decryptedToken, dbKey);
                 return cryptoProvider.encrypt(publicKeyPEM, answer.toJson());
             }
         }

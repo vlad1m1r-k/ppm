@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Base64;
 
 public class DbKey {
-    private long id;
-    private byte[] key;
+    private final long id;
+    private final byte[] key;
 
     public DbKey(long id, byte[] key) {
         this.id = id;
