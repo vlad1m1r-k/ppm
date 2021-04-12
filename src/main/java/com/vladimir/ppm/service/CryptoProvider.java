@@ -2,13 +2,9 @@ package com.vladimir.ppm.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.vladimir.ppm.domain.DbKey;
-import com.vladimir.ppm.domain.DbStatus;
 import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.dto.CryptoDto;
-import com.vladimir.ppm.dto.MessageDto;
 import com.vladimir.ppm.dto.PublicKeyDto;
-
-import java.io.IOException;
 
 public interface CryptoProvider {
     PublicKeyDto getPublicKey();
