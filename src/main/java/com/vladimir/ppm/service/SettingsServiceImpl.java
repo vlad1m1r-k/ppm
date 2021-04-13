@@ -29,14 +29,19 @@ public class SettingsServiceImpl implements SettingsService {
             return SettingsDto.builder()
                     .serverKeyLifeTimeDays(settingsProvider.getServerKeyLifeTimeDays())
                     .tokenLifeTimeMinutes(settingsProvider.getTokenLifeTimeMinutes())
+                    .pwdMinLength(settingsProvider.getPwdMinLength())
+                    .pwdComplexity(settingsProvider.getPwdComplexity())
+                    .pwdSpecialChar(settingsProvider.getPwdSpecialChar())
                     .build();
         }
         return null;
     }
 
     @Override
-    public MessageDto saveSettings(Token token, int serverKeyLifeTime, int tokenLifeTime) throws NoSuchAlgorithmException, NoSuchProviderException {
-        if (userService.isAdmin(token) && validatorService.validateSrvKeyLT(serverKeyLifeTime) && validatorService.validateUsrTknLT(tokenLifeTime)) {
+    public MessageDto saveSettings(Token token, int serverKeyLifeTime, int tokenLifeTime, int pwdMinLength,
+                                   boolean pwdComplexity, boolean pwdSpecialChar) throws NoSuchAlgorithmException, NoSuchProviderException {
+        if (userService.isAdmin(token) && validatorService.validateSrvKeyLT(serverKeyLifeTime) &&
+                validatorService.validateUsrTknLT(tokenLifeTime) && validatorService.validatePwdMinLength(pwdMinLength)) {
             if (settingsProvider.getServerKeyLifeTimeDays() != serverKeyLifeTime ) {
                 if (settingsProvider.getServerKeyLifeTimeDays() > serverKeyLifeTime) {
                     settingsProvider.setServerKeyLifeTimeDays(serverKeyLifeTime);
@@ -46,6 +51,15 @@ public class SettingsServiceImpl implements SettingsService {
             }
             if (settingsProvider.getTokenLifeTimeMinutes() != tokenLifeTime) {
                 settingsProvider.setTokenLifeTimeMinutes(tokenLifeTime);
+            }
+            if (settingsProvider.getPwdMinLength() != pwdMinLength) {
+                settingsProvider.setPwdMinLength(pwdMinLength);
+            }
+            if (settingsProvider.getPwdComplexity() != pwdComplexity) {
+                settingsProvider.setPwdComplexity(pwdComplexity);
+            }
+            if (settingsProvider.getPwdSpecialChar() != pwdSpecialChar) {
+                settingsProvider.setPwdSpecialChar(pwdSpecialChar);
             }
             return MessageDto.builder().build();
         }

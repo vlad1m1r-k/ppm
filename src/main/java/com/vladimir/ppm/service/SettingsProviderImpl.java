@@ -36,16 +36,36 @@ public class SettingsProviderImpl implements SettingsProvider {
     }
 
     @Override
+    public int getTokenLifeTimeMinutes() {
+        return settings.getTokenLifeTimeMinutes();
+    }
+
+    @Override
+    public Long getDBEncryptionKeyId() {
+        return settings.getEncryptionKeyId();
+    }
+
+    @Override
+    public int getPwdMinLength() {
+        return settings.getPwdMinLength();
+    }
+
+    @Override
+    public boolean getPwdComplexity() {
+        return settings.getPwdComplexity();
+    }
+
+    @Override
+    public boolean getPwdSpecialChar() {
+        return settings.getPwdSpecialChar();
+    }
+
+    @Override
     @Transactional
     public void setServerKeyLifeTimeDays(int lifeTime) {
         this.settings.setServerKeyLifeTimeDays(lifeTime);
         Settings settings = settingsRepository.getOne(1L);
         settings.setServerKeyLifeTimeDays(lifeTime);
-    }
-
-    @Override
-    public int getTokenLifeTimeMinutes() {
-        return settings.getTokenLifeTimeMinutes();
     }
 
     @Override
@@ -57,15 +77,34 @@ public class SettingsProviderImpl implements SettingsProvider {
     }
 
     @Override
-    public Long getDBEncryptionKeyId() {
-        return settings.getEncryptionKeyId();
-    }
-
-    @Override
     @Transactional
     public void setDBEncryptionKeyId(long id) {
         Settings settings = settingsRepository.getOne(1L);
         this.settings.setEncryptionKeyId(id);
         settings.setEncryptionKeyId(id);
+    }
+
+    @Override
+    @Transactional
+    public void setPwdMinLength(int minLength) {
+        Settings settings = settingsRepository.getOne(1L);
+        this.settings.setPwdMinLength(minLength);
+        settings.setPwdMinLength(minLength);
+    }
+
+    @Override
+    @Transactional
+    public void setPwdComplexity(boolean complexity) {
+        Settings settings = settingsRepository.getOne(1L);
+        this.settings.setPwdComplexity(complexity);
+        settings.setPwdComplexity(complexity);
+    }
+
+    @Override
+    @Transactional
+    public void setPwdSpecialChar(boolean specialChar) {
+        Settings settings = settingsRepository.getOne(1L);
+        this.settings.setPwdSpecialChar(specialChar);
+        settings.setPwdSpecialChar(specialChar);
     }
 }

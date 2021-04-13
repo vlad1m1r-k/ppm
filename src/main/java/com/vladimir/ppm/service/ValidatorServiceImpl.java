@@ -19,6 +19,11 @@ public class ValidatorServiceImpl implements ValidatorService {
         return usrTknLT > 0 && usrTknLT <= 59;
     }
 
+    @Override
+    public boolean validatePwdMinLength(int length) {
+        return length >= 3 && length <= 20;
+    }
+
     private boolean validateString(String str) {
         return str != null && str.length() > 0;
     }

@@ -15,6 +15,9 @@ public class Settings {
     private Long encryptionKeyId;
     private volatile Integer serverKeyLifeTimeDays;
     private volatile Integer tokenLifeTimeMinutes;
+    private volatile Integer pwdMinLength;
+    private volatile Boolean pwdComplexity;
+    private volatile Boolean pwdSpecialChar;
 
     public Long getId() {
         return id;
@@ -32,6 +35,18 @@ public class Settings {
         return tokenLifeTimeMinutes;
     }
 
+    public Integer getPwdMinLength() {
+        return pwdMinLength;
+    }
+
+    public Boolean getPwdComplexity() {
+        return pwdComplexity;
+    }
+
+    public Boolean getPwdSpecialChar() {
+        return pwdSpecialChar;
+    }
+
     public void setEncryptionKeyId(Long encryptionKeyId) {
         this.encryptionKeyId = encryptionKeyId;
     }
@@ -42,5 +57,17 @@ public class Settings {
 
     public void setTokenLifeTimeMinutes(Integer tokenLifeTimeMinutes) {
         this.tokenLifeTimeMinutes = tokenLifeTimeMinutes;
+    }
+
+    public void setPwdMinLength(Integer pwdMinLength) {
+        this.pwdMinLength = pwdMinLength;
+    }
+
+    public void setPwdComplexity(Boolean pwdComplexity) {
+        this.pwdComplexity = pwdComplexity;
+    }
+
+    public void setPwdSpecialChar(Boolean pwdSpecialChar) {
+        this.pwdSpecialChar = pwdSpecialChar;
     }
 }

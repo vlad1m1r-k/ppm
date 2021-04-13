@@ -4,4 +4,5 @@ public interface ValidatorService {
     boolean validateCrypto(String key, String data);
     boolean validateSrvKeyLT(int srvKeyLT);
     boolean validateUsrTknLT(int usrTknLT);
+    boolean validatePwdMinLength(int length);
 }

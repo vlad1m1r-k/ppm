@@ -9,5 +9,6 @@ import java.security.NoSuchProviderException;
 
 public interface SettingsService {
     SettingsDto getSettings(Token token);
-    MessageDto saveSettings(Token token, int serverKeyLifeTime, int tokenLifeTime) throws NoSuchAlgorithmException, NoSuchProviderException;
+    MessageDto saveSettings(Token token, int serverKeyLifeTime, int tokenLifeTime, int pwdMinLength,
+                            boolean pwdComplexity, boolean pwdSpecialChar) throws NoSuchAlgorithmException, NoSuchProviderException;
 }

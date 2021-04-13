@@ -77,6 +77,10 @@
     "srv2": "Server RSA key life time, Days",
     "srv3": "User token life time, Minutes",
     "srv4": "If parameter is reduced, the server key will be renew! \nUpdate your browser page.",
+    "srv5": "Password policy:",
+    "srv6": "Password Min length",
+    "srv7": "Password complexity",
+    "srv8": "Special characters required",
     "srve1": "Error saving settings."
   }
 }
