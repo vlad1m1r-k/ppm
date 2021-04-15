@@ -81,6 +81,14 @@
     "srv6": "Password Min length",
     "srv7": "Password complexity",
     "srv8": "Special characters required",
-    "srve1": "Error saving settings."
+    "srve1": "Error saving settings.",
+    "uss1": "Change password",
+    "uss2": "Password",
+    "uss3": "Repeat password",
+    "usse1": "New password can't be equals previous password.",
+    "usse2": "The password length is too short.",
+    "usse3": "The password must meet complexity requirements.",
+    "usse4": "The password must have special characters.",
+    "usse5": "The passwords don't match."
   }
 }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.dto.CryptoDto;
+import com.vladimir.ppm.dto.MessageDto;
 import com.vladimir.ppm.dto.TokenDto;
 import com.vladimir.ppm.service.CryptoProvider;
 import com.vladimir.ppm.service.TokenService;
@@ -58,6 +59,22 @@ public class UserRestController {
             if (decryptedToken != null) {
                 TokenDto tokenDto = userService.renewToken(decryptedToken);
                 return cryptoProvider.encrypt(publicKeyPEM, tokenDto.toJson());
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/setPwd")
+    public CryptoDto setPwd(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String token = json.get("token").textValue();
+            String publicKeyPEM = json.get("publicKey").textValue();
+            String newPwd = json.get("pwd").asText();
+            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            if (decryptedToken != null) {
+                MessageDto message = userService.changePassword(decryptedToken, newPwd);
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
             }
         }
         return null;

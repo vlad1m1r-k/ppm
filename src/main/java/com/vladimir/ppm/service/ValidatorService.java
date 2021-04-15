@@ -5,4 +5,7 @@ public interface ValidatorService {
     boolean validateSrvKeyLT(int srvKeyLT);
     boolean validateUsrTknLT(int usrTknLT);
     boolean validatePwdMinLength(int length);
+    boolean validatePwdLength(String pwd, int length);
+    boolean validatePwdComplexity(String pwd);
+    boolean validatePwdSpecialChar(String pwd);
 }

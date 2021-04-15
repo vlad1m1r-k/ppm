@@ -3,6 +3,7 @@ package com.vladimir.ppm.service;
 import com.vladimir.ppm.domain.Group;
 import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.domain.User;
+import com.vladimir.ppm.dto.MessageDto;
 import com.vladimir.ppm.dto.TokenDto;
 import com.vladimir.ppm.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,13 +18,17 @@ public class UserServiceImpl implements UserService {
     private final BCryptPasswordEncoder encoder;
     private final TokenService tokenService;
     private final CryptoProvider cryptoProvider;
+    private final ValidatorService validatorService;
+    private final SettingsProvider settingsProvider;
 
     public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder encoder, TokenService tokenService,
-                           CryptoProvider cryptoProvider) {
+                           CryptoProvider cryptoProvider, ValidatorService validatorService, SettingsProvider settingsProvider) {
         this.userRepository = userRepository;
         this.encoder = encoder;
         this.tokenService = tokenService;
         this.cryptoProvider = cryptoProvider;
+        this.validatorService = validatorService;
+        this.settingsProvider = settingsProvider;
     }
 
     @Override
@@ -73,6 +78,26 @@ public class UserServiceImpl implements UserService {
     public boolean isAdmin(Token token) {
         User user = userRepository.findUserByLogin(token.getLogin());
         return isAdmin(user.getGroups());
+    }
+
+    @Override
+    @Transactional
+    public MessageDto changePassword(Token token, String newPwd) {
+        User user = userRepository.findUserByLogin(token.getLogin());
+        if (!validatorService.validatePwdLength(newPwd, settingsProvider.getPwdMinLength())) {
+            return MessageDto.builder().message("usse2").build();
+        }
+        if (encoder.matches(newPwd, user.getPassword())) {
+            return MessageDto.builder().message("usse1").build();
+        }
+        if (settingsProvider.getPwdComplexity() && !validatorService.validatePwdComplexity(newPwd)) {
+            return MessageDto.builder().message("usse3").build();
+        }
+        if (settingsProvider.getPwdSpecialChar() && !validatorService.validatePwdSpecialChar(newPwd)) {
+            return MessageDto.builder().message("usse4").build();
+        }
+        user.setPassword(encoder.encode(newPwd));
+        return MessageDto.builder().build();
     }
 
     private boolean isAdmin(Set<Group> groups) {

@@ -36,4 +36,12 @@ public class User {
     public Set<Group> getGroups() {
         return groups;
     }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }
