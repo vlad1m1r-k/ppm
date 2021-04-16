@@ -29,4 +29,24 @@ public class ValidatorServiceImplTest {
         assertFalse(validatorService.validatePwdComplexity("aa33aa"));
         assertTrue(validatorService.validatePwdComplexity("a33E"));
     }
+
+    @Test
+    public void validatePwdLoginIncludedTest() {
+        assertTrue(validatorService.validatePwdLoginIncluded("aswert", "wsr"));
+        assertFalse(validatorService.validatePwdLoginIncluded("aswert", "wer"));
+        assertFalse(validatorService.validatePwdLoginIncluded("wer12t", "wer"));
+        assertFalse(validatorService.validatePwdLoginIncluded("as34wer", "wer"));
+    }
+
+    @Test
+    public void validatePwdRepeatCharsTest() {
+        assertTrue(validatorService.validatePwdRepeatChars("asd123%^&"));
+        assertTrue(validatorService.validatePwdRepeatChars("asdfgh"));
+        assertTrue(validatorService.validatePwdRepeatChars("12345"));
+        assertFalse(validatorService.validatePwdRepeatChars("asdfffqw"));
+        assertFalse(validatorService.validatePwdRepeatChars("111fffqw"));
+        assertFalse(validatorService.validatePwdRepeatChars("asdqw****"));
+        assertFalse(validatorService.validatePwdRepeatChars("asdq5555wfgh"));
+        assertFalse(validatorService.validatePwdRepeatChars("5555wfgh"));
+    }
 }

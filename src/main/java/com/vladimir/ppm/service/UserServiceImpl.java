@@ -96,6 +96,12 @@ public class UserServiceImpl implements UserService {
         if (settingsProvider.getPwdSpecialChar() && !validatorService.validatePwdSpecialChar(newPwd)) {
             return MessageDto.builder().message("usse4").build();
         }
+        if (!validatorService.validatePwdLoginIncluded(newPwd, token.getLogin())) {
+            return MessageDto.builder().message("usse6").build();
+        }
+        if (!validatorService.validatePwdRepeatChars(newPwd)) {
+            return MessageDto.builder().message("usse7").build();
+        }
         user.setPassword(encoder.encode(newPwd));
         return MessageDto.builder().build();
     }

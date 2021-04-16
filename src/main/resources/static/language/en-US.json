@@ -89,6 +89,8 @@
     "usse2": "The password length is too short.",
     "usse3": "The password must meet complexity requirements.",
     "usse4": "The password must have special characters.",
-    "usse5": "The passwords don't match."
+    "usse5": "The passwords don't match.",
+    "usse6": "The password can't include your login.",
+    "usse7": "Too much the same symbols in the password."
   }
 }

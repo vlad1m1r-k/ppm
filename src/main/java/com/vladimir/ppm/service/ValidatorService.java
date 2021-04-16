@@ -8,4 +8,6 @@ public interface ValidatorService {
     boolean validatePwdLength(String pwd, int length);
     boolean validatePwdComplexity(String pwd);
     boolean validatePwdSpecialChar(String pwd);
+    boolean validatePwdLoginIncluded(String pwd, String login);
+    boolean validatePwdRepeatChars(String pwd);
 }

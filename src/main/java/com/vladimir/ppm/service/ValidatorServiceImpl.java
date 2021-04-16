@@ -56,6 +56,16 @@ public class ValidatorServiceImpl implements ValidatorService {
         return pwd.matches(".*[`~!@#$%^&*()_\\-+=|\\\\/{}\\[\\]:;\"',.]+.*");
     }
 
+    @Override
+    public boolean validatePwdLoginIncluded(String pwd, String login) {
+        return !pwd.contains(login);
+    }
+
+    @Override
+    public boolean validatePwdRepeatChars(String pwd) {
+        return !pwd.matches(".*(.)\\1{2,}.*");
+    }
+
     private boolean validateString(String str) {
         return str != null && str.length() > 0;
     }
