@@ -40,13 +40,13 @@ public class ValidatorServiceImplTest {
 
     @Test
     public void validatePwdRepeatCharsTest() {
-        assertTrue(validatorService.validatePwdRepeatChars("asd123%^&"));
-        assertTrue(validatorService.validatePwdRepeatChars("asdfgh"));
-        assertTrue(validatorService.validatePwdRepeatChars("12345"));
-        assertFalse(validatorService.validatePwdRepeatChars("asdfffqw"));
-        assertFalse(validatorService.validatePwdRepeatChars("111fffqw"));
-        assertFalse(validatorService.validatePwdRepeatChars("asdqw****"));
-        assertFalse(validatorService.validatePwdRepeatChars("asdq5555wfgh"));
-        assertFalse(validatorService.validatePwdRepeatChars("5555wfgh"));
+        assertTrue(validatorService.validatePwdRepeatedChars("asd123%^&"));
+        assertTrue(validatorService.validatePwdRepeatedChars("asdfgh"));
+        assertTrue(validatorService.validatePwdRepeatedChars("12345"));
+        assertFalse(validatorService.validatePwdRepeatedChars("asdfffqw"));
+        assertFalse(validatorService.validatePwdRepeatedChars("111fffqw"));
+        assertFalse(validatorService.validatePwdRepeatedChars("asdqw****"));
+        assertFalse(validatorService.validatePwdRepeatedChars("asdq5555wfgh"));
+        assertFalse(validatorService.validatePwdRepeatedChars("5555wfgh"));
     }
 }

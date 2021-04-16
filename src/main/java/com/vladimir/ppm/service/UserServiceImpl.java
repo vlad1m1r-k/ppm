@@ -99,7 +99,7 @@ public class UserServiceImpl implements UserService {
         if (!validatorService.validatePwdLoginIncluded(newPwd, token.getLogin())) {
             return MessageDto.builder().message("usse6").build();
         }
-        if (!validatorService.validatePwdRepeatChars(newPwd)) {
+        if (!validatorService.validatePwdRepeatedChars(newPwd)) {
             return MessageDto.builder().message("usse7").build();
         }
         user.setPassword(encoder.encode(newPwd));

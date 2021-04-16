@@ -62,7 +62,7 @@ public class ValidatorServiceImpl implements ValidatorService {
     }
 
     @Override
-    public boolean validatePwdRepeatChars(String pwd) {
+    public boolean validatePwdRepeatedChars(String pwd) {
         return !pwd.matches(".*(.)\\1{2,}.*");
     }
 
