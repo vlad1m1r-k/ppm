@@ -11,7 +11,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Table(name = "seq_groups")
+@Table(name = "sec_groups")
 public class Group {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

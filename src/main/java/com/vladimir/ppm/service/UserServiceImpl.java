@@ -3,14 +3,20 @@ package com.vladimir.ppm.service;
 import com.vladimir.ppm.domain.Group;
 import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.domain.User;
+import com.vladimir.ppm.dto.GroupDto;
 import com.vladimir.ppm.dto.MessageDto;
 import com.vladimir.ppm.dto.TokenDto;
+import com.vladimir.ppm.dto.UserDto;
 import com.vladimir.ppm.repository.UserRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -37,6 +43,9 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findUserByLogin(login);
         if (user == null || !encoder.matches(password, user.getPassword())) {
             return TokenDto.builder().message("lfe1").build();
+        }
+        if (!user.isEnabled()) {
+            return TokenDto.builder().message("lfe3").build();
         }
         if (cryptoProvider.isSystemClosed() && !isAdmin(user.getGroups())) {
             return TokenDto.builder().message("lfe2").build();
@@ -104,6 +113,34 @@ public class UserServiceImpl implements UserService {
         }
         user.setPassword(encoder.encode(newPwd));
         return MessageDto.builder().build();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<UserDto> getUsers(Token token) {
+        if (isAdmin(token)) {
+            List<User> users = userRepository.findAll(Sort.by("login"));
+            return users.stream().map(u -> UserDto.builder()
+                    .id(u.getId())
+                    .login(u.getLogin())
+                    .status(u.getStatus())
+                    .groups(u.getGroups().stream().map(g -> GroupDto.builder()
+                            .id(g.getId())
+                            .name(g.getName())
+                            .adminSettings(g.isAdminSettings())
+                            .build())
+                            .collect(Collectors.toList()))
+                    .build())
+                    .collect(Collectors.toList());
+        }
+        return new ArrayList<>();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean isUserEnabled(Token token) {
+        User user = userRepository.findUserByLogin(token.getLogin());
+        return user.isEnabled();
     }
 
     private boolean isAdmin(Set<Group> groups) {

@@ -7,6 +7,7 @@ import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.dto.CryptoDto;
 import com.vladimir.ppm.dto.MessageDto;
 import com.vladimir.ppm.dto.TokenDto;
+import com.vladimir.ppm.dto.UserDto;
 import com.vladimir.ppm.service.CryptoProvider;
 import com.vladimir.ppm.service.TokenService;
 import com.vladimir.ppm.service.UserService;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 @RequestMapping("/user")
@@ -56,7 +58,7 @@ public class UserRestController {
             String token = json.get("token").textValue();
             String publicKeyPEM = json.get("publicKey").textValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
-            if (decryptedToken != null) {
+            if (decryptedToken != null && !userService.isUserEnabled(decryptedToken)) {
                 TokenDto tokenDto = userService.renewToken(decryptedToken);
                 return cryptoProvider.encrypt(publicKeyPEM, tokenDto.toJson());
             }
@@ -72,9 +74,24 @@ public class UserRestController {
             String publicKeyPEM = json.get("publicKey").textValue();
             String newPwd = json.get("pwd").asText();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
-            if (decryptedToken != null) {
+            if (decryptedToken != null && !userService.isUserEnabled(decryptedToken)) {
                 MessageDto message = userService.changePassword(decryptedToken, newPwd);
                 return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/getUsers")
+    public CryptoDto getUsers(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String token = json.get("token").textValue();
+            String publicKeyPEM = json.get("publicKey").textValue();
+            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            if (decryptedToken != null && !userService.isUserEnabled(decryptedToken)) {
+                List<UserDto> users = userService.getUsers(decryptedToken);
+                return cryptoProvider.encrypt(publicKeyPEM, mapper.writeValueAsString(users));
             }
         }
         return null;
