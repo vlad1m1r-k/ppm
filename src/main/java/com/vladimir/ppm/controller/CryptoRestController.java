@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/crypto")
 public class CryptoRestController {
-    private CryptoProvider cryptoProvider;
+    private final CryptoProvider cryptoProvider;
 
     public CryptoRestController(CryptoProvider cryptoProvider) {
         this.cryptoProvider = cryptoProvider;

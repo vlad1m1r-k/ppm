@@ -50,7 +50,7 @@ public class SettingsRestController {
             String token = json.get("token").textValue();
             String publicKeyPEM = json.get("publicKey").textValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
-            if (decryptedToken != null && !userService.isUserEnabled(decryptedToken)) {
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 SettingsDto settings = settingsService.getSettings(decryptedToken);
                 return cryptoProvider.encrypt(publicKeyPEM, settings.toJson());
             }
@@ -70,7 +70,7 @@ public class SettingsRestController {
             boolean pwdComplexity = json.get("pwdComplexity").asBoolean();
             boolean pwdSpecialChar = json.get("pwdSpecialChar").asBoolean();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
-            if (decryptedToken != null && !userService.isUserEnabled(decryptedToken)) {
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 MessageDto message = settingsService.saveSettings(decryptedToken, serverKeyLifeTime, tokenLifeTime,
                         pwdMinLength, pwdComplexity, pwdSpecialChar);
                 return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
@@ -86,7 +86,7 @@ public class SettingsRestController {
             String token = json.get("token").textValue();
             String publicKeyPEM = json.get("publicKey").textValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
-            if (decryptedToken != null && !userService.isUserEnabled(decryptedToken)) {
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 MessageDto status = databaseService.getDBStatus(decryptedToken);
                 return cryptoProvider.encrypt(publicKeyPEM, status.toJson());
             }
@@ -101,7 +101,7 @@ public class SettingsRestController {
             String token = json.get("token").textValue();
             String publicKeyPEM = json.get("publicKey").textValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
-            if (decryptedToken != null && !userService.isUserEnabled(decryptedToken)) {
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 MessageDto dbKey = databaseService.generateDbKey(decryptedToken);
                 return cryptoProvider.encrypt(publicKeyPEM, dbKey.toJson());
             }
@@ -117,7 +117,7 @@ public class SettingsRestController {
             String publicKeyPEM = json.get("publicKey").textValue();
             String dbKey = json.get("key").textValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
-            if (decryptedToken != null && !userService.isUserEnabled(decryptedToken)) {
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 MessageDto answer = databaseService.installDbKey(decryptedToken, dbKey);
                 return cryptoProvider.encrypt(publicKeyPEM, answer.toJson());
             }

@@ -58,7 +58,7 @@ public class UserRestController {
             String token = json.get("token").textValue();
             String publicKeyPEM = json.get("publicKey").textValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
-            if (decryptedToken != null && !userService.isUserEnabled(decryptedToken)) {
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 TokenDto tokenDto = userService.renewToken(decryptedToken);
                 return cryptoProvider.encrypt(publicKeyPEM, tokenDto.toJson());
             }
@@ -74,7 +74,7 @@ public class UserRestController {
             String publicKeyPEM = json.get("publicKey").textValue();
             String newPwd = json.get("pwd").asText();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
-            if (decryptedToken != null && !userService.isUserEnabled(decryptedToken)) {
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 MessageDto message = userService.changePassword(decryptedToken, newPwd);
                 return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
             }
@@ -89,7 +89,7 @@ public class UserRestController {
             String token = json.get("token").textValue();
             String publicKeyPEM = json.get("publicKey").textValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
-            if (decryptedToken != null && !userService.isUserEnabled(decryptedToken)) {
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 List<UserDto> users = userService.getUsers(decryptedToken);
                 return cryptoProvider.encrypt(publicKeyPEM, mapper.writeValueAsString(users));
             }

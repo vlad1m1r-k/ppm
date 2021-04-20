@@ -6,3 +6,4 @@ TODO:
 + password generator
 + defence
 + logging
++ search

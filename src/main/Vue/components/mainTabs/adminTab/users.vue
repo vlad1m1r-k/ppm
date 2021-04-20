@@ -1,7 +1,13 @@
 <template>
-    <table>
-        <thead>
-
+    <table class="table table-bordered table-striped table-sm">
+        <thead class="tab-header-area">
+        <tr>
+            <th>login</th>
+            <th>status</th>
+            <th>groups</th>
+            <th>edit</th>
+            <th>delete</th>
+        </tr>
         </thead>
         <tbody>
 

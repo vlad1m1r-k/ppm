@@ -49,7 +49,7 @@ public class ContainerRestController {
             String token = json.get("token").textValue();
             String publicKeyPEM = json.get("publicKey").textValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
-            if (decryptedToken != null && !userService.isUserEnabled(decryptedToken)) {
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 ContainerDto tree = containerService.getTree(decryptedToken);
                 return cryptoProvider.encrypt(publicKeyPEM, tree.toJson());
             }
@@ -66,7 +66,7 @@ public class ContainerRestController {
             long itemId = json.get("item").longValue();
             long moveToId = json.get("moveTo").longValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
-            if (decryptedToken != null && !userService.isUserEnabled(decryptedToken)) {
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 MessageDto message = containerService.moveContainer(decryptedToken, itemId, moveToId);
                 return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
             }
@@ -83,7 +83,7 @@ public class ContainerRestController {
             long parentId = json.get("parent").longValue();
             String name = json.get("name").textValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
-            if (decryptedToken != null && !userService.isUserEnabled(decryptedToken)) {
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 MessageDto message = containerService.add(decryptedToken, parentId, name);
                 return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
             }
@@ -100,7 +100,7 @@ public class ContainerRestController {
             long contId = json.get("contId").longValue();
             long restoreToId = json.get("restoreToId").longValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
-            if (decryptedToken != null && !userService.isUserEnabled(decryptedToken)) {
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 MessageDto message = containerService.restore(decryptedToken, contId, restoreToId);
                 return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
             }
@@ -117,7 +117,7 @@ public class ContainerRestController {
             long itemId = json.get("item").longValue();
             boolean permanent = Optional.ofNullable(json.get("permanent")).orElse(new ObjectMapper().createObjectNode().booleanNode(false)).asBoolean();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
-            if (decryptedToken != null && !userService.isUserEnabled(decryptedToken)) {
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 MessageDto message = containerService.delete(decryptedToken, itemId, permanent);
                 return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
             }
@@ -134,7 +134,7 @@ public class ContainerRestController {
             long itemId = json.get("item").longValue();
             String name = json.get("name").textValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
-            if (decryptedToken != null && !userService.isUserEnabled(decryptedToken)) {
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 MessageDto message = containerService.rename(decryptedToken, itemId, name);
                 return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
             }
@@ -152,7 +152,7 @@ public class ContainerRestController {
             String name = json.get("name").textValue();
             String text = json.get("text").textValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
-            if (decryptedToken != null && !userService.isUserEnabled(decryptedToken)) {
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 MessageDto message = containerService.addNote(decryptedToken, parentId, name, text);
                 return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
             }
@@ -168,7 +168,7 @@ public class ContainerRestController {
             String token = json.get("token").textValue();
             long noteId = json.get("note").longValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
-            if (decryptedToken != null && !userService.isUserEnabled(decryptedToken)) {
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 MessageDto message = containerService.getNote(decryptedToken, noteId);
                 return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
             }
@@ -186,7 +186,7 @@ public class ContainerRestController {
             String name = json.get("name").textValue();
             String text = json.get("text").textValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
-            if (decryptedToken != null && !userService.isUserEnabled(decryptedToken)) {
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 MessageDto message = containerService.editNote(decryptedToken, noteId, name, text);
                 return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
             }
@@ -203,7 +203,7 @@ public class ContainerRestController {
             long noteId = json.get("note").longValue();
             boolean permanent = Optional.ofNullable(json.get("permanent")).orElse(new ObjectMapper().createObjectNode().booleanNode(false)).asBoolean();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
-            if (decryptedToken != null && !userService.isUserEnabled(decryptedToken)) {
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 MessageDto message = containerService.removeNote(decryptedToken, noteId, permanent);
                 return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
             }
@@ -223,7 +223,7 @@ public class ContainerRestController {
             String pass = json.get("pass").textValue();
             String note = json.get("note").textValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
-            if (decryptedToken != null && !userService.isUserEnabled(decryptedToken)) {
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 MessageDto message = containerService.addPasswd(decryptedToken, parentId, name, login, pass, note);
                 return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
             }
@@ -239,7 +239,7 @@ public class ContainerRestController {
             String token = json.get("token").textValue();
             long pwdId = json.get("pwd").longValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
-            if (decryptedToken != null && !userService.isUserEnabled(decryptedToken)) {
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 PasswordDto passwd = containerService.getPwdEnv(decryptedToken, pwdId);
                 return cryptoProvider.encrypt(publicKeyPEM, passwd.toJson());
             }
@@ -255,7 +255,7 @@ public class ContainerRestController {
             String token = json.get("token").textValue();
             long pwdId = json.get("pwd").longValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
-            if (decryptedToken != null && !userService.isUserEnabled(decryptedToken)) {
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 PasswordDto passwd = containerService.getPwdBody(decryptedToken, pwdId);
                 return cryptoProvider.encrypt(publicKeyPEM, passwd.toJson());
             }
@@ -275,7 +275,7 @@ public class ContainerRestController {
             String pass = json.get("pass").textValue();
             String note = json.get("note").textValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
-            if (decryptedToken != null && !userService.isUserEnabled(decryptedToken)) {
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 MessageDto message = containerService.editPassword(decryptedToken, pwdId, name, login, pass, note);
                 return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
             }
@@ -292,7 +292,7 @@ public class ContainerRestController {
             long pwdId = json.get("pwd").longValue();
             boolean permanent = Optional.ofNullable(json.get("permanent")).orElse(new ObjectMapper().createObjectNode().booleanNode(false)).asBoolean();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
-            if (decryptedToken != null && !userService.isUserEnabled(decryptedToken)) {
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 MessageDto message = containerService.removePassword(decryptedToken, pwdId, permanent);
                 return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
             }
@@ -310,7 +310,7 @@ public class ContainerRestController {
             String sortNotes = json.get("sortNotes").textValue();
             String sortPwd = json.get("sortPwd").textValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
-            if (decryptedToken != null && !userService.isUserEnabled(decryptedToken)) {
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 ContainerDto container = containerService.getDeletedItems(decryptedToken, containerId, sortNotes, sortPwd);
                 return cryptoProvider.encrypt(publicKeyPEM, container.toJson());
             }
@@ -326,7 +326,7 @@ public class ContainerRestController {
             String token = json.get("token").textValue();
             long noteId = json.get("noteId").longValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
-            if (decryptedToken != null && !userService.isUserEnabled(decryptedToken)) {
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 MessageDto message = containerService.restoreNote(decryptedToken, noteId);
                 return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
             }
@@ -342,7 +342,7 @@ public class ContainerRestController {
             String token = json.get("token").textValue();
             long pwdId = json.get("pwdId").longValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
-            if (decryptedToken != null && !userService.isUserEnabled(decryptedToken)) {
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 MessageDto message = containerService.restorePasswd(decryptedToken, pwdId);
                 return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
             }
@@ -358,7 +358,7 @@ public class ContainerRestController {
             String token = json.get("token").textValue();
             String sort = json.get("sort").textValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
-            if (decryptedToken != null && !userService.isUserEnabled(decryptedToken)) {
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 List<ContainerDto> containers = containerService.getDeletedContainers(decryptedToken, sort);
                 return cryptoProvider.encrypt(publicKeyPEM, mapper.writeValueAsString(containers));
             }
