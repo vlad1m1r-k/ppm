@@ -21,16 +21,17 @@ public class User {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    private UserStatus status = UserStatus.ENABLED;
+    private UserStatus status;
 
     @ManyToMany
     private final Set<Group> groups = new HashSet<>();
 
     public User() {}
 
-    public User(String login, String password) {
+    public User(String login, String password, UserStatus status) {
         this.login = login;
         this.password = password;
+        this.status = status;
     }
 
     public Long getId() {

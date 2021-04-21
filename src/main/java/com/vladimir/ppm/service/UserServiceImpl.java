@@ -3,6 +3,7 @@ package com.vladimir.ppm.service;
 import com.vladimir.ppm.domain.Group;
 import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.domain.User;
+import com.vladimir.ppm.domain.UserStatus;
 import com.vladimir.ppm.dto.GroupDto;
 import com.vladimir.ppm.dto.MessageDto;
 import com.vladimir.ppm.dto.TokenDto;
@@ -117,9 +118,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<UserDto> getUsers(Token token) {
+    public List<UserDto> getUsers(Token token, String sort) {
         if (isAdmin(token)) {
-            List<User> users = userRepository.findAll(Sort.by("login"));
+            String sortField = sort.substring(0, sort.indexOf(","));
+            Sort.Direction sortDirection = Sort.Direction.fromString(sort.substring(sort.indexOf(",") + 1));
+            List<User> users = userRepository.findAll(Sort.by(sortDirection, sortField));
             return users.stream().map(u -> UserDto.builder()
                     .id(u.getId())
                     .login(u.getLogin())
@@ -141,6 +144,26 @@ public class UserServiceImpl implements UserService {
     public boolean isUserEnabled(Token token) {
         User user = userRepository.findUserByLogin(token.getLogin());
         return user.isEnabled();
+    }
+
+    @Override
+    @Transactional
+    public MessageDto addUser(Token token, String login, String pwd, UserStatus status) {
+        if (isAdmin(token)) {
+            if (!validatorService.validateString(login)) {
+                return MessageDto.builder().message("use1").build();
+            }
+            if (!validatorService.validateString(pwd)) {
+                return MessageDto.builder().message("use2").build();
+            }
+            User user = userRepository.findUserByLogin(login);
+            if (user != null) {
+                return MessageDto.builder().message("use3").build();
+            }
+            user = new User(login, encoder.encode(pwd), status);
+            userRepository.save(user);
+        }
+        return MessageDto.builder().build();
     }
 
     private boolean isAdmin(Set<Group> groups) {

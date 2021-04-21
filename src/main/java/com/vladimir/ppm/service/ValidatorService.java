@@ -1,6 +1,7 @@
 package com.vladimir.ppm.service;
 
 public interface ValidatorService {
+    boolean validateString(String str);
     boolean validateCrypto(String key, String data);
     boolean validateSrvKeyLT(int srvKeyLT);
     boolean validateUsrTknLT(int usrTknLT);

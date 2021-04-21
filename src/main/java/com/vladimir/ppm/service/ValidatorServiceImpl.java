@@ -66,7 +66,8 @@ public class ValidatorServiceImpl implements ValidatorService {
         return !pwd.matches(".*(.)\\1{2,}.*");
     }
 
-    private boolean validateString(String str) {
+    @Override
+    public boolean validateString(String str) {
         return str != null && str.length() > 0;
     }
 }

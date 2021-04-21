@@ -1,7 +1,8 @@
 TODO:
 + users management
-  + user status
+  + user to group
 + groups management
+  + group to user
 + container access management
 + password generator
 + defence

@@ -2,6 +2,7 @@ package com.vladimir.ppm.service;
 
 import com.vladimir.ppm.domain.Group;
 import com.vladimir.ppm.domain.Token;
+import com.vladimir.ppm.domain.UserStatus;
 import com.vladimir.ppm.dto.MessageDto;
 import com.vladimir.ppm.dto.TokenDto;
 import com.vladimir.ppm.dto.UserDto;
@@ -15,6 +16,7 @@ public interface UserService {
     Set<Group> getGroups(Token token);
     boolean isAdmin(Token token);
     MessageDto changePassword(Token token, String newPwd);
-    List<UserDto> getUsers(Token token);
+    List<UserDto> getUsers(Token token, String sort);
     boolean isUserEnabled(Token token);
+    MessageDto addUser(Token token, String login, String pwd, UserStatus status);
 }

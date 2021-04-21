@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vladimir.ppm.domain.Token;
+import com.vladimir.ppm.domain.UserStatus;
 import com.vladimir.ppm.dto.CryptoDto;
 import com.vladimir.ppm.dto.MessageDto;
 import com.vladimir.ppm.dto.TokenDto;
@@ -88,10 +89,43 @@ public class UserRestController {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").textValue();
             String publicKeyPEM = json.get("publicKey").textValue();
+            String sort = json.get("sort").textValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
-                List<UserDto> users = userService.getUsers(decryptedToken);
+                List<UserDto> users = userService.getUsers(decryptedToken, sort);
                 return cryptoProvider.encrypt(publicKeyPEM, mapper.writeValueAsString(users));
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("getStatuses")
+    public CryptoDto getStatuses(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String token = json.get("token").textValue();
+            String publicKeyPEM = json.get("publicKey").textValue();
+            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken) && userService.isAdmin(decryptedToken)) {
+                return cryptoProvider.encrypt(publicKeyPEM, mapper.writeValueAsString(UserStatus.values()));
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("addUser")
+    public CryptoDto addUser(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String token = json.get("token").textValue();
+            String publicKeyPEM = json.get("publicKey").textValue();
+            String login = json.get("login").textValue();
+            String pwd = json.get("pwd").textValue();
+            UserStatus status = UserStatus.valueOf(json.get("status").textValue());
+            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                MessageDto message = userService.addUser(decryptedToken, login, pwd, status);
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
             }
         }
         return null;
