@@ -22,7 +22,7 @@
                 <button class="btn btn-sm btn-danger" @click="cancel">X</button>
             </td>
         </tr>
-        <user-view v-for="user in users" :user="user" :statuses="statuses" :key="'usv' + user.id"></user-view>
+        <user-view v-for="user in users" :user="user" :statuses="statuses" :key="'usv' + user.id" @user-changed="getUsers"></user-view>
         </tbody>
     </table>
 </template>

@@ -17,15 +17,17 @@
         <td :class="{'text-danger': user.status === 'DISABLED'}">{{ user.status }}</td>
         <td>
             groups
+<!--            TODO-->
         </td>
         <td><button class="btn btn-sm btn-outline-success" :title="language.data.cm2" @click="showEditDlg = true">&#x1f589;</button></td>
-        <td>delete</td>
+        <td><button class="btn btn-sm btn-outline-danger" :title="language.data.cm5" @click="deleteUser">&#x1f5d1;</button></td>
     </tr>
 </template>
 
 <script>
 export default {
     name: "userView",
+    emits: ["user-changed"],
     props: {
         user: Object,
         statuses: Array
@@ -42,14 +44,58 @@ export default {
     },
     methods: {
         async save() {
-            //TODO emit save event
-            //TODO check pwd changed
+            this.eventHub.emit("show-msg", "");
+            try {
+                const token = await this.tokenProvider.getToken();
+                const encryptedData = await cryptoProvider.encrypt({
+                    token: token,
+                    id: this.user.id,
+                    login: this.login,
+                    pwd: this.pwd,
+                    status: this.status
+                });
+                const answer = await $.ajax({
+                    url: "/user/editUser",
+                    method: "POST",
+                    data: encryptedData
+                });
+                const data = cryptoProvider.decrypt(answer);
+                if (data.message) {
+                    this.eventHub.emit("show-msg", this.language.data[data.message]);
+                } else {
+                    this.showEditDlg = false;
+                    this.pwd = "";
+                    this.$emit("user-changed");
+                }
+            } catch (e) {
+                this.eventHub.emit("show-msg", this.errorParser(e));
+            }
         },
         cancel() {
             this.login = this.user.login;
             this.pwd = "";
             this.status = this.user.status;
             this.showEditDlg = false;
+        },
+        async deleteUser() {
+            if (confirm(this.language.data.cm5 + " " + this.user.login + "?")) {
+                this.eventHub.emit("show-msg", "");
+                try {
+                    const token = await this.tokenProvider.getToken();
+                    const encryptedData = await cryptoProvider.encrypt({
+                        token: token,
+                        id: this.user.id,
+                    });
+                    await $.ajax({
+                        url: "/user/deleteUser",
+                        method: "POST",
+                        data: encryptedData
+                    });
+                    this.$emit("user-changed");
+                } catch (e) {
+                    this.eventHub.emit("show-msg", this.errorParser(e));
+                }
+            }
         }
     }
 }

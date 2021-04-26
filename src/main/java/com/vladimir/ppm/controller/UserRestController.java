@@ -130,4 +130,39 @@ public class UserRestController {
         }
         return null;
     }
+
+    @PostMapping("editUser")
+    public CryptoDto editUser(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String token = json.get("token").textValue();
+            String publicKeyPEM = json.get("publicKey").textValue();
+            long userId = json.get("id").asLong();
+            String login = json.get("login").textValue();
+            String pwd = json.get("pwd").textValue();
+            UserStatus status = UserStatus.valueOf(json.get("status").textValue());
+            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                MessageDto message = userService.editUser(decryptedToken, userId, login, pwd, status);
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("deleteUser")
+    public CryptoDto deleteUser(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String token = json.get("token").textValue();
+            String publicKeyPEM = json.get("publicKey").textValue();
+            long userId = json.get("id").asLong();
+            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                MessageDto message = userService.deleteUser(decryptedToken, userId);
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
+            }
+        }
+        return null;
+    }
 }

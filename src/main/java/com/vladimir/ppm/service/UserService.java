@@ -19,4 +19,6 @@ public interface UserService {
     List<UserDto> getUsers(Token token, String sort);
     boolean isUserEnabled(Token token);
     MessageDto addUser(Token token, String login, String pwd, UserStatus status);
+    MessageDto editUser(Token token, long userId, String login, String pwd, UserStatus status);
+    MessageDto deleteUser(Token token, long userId);
 }

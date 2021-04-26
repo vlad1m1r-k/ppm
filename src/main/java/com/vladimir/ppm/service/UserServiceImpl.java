@@ -166,6 +166,37 @@ public class UserServiceImpl implements UserService {
         return MessageDto.builder().build();
     }
 
+    @Override
+    @Transactional
+    public MessageDto editUser(Token token, long userId, String login, String pwd, UserStatus status) {
+        if (isAdmin(token)) {
+            if (!validatorService.validateString(login)) {
+                return MessageDto.builder().message("use1").build();
+            }
+            User user = userRepository.getOne(userId);
+            if (pwd != null && pwd.length() > 0) {
+                user.setPassword(encoder.encode(pwd));
+            }
+            if (!user.getLogin().equals(login) && userRepository.findUserByLogin(login) != null) {
+                return MessageDto.builder().message("use3").build();
+            }
+            user.setLogin(login);
+            user.setStatus(status);
+        }
+        return MessageDto.builder().build();
+    }
+
+    @Override
+    @Transactional
+    public MessageDto deleteUser(Token token, long userId) {
+        if (isAdmin(token)) {
+            User user = userRepository.getOne(userId);
+            user.getGroups().forEach(g -> g.getUsers().remove(user));
+            userRepository.delete(user);
+        }
+        return MessageDto.builder().build();
+    }
+
     private boolean isAdmin(Set<Group> groups) {
         for (Group group : groups) {
             if (group.isAdminSettings()) {
