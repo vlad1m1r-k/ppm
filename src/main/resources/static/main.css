@@ -214,6 +214,18 @@ ul[data-v-8ef25f0e] {
 }
 
 
+.btn-dc[data-v-57646438] {
+    cursor: pointer;
+    user-select: none;
+    padding-left: 2px;
+    padding-right: 2px;
+}
+.btn-dc[data-v-57646438]:hover {
+    background-color: darkgray;
+    border-radius: 4px;
+}
+
+
 .form-bg[data-v-dbd99e66] {
     background-color: #f1f1f1 !important;
     border-radius: 3px;

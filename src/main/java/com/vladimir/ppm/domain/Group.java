@@ -20,7 +20,7 @@ public class Group {
     private boolean adminSettings = false;
 
     @ManyToMany(mappedBy = "groups")
-    private Set<User> users = new HashSet<>();
+    private final Set<User> users = new HashSet<>();
 
     public Group() {}
 
@@ -43,6 +43,14 @@ public class Group {
 
     public Set<User> getUsers() {
         return users;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setAdminSettings(boolean adminSettings) {
+        this.adminSettings = adminSettings;
     }
 
     @Override
