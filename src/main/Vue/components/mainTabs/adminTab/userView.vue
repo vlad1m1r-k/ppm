@@ -1,4 +1,5 @@
 <template>
+    <group-selector v-show="showGroupSelector" @close-dlg="showGroupSelector = false" :user="user"></group-selector>
     <tr v-if="showEditDlg">
         <td colspan="10">
             <input type="text" class="form-control-sm align-middle" :placeholder="language.data.lf1" v-model="login">
@@ -16,8 +17,7 @@
         <td>{{ user.login }}</td>
         <td :class="{'text-danger': user.status === 'DISABLED'}">{{ user.status }}</td>
         <td>
-            groups
-<!--            TODO-->
+            <button class="btn btn-sm btn-outline-success" @click="showGroupSelector = true">{{ language.data.gp1 }} ({{ user.groups.length }})</button>
         </td>
         <td><button class="btn btn-sm btn-outline-success" :title="language.data.cm2" @click="showEditDlg = true">&#x1f589;</button></td>
         <td><button class="btn btn-sm btn-outline-danger" :title="language.data.cm5" @click="deleteUser">&#x1f5d1;</button></td>
@@ -25,6 +25,8 @@
 </template>
 
 <script>
+import groupSelector from "./groupSelector.vue";
+
 export default {
     name: "userView",
     emits: ["user-changed"],
@@ -32,11 +34,13 @@ export default {
         user: Object,
         statuses: Array
     },
+    components: {groupSelector},
     data() {
         return {
             tokenProvider: this.$root.$data.tokenProvider,
             language: this.$root.$data.language,
             showEditDlg: false,
+            showGroupSelector: false,
             login: this.user.login,
             pwd: "",
             status: this.user.status
