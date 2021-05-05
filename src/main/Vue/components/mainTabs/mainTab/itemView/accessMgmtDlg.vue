@@ -3,56 +3,62 @@
         <div class="l-modal-body">
             <div class="row">
                 <div class="col">
-                    {{ user.login }}{{language.data.gs1}}
+                    {{ item.name }}
                     <button class="close" @click="$emit('close-dlg')">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
             </div>
-            <div class="scroll">
-                <table class="table table-bordered table-striped table-sm mt-3">
-                    <thead class="tab-header-area">
-                    <tr>
-                        <th></th>
-                        <th><button class="btn btn-sm btn-link" @click="setSort('name')">{{ language.data.gp2 }}</button></th>
-                        <th><button class="btn btn-sm btn-link" @click="setSort('adminSettings')">{{ language.data.gp3 }}</button></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr v-for="group in groups">
-                        <td><input type="checkbox" :checked="isChecked(group.id)" @change="setGroup(group.id, $event.target.checked)"></td>
-                        <td>{{ group.name }}</td>
-                        <td :class="{'bg-danger': group.adminSettings}">{{ group.adminSettings }}</td>
-                    </tr>
-                    </tbody>
-                </table>
+            <div class="scroll mt-3 p-1">
+                <div class="row m-0">
+                    <div class="col p-0">
+                        <button class="btn btn-sm btn-outline-success" @click="addDlg = !addDlg">&#x2795;</button>
+                    </div>
+                </div>
+                <div class="row m-0" v-if="addDlg">
+                    <div class="col p-0">
+                        <select class="form-control-sm" v-model="groupId">
+                            <option selected disabled value="null">{{ language.data.gp1 }}</option>
+                            <option v-for="grp in groups" :value="grp.id">
+                                {{ grp.name }}
+                            </option>
+                        </select>
+                        <select class="form-control-sm" v-model="access">
+                            <option selected disabled value="null">{{ language.data.amg1 }}</option>
+                            <option>
+<!--                                TODO-->
+                                {{ grp.name }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                DATA
             </div>
         </div>
     </div>
 </template>
 
 <script>
-import Sort from "../../../sort";
+import Sort from "../../../../sort";
 
 export default {
-    name: "groupSelector",
+    name: "accessMgmtDlg",
     props: {
-        user: Object
+        item: Object
     },
-    emits: ["close-dlg"],
+    emits: ['close-dlg'],
     data() {
         return {
             tokenProvider: this.$root.$data.tokenProvider,
             language: this.$root.$data.language,
             groups: [],
-            sort: new Sort("name", "asc")
+            sort: new Sort("name", "asc"),
+            addDlg: false,
+            groupId: null,
+            access: null
         }
     },
     methods: {
-        setSort(field) {
-            this.sort.setField(field);
-            this.getGroups();
-        },
         async getGroups() {
             this.eventHub.emit("show-msg", "");
             try {
@@ -71,28 +77,6 @@ export default {
                 this.eventHub.emit("show-msg", this.errorParser(e));
             }
         },
-        isChecked(id) {
-            return this.user.groups.find(grp => id === grp.id);
-        },
-        async setGroup(groupId, checked) {
-            this.eventHub.emit("show-msg", "");
-            try {
-                const token = await this.tokenProvider.getToken();
-                const encryptedData = await cryptoProvider.encrypt({
-                    token: token,
-                    groupId: groupId,
-                    userId: this.user.id,
-                    member: checked
-                });
-                $.ajax({
-                    url: "/group/editGroupMembers",
-                    method: "POST",
-                    data: encryptedData
-                });
-            } catch (e) {
-                this.eventHub.emit("show-msg", this.errorParser(e));
-            }
-        }
     },
     beforeMount() {
         this.getGroups();
@@ -135,5 +119,7 @@ export default {
 .scroll {
     overflow: auto;
     max-height: calc(100vh - 70px);
+    border-radius: 5px;
+    background: #f2f2f2;
 }
 </style>

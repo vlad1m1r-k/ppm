@@ -356,6 +356,7 @@ public class ContainerServiceImpl implements ContainerService {
     }
 
     private ContainerDto buildTree(Container container, Set<Group> groups) {
+        //TODO Implement PT option
         Access access = getAccess(container, groups);
         if (access == Access.NA || container.isDeleted()) {
             return ContainerDto.builder().build();
@@ -425,13 +426,33 @@ public class ContainerServiceImpl implements ContainerService {
 
     private Access getAccess(Container container, Set<Group> groups) {
         for (Group group : groups) {
-            if (group.isAdminSettings() || container.getGroupsRW().contains(group)) {
+            if (group.isAdminSettings()) {
+                return Access.RW;
+            }
+        }
+        for (Group group : groups) {
+            if (container.getGroupsNA().contains(group)) {
+                return Access.NA;
+            }
+        }
+        for (Group group : groups) {
+            if (container.getGroupsRW().contains(group)) {
+                return Access.RW;
+            }
+        }
+        for (Group group : groups) {
+            if (container.getGroupsRW().contains(group)) {
                 return Access.RW;
             }
         }
         for (Group group : groups) {
             if (container.getGroupsRO().contains(group)) {
                 return Access.RO;
+            }
+        }
+        for (Group group : groups) {
+            if (container.getGroupsPT().contains(group)) {
+                return Access.PT;
             }
         }
         return Access.NA;

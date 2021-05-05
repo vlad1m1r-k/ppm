@@ -10,7 +10,7 @@
                 </div>
             </div>
             <div class="scroll">
-                <table class="table table-bordered table-striped table-sm mt-3 rounded">
+                <table class="table table-bordered table-striped table-sm mt-3">
                     <thead class="tab-header-area">
                     <tr>
                         <th></th>

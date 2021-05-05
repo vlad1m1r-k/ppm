@@ -33,7 +33,13 @@ public class Container {
     private Container parent;
 
     @OneToMany
-    private Set<Container> children = new HashSet<>();
+    private final Set<Container> children = new HashSet<>();
+
+    @ManyToMany
+    private final Set<Group> groupsNA = new HashSet<>();
+
+    @ManyToMany
+    private final Set<Group> groupsPT = new HashSet<>();
 
     @ManyToMany
     private Set<Group> groupsRO = new HashSet<>();
@@ -42,10 +48,10 @@ public class Container {
     private Set<Group> groupsRW = new HashSet<>();
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.REMOVE)
-    private Set<Note> notes = new HashSet<>();
+    private final Set<Note> notes = new HashSet<>();
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.REMOVE)
-    private Set<Password> passwords = new HashSet<>();
+    private final Set<Password> passwords = new HashSet<>();
 
     public Container() {
     }
@@ -67,6 +73,14 @@ public class Container {
 
     public Container getParent() {
         return parent;
+    }
+
+    public Set<Group> getGroupsNA() {
+        return groupsNA;
+    }
+
+    public Set<Group> getGroupsPT() {
+        return groupsPT;
     }
 
     public Set<Group> getGroupsRO() {

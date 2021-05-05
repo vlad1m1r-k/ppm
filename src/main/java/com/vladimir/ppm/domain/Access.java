@@ -1,5 +1,5 @@
 package com.vladimir.ppm.domain;
 
 public enum Access {
-    NA, RO, RW
+    NA, PT, RO, RW
 }

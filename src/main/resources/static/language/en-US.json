@@ -34,6 +34,7 @@
     "iv9": "Save note?",
     "iv10": "Delete note ",
     "iv11": "Add password",
+    "iv12": "Access settings",
     "ive1": "A container with that name already exists",
     "ive2": "Error deleting container",
     "ive3": "Error renaming container",
@@ -102,6 +103,7 @@
     "usse4": "The password must have special characters.",
     "usse5": "The passwords don't match.",
     "usse6": "The password can't include your login.",
-    "usse7": "Too much the same symbols in the password."
+    "usse7": "Too much the same symbols in the password.",
+    "amg1": "Access"
   }
 }
