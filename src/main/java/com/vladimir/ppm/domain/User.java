@@ -23,7 +23,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserStatus status;
 
-    @ManyToMany
+    @ManyToMany(mappedBy = "users")
     private final Set<Group> groups = new HashSet<>();
 
     public User() {}

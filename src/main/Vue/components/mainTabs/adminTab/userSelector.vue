@@ -3,7 +3,7 @@
         <div class="l-modal-body">
             <div class="row">
                 <div class="col">
-                    {{ user.login }}{{language.data.gs1}}
+                    {{ group.name }}
                     <button class="close" @click="$emit('close-dlg')">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -14,15 +14,15 @@
                     <thead class="tab-header-area">
                     <tr>
                         <th></th>
-                        <th><button class="btn btn-sm btn-link" @click="setSort('name')">{{ language.data.gp2 }}</button></th>
-                        <th><button class="btn btn-sm btn-link" @click="setSort('adminSettings')">{{ language.data.gp3 }}</button></th>
+                        <th><button class="btn btn-sm btn-link" @click="setSort('login')">{{ language.data.lf1 }}</button></th>
+                        <th><button class="btn btn-sm btn-link" @click="setSort('status')">{{ language.data.us2 }}</button></th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr v-for="group in groups">
-                        <td><input type="checkbox" :checked="isChecked(group.id)" @change="setGroup(group.id, $event.target.checked)"></td>
-                        <td>{{ group.name }}</td>
-                        <td :class="{'bg-danger': group.adminSettings}">{{ group.adminSettings }}</td>
+                    <tr v-for="user in users">
+                        <td><input type="checkbox" :checked="isChecked(user.id)" @change="setUser(user.id, $event.target.checked)"></td>
+                        <td>{{ user.login }}</td>
+                        <td :class="{'bg-danger': user.status === 'DISABLED'}">{{ user.status }}</td>
                     </tr>
                     </tbody>
                 </table>
@@ -35,25 +35,25 @@
 import Sort from "../../../sort";
 
 export default {
-    name: "groupSelector",
+    name: "userSelector",
     props: {
-        user: Object
+        group: Object
     },
     emits: ["close-dlg"],
     data() {
         return {
             tokenProvider: this.$root.$data.tokenProvider,
             language: this.$root.$data.language,
-            groups: [],
-            sort: new Sort("name", "asc")
+            users: [],
+            sort: new Sort("login", "asc")
         }
     },
     methods: {
         setSort(field) {
             this.sort.setField(field);
-            this.getGroups();
+            this.getUsers();
         },
-        async getGroups() {
+        async getUsers() {
             this.eventHub.emit("show-msg", "");
             try {
                 const token = await this.tokenProvider.getToken();
@@ -62,26 +62,26 @@ export default {
                     sort: this.sort.toString()
                 });
                 const answer = await $.ajax({
-                    url: "/group/getGroups",
+                    url: "/user/getUsers",
                     method: "POST",
                     data: encryptedData
                 });
-                this.groups = cryptoProvider.decrypt(answer);
+                this.users = cryptoProvider.decrypt(answer);
             } catch (e) {
                 this.eventHub.emit("show-msg", this.errorParser(e));
             }
         },
         isChecked(id) {
-            return this.user.groups.find(grp => id === grp.id);
+            return this.group.users.find(usr => id === usr.id);
         },
-        async setGroup(groupId, checked) {
+        async setUser(userId, checked) {
             this.eventHub.emit("show-msg", "");
             try {
                 const token = await this.tokenProvider.getToken();
                 const encryptedData = await cryptoProvider.encrypt({
                     token: token,
-                    groupId: groupId,
-                    userId: this.user.id,
+                    groupId: this.group.id,
+                    userId: userId,
                     member: checked
                 });
                 $.ajax({
@@ -95,7 +95,7 @@ export default {
         }
     },
     beforeMount() {
-        this.getGroups();
+        this.getUsers();
     }
 }
 </script>

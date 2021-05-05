@@ -106,4 +106,22 @@ public class GroupRestController {
         }
         return null;
     }
+
+    @PostMapping("editGroupMembers")
+    public CryptoDto editGroupMembers(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String token = json.get("token").textValue();
+            String publicKeyPEM = json.get("publicKey").textValue();
+            long groupId = json.get("groupId").asLong();
+            long userId = json.get("userId").asLong();
+            boolean member = json.get("member").asBoolean();
+            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                MessageDto message = groupService.editGroupMembers(decryptedToken, groupId, userId, member);
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
+            }
+        }
+        return null;
+    }
 }

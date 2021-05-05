@@ -78,6 +78,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
+    public User getUserById(long userId) {
+        return userRepository.getOne(userId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Set<Group> getGroups(Token token) {
         User user = userRepository.findUserByLogin(token.getLogin());
         return user.getGroups();

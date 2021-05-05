@@ -38,7 +38,7 @@ public class GroupServiceImpl implements GroupService {
                     .id(g.getId())
                     .name(g.getName())
                     .adminSettings(g.isAdminSettings())
-                    .users(g.getUsers().stream().filter(User::isEnabled).map(u -> UserDto.builder()
+                    .users(g.getUsers().stream().map(u -> UserDto.builder()
                             .id(u.getId())
                             .login(u.getLogin())
                             .build())
@@ -90,6 +90,21 @@ public class GroupServiceImpl implements GroupService {
             Group group = groupRepository.getOne(groupId);
             group.getUsers().forEach(u -> u.getGroups().remove(group));
             groupRepository.delete(group);
+        }
+        return MessageDto.builder().build();
+    }
+
+    @Override
+    @Transactional
+    public MessageDto editGroupMembers(Token token, long groupId, long userId, boolean member) {
+        if (userService.isAdmin(token)) {
+            Group group = groupRepository.getOne(groupId);
+            User user = userService.getUserById(userId);
+            if (member) {
+                group.getUsers().add(user);
+            } else {
+                group.getUsers().remove(user);
+            }
         }
         return MessageDto.builder().build();
     }

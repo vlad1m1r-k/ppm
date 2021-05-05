@@ -11,4 +11,5 @@ public interface GroupService {
     MessageDto addGroup(Token token, String name, boolean adminSettings);
     MessageDto editGroup(Token token, long groupId, String name, boolean adminSettings);
     MessageDto deleteGroup(Token token, long groupId);
+    MessageDto editGroupMembers(Token token, long groupId, long userId, boolean member);
 }
