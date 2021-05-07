@@ -356,7 +356,6 @@ public class ContainerServiceImpl implements ContainerService {
     }
 
     private ContainerDto buildTree(Container container, Set<Group> groups) {
-        //TODO Implement PT option
         Access access = getAccess(container, groups);
         if (access == Access.NA || container.isDeleted()) {
             return ContainerDto.builder().build();
@@ -371,8 +370,8 @@ public class ContainerServiceImpl implements ContainerService {
             }
         }
         children.sort(Comparator.comparing(ContainerDto::getName));
-        List<NoteDto> notes;
-        List<PasswordDto> passwords;
+        List<NoteDto> notes = new ArrayList<>();
+        List<PasswordDto> passwords = new ArrayList<>();
         if (access == Access.RW) {
             notes = container.getNotes().stream()
                     .filter(n -> !n.isDeleted())
@@ -402,7 +401,8 @@ public class ContainerServiceImpl implements ContainerService {
                             .build())
                     .sorted(Comparator.comparing(PasswordDto::getName))
                     .collect(Collectors.toList());
-        } else {
+        }
+        if (access == Access.RO) {
             notes = container.getNotes().stream()
                     .filter(n -> !n.isDeleted())
                     .map(n -> NoteDto.builder().id(n.getId()).name(n.getName()).build())
