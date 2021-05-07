@@ -1,5 +1,6 @@
 package com.vladimir.ppm.service;
 
+import com.vladimir.ppm.domain.Access;
 import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.dto.ContainerDto;
 import com.vladimir.ppm.dto.MessageDto;
@@ -27,4 +28,5 @@ public interface ContainerService {
     MessageDto restoreNote(Token token, long noteId);
     MessageDto restorePasswd(Token token, long pwdId);
     List<ContainerDto> getDeletedContainers(Token token, String sort);
+    MessageDto setAccess(Token token, long containerId, long groupId, Access access, boolean ptAbove, boolean sameBelow);
 }

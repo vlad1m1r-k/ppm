@@ -3,6 +3,7 @@ package com.vladimir.ppm.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vladimir.ppm.domain.Access;
 import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.dto.ContainerDto;
 import com.vladimir.ppm.dto.CryptoDto;
@@ -361,6 +362,26 @@ public class ContainerRestController {
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 List<ContainerDto> containers = containerService.getDeletedContainers(decryptedToken, sort);
                 return cryptoProvider.encrypt(publicKeyPEM, mapper.writeValueAsString(containers));
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("setAccess")
+    public CryptoDto setAccess(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String publicKeyPEM = json.get("publicKey").textValue();
+            String token = json.get("token").textValue();
+            long containerId = json.get("containerId").longValue();
+            long groupId = json.get("groupId").longValue();
+            Access access = Access.valueOf(json.get("access").textValue());
+            boolean ptAbove = json.get("ptAbove").asBoolean();
+            boolean sameBelow = json.get("sameBelow").asBoolean();
+            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                MessageDto message = containerService.setAccess(decryptedToken, containerId, groupId, access, ptAbove, sameBelow);
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
             }
         }
         return null;

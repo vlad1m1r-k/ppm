@@ -104,6 +104,12 @@
     "usse5": "The passwords don't match.",
     "usse6": "The password can't include your login.",
     "usse7": "Too much the same symbols in the password.",
-    "amg1": "Access"
+    "amg1": "Access",
+    "amg2": "No access",
+    "amg3": "Pass through",
+    "amg4": "Read only",
+    "amg5": "Full access",
+    "amg6": "Set \"pass through\" to containers above",
+    "amg7": "Set the same rights to containers below"
   }
 }

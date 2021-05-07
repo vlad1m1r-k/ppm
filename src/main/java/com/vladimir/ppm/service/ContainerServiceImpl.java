@@ -355,6 +355,12 @@ public class ContainerServiceImpl implements ContainerService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public MessageDto setAccess(Token token, long containerId, long groupId, Access access, boolean ptAbove, boolean sameBelow) {
+        //TODO
+        return null;
+    }
+
     private ContainerDto buildTree(Container container, Set<Group> groups) {
         Access access = getAccess(container, groups);
         if (access == Access.NA || container.isDeleted()) {

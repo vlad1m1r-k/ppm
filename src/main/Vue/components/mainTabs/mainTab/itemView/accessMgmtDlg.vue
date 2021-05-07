@@ -15,21 +15,28 @@
                         <button class="btn btn-sm btn-outline-success" @click="addDlg = !addDlg">&#x2795;</button>
                     </div>
                 </div>
-                <div class="row m-0" v-if="addDlg">
+                <div class="row m-0 mt-1" v-if="addDlg">
                     <div class="col p-0">
-                        <select class="form-control-sm" v-model="groupId">
+                        <select class="form-control-sm align-middle" v-model="groupId">
                             <option selected disabled value="null">{{ language.data.gp1 }}</option>
                             <option v-for="grp in groups" :value="grp.id">
                                 {{ grp.name }}
                             </option>
                         </select>
-                        <select class="form-control-sm" v-model="access">
+                        <select class="form-control-sm align-middle" v-model="access">
                             <option selected disabled value="null">{{ language.data.amg1 }}</option>
-                            <option>
-<!--                                TODO-->
-                                {{ grp.name }}
-                            </option>
+                            <option value="NA">{{ language.data.amg2 }}</option>
+                            <option value="PT">{{ language.data.amg3 }}</option>
+                            <option value="RO">{{ language.data.amg4 }}</option>
+                            <option value="RW">{{ language.data.amg5 }}</option>
                         </select>
+                        <button class="btn btn-sm btn-outline-success" :disabled="groupId === null && access === null"
+                                @click="setAccess">&check;</button>
+                        <button class="btn btn-sm btn-danger" @click="cancel">X</button>
+                        <br>
+                        <input type="checkbox"> {{ language.data.amg6 }}
+                        <br>
+                        <input type="checkbox"> {{ language.data.amg7 }}
                     </div>
                 </div>
                 DATA
@@ -51,11 +58,14 @@ export default {
         return {
             tokenProvider: this.$root.$data.tokenProvider,
             language: this.$root.$data.language,
+            assignedGroups: [],
             groups: [],
             sort: new Sort("name", "asc"),
             addDlg: false,
             groupId: null,
-            access: null
+            access: null,
+            ptAbove: false,
+            sameBelow: false
         }
     },
     methods: {
@@ -77,9 +87,23 @@ export default {
                 this.eventHub.emit("show-msg", this.errorParser(e));
             }
         },
+        cancel() {
+            this.addDlg = false;
+            this.groupId = null;
+            this.access = null;
+            this.ptAbove = false;
+            this.sameBelow = false;
+        },
+        getAssignedGroups() {
+            //TODO
+        },
+        setAccess() {
+            //TODO
+        }
     },
     beforeMount() {
         this.getGroups();
+        this.getAssignedGroups();
     }
 }
 </script>
