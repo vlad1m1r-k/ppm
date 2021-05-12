@@ -32,14 +32,16 @@ public class ContainerServiceImpl implements ContainerService {
     private final CryptoProvider cryptoProvider;
     private final NoteRepository noteRepository;
     private final PasswordRepository passwordRepository;
+    private final GroupService groupService;
 
     public ContainerServiceImpl(UserService userService, ContainerRepository containerRepository, CryptoProvider cryptoProvider,
-                                NoteRepository noteRepository, PasswordRepository passwordRepository) {
+                                NoteRepository noteRepository, PasswordRepository passwordRepository, GroupService groupService) {
         this.userService = userService;
         this.containerRepository = containerRepository;
         this.cryptoProvider = cryptoProvider;
         this.noteRepository = noteRepository;
         this.passwordRepository = passwordRepository;
+        this.groupService = groupService;
     }
 
     @Override
@@ -356,9 +358,36 @@ public class ContainerServiceImpl implements ContainerService {
     }
 
     @Override
+    @Transactional
     public MessageDto setAccess(Token token, long containerId, long groupId, Access access, boolean ptAbove, boolean sameBelow) {
-        //TODO
-        return null;
+        if (userService.isAdmin(token)) {
+            Container container = containerRepository.getOne(containerId);
+            Group group = groupService.getGroupById(groupId);
+            switch (access) {
+                case NA:
+                    container.getGroupsNA().add(group);
+                    break;
+                case PT:
+                    container.getGroupsPT().add(group);
+                    break;
+                case RO:
+                    container.getGroupsRO().add(group);
+                    break;
+                case RW:
+                    container.getGroupsRW().add(group);
+            }
+            if (ptAbove) {
+                Container parent = container.getParent();
+                while (parent != null) {
+                    parent.getGroupsPT().add(group);
+                    parent = parent.getParent();
+                }
+            }
+            if (sameBelow) {
+                //TODO
+            }
+        }
+        return MessageDto.builder().build();
     }
 
     private ContainerDto buildTree(Container container, Set<Group> groups) {

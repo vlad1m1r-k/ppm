@@ -108,4 +108,10 @@ public class GroupServiceImpl implements GroupService {
         }
         return MessageDto.builder().build();
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Group getGroupById(long groupId) {
+        return groupRepository.getOne(groupId);
+    }
 }
