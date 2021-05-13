@@ -74,6 +74,8 @@ public class ContainerServiceImpl implements ContainerService {
         Container parent = containerRepository.getOne(parentId);
         if (getAccess(parent, userService.getGroups(token)) == Access.RW && name.length() > 0 && !parent.isDeleted()) {
             Container container = new Container(name, parent, token.getLogin());
+            container.setGroupsNA(new HashSet<>(parent.getGroupsNA()));
+            container.setGroupsPT(new HashSet<>(parent.getGroupsPT()));
             container.setGroupsRO(new HashSet<>(parent.getGroupsRO()));
             container.setGroupsRW(new HashSet<>(parent.getGroupsRW()));
             container = containerRepository.save(container);

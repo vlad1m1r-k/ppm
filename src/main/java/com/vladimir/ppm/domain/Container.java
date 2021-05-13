@@ -36,10 +36,10 @@ public class Container {
     private final Set<Container> children = new HashSet<>();
 
     @ManyToMany
-    private final Set<Group> groupsNA = new HashSet<>();
+    private Set<Group> groupsNA = new HashSet<>();
 
     @ManyToMany
-    private final Set<Group> groupsPT = new HashSet<>();
+    private Set<Group> groupsPT = new HashSet<>();
 
     @ManyToMany
     private Set<Group> groupsRO = new HashSet<>();
@@ -137,6 +137,14 @@ public class Container {
 
     public void setParent(Container parent) {
         this.parent = parent;
+    }
+
+    public void setGroupsNA(Set<Group> groupsNA) {
+        this.groupsNA = groupsNA;
+    }
+
+    public void setGroupsPT(Set<Group> groupsPT) {
+        this.groupsPT = groupsPT;
     }
 
     public void setGroupsRO(Set<Group> groupsRO) {
