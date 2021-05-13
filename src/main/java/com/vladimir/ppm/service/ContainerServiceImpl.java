@@ -386,10 +386,29 @@ public class ContainerServiceImpl implements ContainerService {
                 }
             }
             if (sameBelow) {
-                //TODO
+                setAccess(container, group, access);
             }
         }
         return MessageDto.builder().build();
+    }
+
+    private void setAccess(Container container, Group group, Access access) {
+        for (Container childContainer : container.getChildren()) {
+            switch (access) {
+                case NA:
+                    childContainer.getGroupsNA().add(group);
+                    break;
+                case PT:
+                    childContainer.getGroupsPT().add(group);
+                    break;
+                case RO:
+                    childContainer.getGroupsRO().add(group);
+                    break;
+                case RW:
+                    childContainer.getGroupsRW().add(group);
+            }
+            setAccess(childContainer, group, access);
+        }
     }
 
     private ContainerDto buildTree(Container container, Set<Group> groups) {
