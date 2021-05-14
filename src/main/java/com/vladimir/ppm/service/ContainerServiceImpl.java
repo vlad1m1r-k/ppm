@@ -6,6 +6,7 @@ import com.vladimir.ppm.domain.Group;
 import com.vladimir.ppm.domain.Note;
 import com.vladimir.ppm.domain.Password;
 import com.vladimir.ppm.domain.Token;
+import com.vladimir.ppm.dto.AccessDto;
 import com.vladimir.ppm.dto.ContainerDto;
 import com.vladimir.ppm.dto.MessageDto;
 import com.vladimir.ppm.dto.NoteDto;
@@ -365,19 +366,7 @@ public class ContainerServiceImpl implements ContainerService {
         if (userService.isAdmin(token)) {
             Container container = containerRepository.getOne(containerId);
             Group group = groupService.getGroupById(groupId);
-            switch (access) {
-                case NA:
-                    container.getGroupsNA().add(group);
-                    break;
-                case PT:
-                    container.getGroupsPT().add(group);
-                    break;
-                case RO:
-                    container.getGroupsRO().add(group);
-                    break;
-                case RW:
-                    container.getGroupsRW().add(group);
-            }
+            setAccessSwitch(container, group, access);
             if (ptAbove) {
                 Container parent = container.getParent();
                 while (parent != null) {
@@ -386,28 +375,56 @@ public class ContainerServiceImpl implements ContainerService {
                 }
             }
             if (sameBelow) {
-                setAccess(container, group, access);
+                setAccessRecursively(container, group, access);
             }
         }
         return MessageDto.builder().build();
     }
 
-    private void setAccess(Container container, Group group, Access access) {
+    @Override
+    @Transactional(readOnly = true)
+    public List<AccessDto> getAssignedGroups(Token token, long containerId) {
+        if (userService.isAdmin(token)) {
+            Container container = containerRepository.getOne(containerId);
+            List<AccessDto> accessList = new ArrayList<>();
+            accessList.addAll(mapGroupToAccessDto(container.getGroupsNA(), Access.NA));
+            accessList.addAll(mapGroupToAccessDto(container.getGroupsPT(), Access.PT));
+            accessList.addAll(mapGroupToAccessDto(container.getGroupsRO(), Access.RO));
+            accessList.addAll(mapGroupToAccessDto(container.getGroupsRW(), Access.RW));
+            return accessList;
+        }
+        return new ArrayList<>();
+    }
+
+    private List<AccessDto> mapGroupToAccessDto(Set<Group> groups, Access access) {
+        return groups.stream().map(g -> AccessDto.builder()
+                .id(g.getId())
+                .name(g.getName())
+                .access(access)
+                .build())
+                .collect(Collectors.toList());
+    }
+
+    private void setAccessRecursively(Container container, Group group, Access access) {
         for (Container childContainer : container.getChildren()) {
-            switch (access) {
-                case NA:
-                    childContainer.getGroupsNA().add(group);
-                    break;
-                case PT:
-                    childContainer.getGroupsPT().add(group);
-                    break;
-                case RO:
-                    childContainer.getGroupsRO().add(group);
-                    break;
-                case RW:
-                    childContainer.getGroupsRW().add(group);
-            }
-            setAccess(childContainer, group, access);
+            setAccessSwitch(childContainer, group, access);
+            setAccessRecursively(childContainer, group, access);
+        }
+    }
+
+    private void setAccessSwitch(Container container, Group group, Access access) {
+        switch (access) {
+            case NA:
+                container.getGroupsNA().add(group);
+                break;
+            case PT:
+                container.getGroupsPT().add(group);
+                break;
+            case RO:
+                container.getGroupsRO().add(group);
+                break;
+            case RW:
+                container.getGroupsRW().add(group);
         }
     }
 

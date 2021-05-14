@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vladimir.ppm.domain.Access;
 import com.vladimir.ppm.domain.Token;
+import com.vladimir.ppm.dto.AccessDto;
 import com.vladimir.ppm.dto.ContainerDto;
 import com.vladimir.ppm.dto.CryptoDto;
 import com.vladimir.ppm.dto.MessageDto;
@@ -382,6 +383,22 @@ public class ContainerRestController {
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 MessageDto message = containerService.setAccess(decryptedToken, containerId, groupId, access, ptAbove, sameBelow);
                 return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("getAssignedGroups")
+    public CryptoDto getAssignedGroups(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String publicKeyPEM = json.get("publicKey").textValue();
+            String token = json.get("token").textValue();
+            long containerId = json.get("containerId").longValue();
+            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                List<AccessDto> accessList = containerService.getAssignedGroups(decryptedToken, containerId);
+                return cryptoProvider.encrypt(publicKeyPEM, mapper.writeValueAsString(accessList));
             }
         }
         return null;

@@ -31,15 +31,29 @@
                             <option value="RW">{{ language.data.amg5 }}</option>
                         </select>
                         <button class="btn btn-sm btn-outline-success" :disabled="groupId === null && access === null"
-                                @click="setAccess">&check;</button>
+                                @click="setAccess">&check;
+                        </button>
                         <button class="btn btn-sm btn-danger" @click="cancel">X</button>
                         <br>
-                        <input type="checkbox"> {{ language.data.amg6 }}
+                        <input type="checkbox" v-model="ptAbove"> {{ language.data.amg6 }}
                         <br>
-                        <input type="checkbox"> {{ language.data.amg7 }}
+                        <input type="checkbox" v-model="sameBelow"> {{ language.data.amg7 }}
                     </div>
                 </div>
-                DATA
+                <table class="table table-bordered table-striped table-sm mt-1">
+                    <thead></thead>
+                    <tbody>
+                    <tr v-for="group in assignedGroups" :key="'access' + group.id">
+                        <td>{{ group.name }}</td>
+                        <td>{{ group.access }}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-danger" :title="language.data.cm5" @click="removeAccess(group.id, group.name)">
+                                &#x1f5d1;
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -94,11 +108,52 @@ export default {
             this.ptAbove = false;
             this.sameBelow = false;
         },
-        getAssignedGroups() {
-            //TODO
+        async getAssignedGroups() {
+            this.eventHub.emit("show-msg", "");
+            try {
+                const token = await this.tokenProvider.getToken();
+                const encryptedData = await cryptoProvider.encrypt({
+                    token: token,
+                    containerId: this.item.id
+                });
+                const answer = await $.ajax({
+                    url: "/container/getAssignedGroups",
+                    method: "POST",
+                    data: encryptedData
+                });
+                this.assignedGroups = cryptoProvider.decrypt(answer);
+            } catch (e) {
+                this.eventHub.emit("show-msg", this.errorParser(e));
+            }
         },
-        setAccess() {
-            //TODO
+        async setAccess() {
+            this.eventHub.emit("show-msg", "");
+            try {
+                const token = await this.tokenProvider.getToken();
+                const encryptedData = await cryptoProvider.encrypt({
+                    token: token,
+                    containerId: this.item.id,
+                    groupId: this.groupId,
+                    access: this.access,
+                    ptAbove: this.ptAbove,
+                    sameBelow: this.sameBelow
+                });
+                await $.ajax({
+                    url: "/container/setAccess",
+                    method: "POST",
+                    data: encryptedData
+                });
+                this.cancel();
+                this.getAssignedGroups();
+            } catch (e) {
+                this.eventHub.emit("show-msg", this.errorParser(e));
+            }
+        },
+        async removeAccess(groupId, groupName) {
+            if (confirm(this.language.data.amg8 + groupName + "?")) {
+                //TODO
+                //TODO add painting and translate for access by computed property
+            }
         }
     },
     beforeMount() {
@@ -140,6 +195,7 @@ export default {
     max-height: calc(100vh - 40px);
     overflow-y: hidden;
 }
+
 .scroll {
     overflow: auto;
     max-height: calc(100vh - 70px);
