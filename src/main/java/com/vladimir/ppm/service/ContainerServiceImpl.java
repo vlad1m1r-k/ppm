@@ -7,6 +7,7 @@ import com.vladimir.ppm.domain.Note;
 import com.vladimir.ppm.domain.Password;
 import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.dto.AccessDto;
+import com.vladimir.ppm.dto.AccessTreeDto;
 import com.vladimir.ppm.dto.ContainerDto;
 import com.vladimir.ppm.dto.MessageDto;
 import com.vladimir.ppm.dto.NoteDto;
@@ -404,6 +405,42 @@ public class ContainerServiceImpl implements ContainerService {
             return accessList;
         }
         return new ArrayList<>();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public AccessTreeDto getAccessTree(Token token, long groupId) {
+        if (userService.isAdmin(token)) {
+            Group group = groupService.getGroupById(groupId);
+            Container root = containerRepository.getContainerByName("root");
+            return buildAccessTree(root, group);
+        }
+        return AccessTreeDto.builder().build();
+    }
+
+    private AccessTreeDto buildAccessTree(Container container, Group group) {
+        boolean na = container.getGroupsNA().contains(group);
+        boolean pt = container.getGroupsPT().contains(group);
+        boolean ro = container.getGroupsRO().contains(group);
+        boolean rw = container.getGroupsRW().contains(group);
+        List<AccessTreeDto> children = new ArrayList<>();
+        for (Container child : container.getChildren()) {
+            AccessTreeDto childDto = buildAccessTree(child, group);
+            if (childDto.getName() != null) {
+                children.add(childDto);
+            }
+        }
+        if (children.isEmpty() && !na && !pt && !ro && !rw) {
+            return AccessTreeDto.builder().build();
+        }
+        return AccessTreeDto.builder()
+                .name(container.getName())
+                .children(children)
+                .accessNA(na)
+                .accessPT(pt)
+                .accessRO(ro)
+                .accessRW(rw)
+                .build();
     }
 
     private List<AccessDto> mapGroupToAccessDto(Set<Group> groups, Access access) {

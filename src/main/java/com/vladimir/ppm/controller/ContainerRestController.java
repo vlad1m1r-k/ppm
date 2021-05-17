@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vladimir.ppm.domain.Access;
 import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.dto.AccessDto;
+import com.vladimir.ppm.dto.AccessTreeDto;
 import com.vladimir.ppm.dto.ContainerDto;
 import com.vladimir.ppm.dto.CryptoDto;
 import com.vladimir.ppm.dto.MessageDto;
@@ -368,7 +369,7 @@ public class ContainerRestController {
         return null;
     }
 
-    @PostMapping("setAccess")
+    @PostMapping("/setAccess")
     public CryptoDto setAccess(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
@@ -388,7 +389,7 @@ public class ContainerRestController {
         return null;
     }
 
-    @PostMapping("getAssignedGroups")
+    @PostMapping("/getAssignedGroups")
     public CryptoDto getAssignedGroups(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
@@ -404,7 +405,7 @@ public class ContainerRestController {
         return null;
     }
 
-    @PostMapping("removeAccess")
+    @PostMapping("/removeAccess")
     public CryptoDto removeAccess(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
@@ -417,6 +418,22 @@ public class ContainerRestController {
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 containerService.removeAccess(decryptedToken, containerId, groupId, access);
                 return cryptoProvider.encrypt(publicKeyPEM, "");
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/getAccessTree")
+    public CryptoDto getAccessTree(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String token = json.get("token").textValue();
+            String publicKeyPEM = json.get("publicKey").textValue();
+            long groupId = json.get("groupId").asLong();
+            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                AccessTreeDto treeDto = containerService.getAccessTree(decryptedToken, groupId);
+                return cryptoProvider.encrypt(publicKeyPEM, treeDto.toJson());
             }
         }
         return null;

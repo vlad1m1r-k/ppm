@@ -99,7 +99,7 @@ public class UserRestController {
         return null;
     }
 
-    @PostMapping("getStatuses")
+    @PostMapping("/getStatuses")
     public CryptoDto getStatuses(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
@@ -113,7 +113,7 @@ public class UserRestController {
         return null;
     }
 
-    @PostMapping("addUser")
+    @PostMapping("/addUser")
     public CryptoDto addUser(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
@@ -131,7 +131,7 @@ public class UserRestController {
         return null;
     }
 
-    @PostMapping("editUser")
+    @PostMapping("/editUser")
     public CryptoDto editUser(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
@@ -150,7 +150,7 @@ public class UserRestController {
         return null;
     }
 
-    @PostMapping("deleteUser")
+    @PostMapping("/deleteUser")
     public CryptoDto deleteUser(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));

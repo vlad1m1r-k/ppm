@@ -232,7 +232,7 @@ export default {
 
 .scroll {
     overflow: auto;
-    max-height: calc(100vh - 70px);
+    max-height: calc(100vh - 90px);
     border-radius: 5px;
     background: #f2f2f2;
 }

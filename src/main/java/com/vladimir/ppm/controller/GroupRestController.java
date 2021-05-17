@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vladimir.ppm.domain.Token;
+import com.vladimir.ppm.dto.AccessTreeDto;
 import com.vladimir.ppm.dto.CryptoDto;
 import com.vladimir.ppm.dto.GroupDto;
 import com.vladimir.ppm.dto.MessageDto;
@@ -73,7 +74,7 @@ public class GroupRestController {
         return null;
     }
 
-    @PostMapping("editGroup")
+    @PostMapping("/editGroup")
     public CryptoDto editGroup(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
@@ -91,7 +92,7 @@ public class GroupRestController {
         return null;
     }
 
-    @PostMapping("deleteGroup")
+    @PostMapping("/deleteGroup")
     public CryptoDto deleteGroup(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
@@ -107,7 +108,7 @@ public class GroupRestController {
         return null;
     }
 
-    @PostMapping("editGroupMembers")
+    @PostMapping("/editGroupMembers")
     public CryptoDto editGroupMembers(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));

@@ -3,6 +3,7 @@ package com.vladimir.ppm.service;
 import com.vladimir.ppm.domain.Group;
 import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.domain.User;
+import com.vladimir.ppm.dto.AccessTreeDto;
 import com.vladimir.ppm.dto.GroupDto;
 import com.vladimir.ppm.dto.MessageDto;
 import com.vladimir.ppm.dto.UserDto;

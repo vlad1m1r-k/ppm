@@ -3,6 +3,7 @@ package com.vladimir.ppm.service;
 import com.vladimir.ppm.domain.Access;
 import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.dto.AccessDto;
+import com.vladimir.ppm.dto.AccessTreeDto;
 import com.vladimir.ppm.dto.ContainerDto;
 import com.vladimir.ppm.dto.MessageDto;
 import com.vladimir.ppm.dto.PasswordDto;
@@ -32,4 +33,5 @@ public interface ContainerService {
     MessageDto setAccess(Token token, long containerId, long groupId, Access access, boolean ptAbove, boolean sameBelow);
     void removeAccess(Token token, long containerId, long groupId, Access access);
     List<AccessDto> getAssignedGroups(Token token, long containerId);
+    AccessTreeDto getAccessTree(Token token, long groupId);
 }

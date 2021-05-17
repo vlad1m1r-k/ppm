@@ -5,6 +5,7 @@
             <th><button class="btn btn-sm btn-link" @click="setSort('name')">{{ language.data.gp2 }}</button></th>
             <th><button class="btn btn-sm btn-link" @click="setSort('adminSettings')">{{ language.data.gp3 }}</button></th>
             <th>{{ language.data.us1 }}</th>
+            <th>{{ language.data.amg1 }}</th>
             <th><span class="btn-dc text-success" @click="showAddDlg = !showAddDlg">&#x2795;</span></th>
             <th></th>
         </tr>

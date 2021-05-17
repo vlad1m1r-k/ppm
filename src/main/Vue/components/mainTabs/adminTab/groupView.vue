@@ -1,5 +1,6 @@
 <template>
     <user-selector v-show="showUserSelector" :group="group" @close-dlg="showUserSelector = false; $emit('group-changed')"></user-selector>
+    <access-tree v-show="showAccessTree" :group="group" @close-dlg="showAccessTree = false"></access-tree>
     <tr v-if="showEditDlg">
         <td colspan="10">
             <input type="text" class="form-control-sm align-middle" :placeholder="language.data.gp2" v-model="name">
@@ -21,6 +22,9 @@
         <td>
             <button class="btn btn-sm btn-outline-success" @click="showUserSelector = true">{{ language.data.us1 }} ({{ group.users.length }})</button>
         </td>
+        <td>
+            <button class="btn btn-sm btn-outline-success" @click="showAccessTree = true">{{ language.data.gp4 }}</button>
+        </td>
         <td><button class="btn btn-sm btn-outline-success" :title="language.data.cm2" @click="showEditDlg = true">&#x1f589;</button></td>
         <td><button class="btn btn-sm btn-outline-danger" :title="language.data.cm5" @click="deleteGroup">&#x1f5d1;</button></td>
     </tr>
@@ -28,6 +32,7 @@
 
 <script>
 import userSelector from "./userSelector.vue";
+import accessTree from "./accessTree.vue";
 
 export default {
     name: "groupView",
@@ -35,13 +40,14 @@ export default {
         group: Object
     },
     emits: ["group-changed"],
-    components: {userSelector},
+    components: {userSelector, accessTree},
     data() {
         return {
             tokenProvider: this.$root.$data.tokenProvider,
             language: this.$root.$data.language,
             showEditDlg: false,
             showUserSelector: false,
+            showAccessTree: false,
             name: this.group.name,
             adminSettings: this.group.adminSettings
         }
