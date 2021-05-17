@@ -30,5 +30,6 @@ public interface ContainerService {
     MessageDto restorePasswd(Token token, long pwdId);
     List<ContainerDto> getDeletedContainers(Token token, String sort);
     MessageDto setAccess(Token token, long containerId, long groupId, Access access, boolean ptAbove, boolean sameBelow);
+    void removeAccess(Token token, long containerId, long groupId, Access access);
     List<AccessDto> getAssignedGroups(Token token, long containerId);
 }

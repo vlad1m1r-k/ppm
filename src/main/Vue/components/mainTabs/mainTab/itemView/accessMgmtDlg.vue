@@ -45,9 +45,10 @@
                     <tbody>
                     <tr v-for="group in assignedGroups" :key="'access' + group.id">
                         <td>{{ group.name }}</td>
-                        <td>{{ group.access }}</td>
+                        <td :class="paintAccess(group.access)">{{ printAccess(group.access) }}</td>
                         <td>
-                            <button class="btn btn-sm btn-outline-danger" :title="language.data.cm5" @click="removeAccess(group.id, group.name)">
+                            <button class="btn btn-sm btn-outline-danger" :title="language.data.cm5"
+                                    @click="removeAccess(group.id, group.access, group.name)">
                                 &#x1f5d1;
                             </button>
                         </td>
@@ -108,6 +109,23 @@ export default {
             this.ptAbove = false;
             this.sameBelow = false;
         },
+        printAccess(access) {
+            switch (access) {
+                case "NA": return this.language.data.amg2
+                case "PT": return this.language.data.amg3
+                case "RO": return this.language.data.amg4
+                case "RW": return this.language.data.amg5
+            }
+            return access;
+        },
+        paintAccess(access) {
+            switch (access) {
+                case "NA": return ""
+                case "PT": return "bg-info"
+                case "RO": return "bg-success"
+                case "RW": return "bg-danger"
+            }
+        },
         async getAssignedGroups() {
             this.eventHub.emit("show-msg", "");
             try {
@@ -149,10 +167,26 @@ export default {
                 this.eventHub.emit("show-msg", this.errorParser(e));
             }
         },
-        async removeAccess(groupId, groupName) {
+        async removeAccess(groupId, access, groupName) {
             if (confirm(this.language.data.amg8 + groupName + "?")) {
-                //TODO
-                //TODO add painting and translate for access by computed property
+                this.eventHub.emit("show-msg", "");
+                try {
+                    const token = await this.tokenProvider.getToken();
+                    const encryptedData = await cryptoProvider.encrypt({
+                        token: token,
+                        containerId: this.item.id,
+                        groupId: groupId,
+                        access: access,
+                    });
+                    await $.ajax({
+                        url: "/container/removeAccess",
+                        method: "POST",
+                        data: encryptedData
+                    });
+                    this.getAssignedGroups();
+                } catch (e) {
+                    this.eventHub.emit("show-msg", this.errorParser(e));
+                }
             }
         }
     },

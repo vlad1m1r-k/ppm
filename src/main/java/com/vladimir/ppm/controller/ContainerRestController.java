@@ -403,4 +403,22 @@ public class ContainerRestController {
         }
         return null;
     }
+
+    @PostMapping("removeAccess")
+    public CryptoDto removeAccess(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String publicKeyPEM = json.get("publicKey").textValue();
+            String token = json.get("token").textValue();
+            long containerId = json.get("containerId").longValue();
+            long groupId = json.get("groupId").longValue();
+            Access access = Access.valueOf(json.get("access").textValue());
+            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                containerService.removeAccess(decryptedToken, containerId, groupId, access);
+                return cryptoProvider.encrypt(publicKeyPEM, "");
+            }
+        }
+        return null;
+    }
 }

@@ -382,6 +382,16 @@ public class ContainerServiceImpl implements ContainerService {
     }
 
     @Override
+    @Transactional
+    public void removeAccess(Token token, long containerId, long groupId, Access access) {
+        if (userService.isAdmin(token)) {
+            Container container = containerRepository.getOne(containerId);
+            Group group = groupService.getGroupById(groupId);
+            removeAccessRecursively(container, group, access);
+        }
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public List<AccessDto> getAssignedGroups(Token token, long containerId) {
         if (userService.isAdmin(token)) {
@@ -425,6 +435,29 @@ public class ContainerServiceImpl implements ContainerService {
                 break;
             case RW:
                 container.getGroupsRW().add(group);
+        }
+    }
+
+    private void removeAccessRecursively(Container container, Group group, Access access) {
+        removeAccessSwitch(container, group, access);
+        for (Container childContainer : container.getChildren()) {
+            removeAccessRecursively(childContainer, group, access);
+        }
+    }
+
+    private void removeAccessSwitch(Container container, Group group, Access access) {
+        switch (access) {
+            case NA:
+                container.getGroupsNA().remove(group);
+                break;
+            case PT:
+                container.getGroupsPT().remove(group);
+                break;
+            case RO:
+                container.getGroupsRO().remove(group);
+                break;
+            case RW:
+                container.getGroupsRW().remove(group);
         }
     }
 
