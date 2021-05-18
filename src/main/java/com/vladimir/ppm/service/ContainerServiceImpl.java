@@ -434,6 +434,7 @@ public class ContainerServiceImpl implements ContainerService {
             return AccessTreeDto.builder().build();
         }
         return AccessTreeDto.builder()
+                .id(container.getId())
                 .name(container.getName())
                 .children(children)
                 .accessNA(na)

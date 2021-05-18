@@ -1,5 +1,5 @@
 <template>
-    <group-selector v-show="showGroupSelector" @close-dlg="showGroupSelector = false; $emit('user-changed')" :user="user"></group-selector>
+    <group-selector v-if="showGroupSelector" @close-dlg="showGroupSelector = false; $emit('user-changed')" :user="user"></group-selector>
     <tr v-if="showEditDlg">
         <td colspan="10">
             <input type="text" class="form-control-sm align-middle" :placeholder="language.data.lf1" v-model="login">

@@ -327,6 +327,15 @@ ul[data-v-8ef25f0e] {
 }
 
 
+dd[data-v-58d9a18e] {
+    margin-left: 22px;
+    margin-bottom: auto;
+}
+dl[data-v-58d9a18e] {
+    margin-bottom: auto;
+}
+
+
 .l-modal[data-v-18bc8ef4] {
     left: 0;
     top: 0;
@@ -344,7 +353,7 @@ ul[data-v-8ef25f0e] {
 }
 .l-modal-body[data-v-18bc8ef4] {
     padding: 15px;
-    width: 600px;
+    width: 800px;
     margin: 30px auto;
     border-radius: 5px;
     background: #fff;
@@ -359,7 +368,7 @@ ul[data-v-8ef25f0e] {
 }
 .scroll[data-v-18bc8ef4] {
     overflow: auto;
-    max-height: calc(100vh - 70px);
+    max-height: calc(100vh - 110px);
 }
 
 

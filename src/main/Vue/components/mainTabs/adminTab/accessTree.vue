@@ -10,19 +10,22 @@
                 </div>
             </div>
             <div class="scroll mt-3 p-1">
-<!--                TODO-->
+                <access-item :item="tree"></access-item>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+import accessItem from "./accessTreeItem.vue";
+
 export default {
     name: "accessTree",
     emits: ["close-dlg"],
     props: {
         group: Object
     },
+    components: {accessItem},
     data() {
         return {
             tokenProvider: this.$root.$data.tokenProvider,
@@ -90,6 +93,6 @@ export default {
 }
 .scroll {
     overflow: auto;
-    max-height: calc(100vh - 70px);
+    max-height: calc(100vh - 110px);
 }
 </style>

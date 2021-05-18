@@ -1,6 +1,6 @@
 <template>
-    <user-selector v-show="showUserSelector" :group="group" @close-dlg="showUserSelector = false; $emit('group-changed')"></user-selector>
-    <access-tree v-show="showAccessTree" :group="group" @close-dlg="showAccessTree = false"></access-tree>
+    <user-selector v-if="showUserSelector" :group="group" @close-dlg="showUserSelector = false; $emit('group-changed')"></user-selector>
+    <access-tree v-if="showAccessTree" :group="group" @close-dlg="showAccessTree = false"></access-tree>
     <tr v-if="showEditDlg">
         <td colspan="10">
             <input type="text" class="form-control-sm align-middle" :placeholder="language.data.gp2" v-model="name">

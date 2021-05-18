@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 
 public class AccessTreeDto {
+    private final Long id;
     private final String name;
     private final List<AccessTreeDto> children;
     private final Boolean accessNA;
@@ -14,12 +15,17 @@ public class AccessTreeDto {
     private final Boolean accessRW;
 
     private AccessTreeDto(Builder builder) {
+        this.id = builder.id;
         this.name = builder.name;
         this.children = builder.children;
         this.accessNA = builder.accessNA;
         this.accessPT = builder.accessPT;
         this.accessRO = builder.accessRO;
         this.accessRW = builder.accessRW;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getName() {
@@ -55,12 +61,18 @@ public class AccessTreeDto {
     }
 
     public static class Builder {
+        private Long id;
         private String name;
         private List<AccessTreeDto> children;
         private Boolean accessNA;
         private Boolean accessPT;
         private Boolean accessRO;
         private Boolean accessRW;
+
+        public Builder id(Long id) {
+            this.id = id;
+            return this;
+        }
 
         public Builder name(String name) {
             this.name = name;

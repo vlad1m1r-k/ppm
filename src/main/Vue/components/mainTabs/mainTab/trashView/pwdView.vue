@@ -31,22 +31,6 @@
             <textarea class="form-control" rows="4" readonly v-model="note"></textarea>
         </td>
     </tr>
-
-<!--    <div>-->
-<!--        <div class="decor">-->
-<!--            {{ pwd.name }} &nbsp;-->
-<!--            <span class="btn-dc" @click="toggle" :title="language.data.cm1">&#x1f441;</span>-->
-<!--            <span class="btn-dc float-right" :title="language.data.cm5" @click="remove">&#x1f5d1;</span>-->
-<!--            <div class="btn-dc float-right text-success" :title="language.data.cm7" @click="restore">&#x21ba;</div>-->
-<!--        </div>-->
-<!--        <input class="form-control" v-show="show" v-model="login" readonly>-->
-<!--        <div v-show="show" style="display: flex">-->
-<!--            <div class="btn-st fs" @click="loadPwdBody" :title="language.data.cm1">&#x1f441;</div>-->
-<!--            <div class="btn-st" :title="language.data.cm6" @click="pwdToClipboard">&#x1f4cb;</div>-->
-<!--            <input class="form-control er" v-model="pass" readonly placeholder="******">-->
-<!--        </div>-->
-<!--        <textarea class="form-control" rows="4" readonly v-show="show" v-model="note"></textarea>-->
-<!--    </div>-->
 </template>
 
 <script>
