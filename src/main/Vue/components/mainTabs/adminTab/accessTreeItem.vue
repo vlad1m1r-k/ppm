@@ -1,19 +1,23 @@
 <template>
     <dl>
         <dt>
-            <div class="row">
+            <div class="row ml-0 mr-0">
                 <div class="col">{{ item.name }}</div>
-                <div class="col col-sm align-self-end">
-                    {{ item.accessNA }} NA
+                <div class="col-auto pl-0">
+                    <input type="checkbox" :checked="item.accessNA" @click="removeAccess">
+                    NA
                 </div>
-                <div class="col col-sm align-self-end">
-                    {{ item.accessPT }} PT
+                <div class="col-auto pl-0" :class="{'bg-info': item.accessPT}">
+                    <input type="checkbox" :checked="item.accessPT" @click="removeAccess">
+                    PT
                 </div>
-                <div class="col col-sm align-self-end">
-                    {{ item.accessRO }} RO
+                <div class="col-auto pl-0" :class="{'bg-success': item.accessRO}">
+                    <input type="checkbox" :checked="item.accessRO" @click="removeAccess">
+                    RO
                 </div>
-                <div class="col col-sm align-self-end">
-                    {{ item.accessRW }} RW
+                <div class="col-auto pl-0" :class="{'bg-danger': item.accessRW}">
+                    <input type="checkbox" :checked="item.accessRW" @click="removeAccess">
+                    RW
                 </div>
             </div>
         </dt>
@@ -34,7 +38,9 @@ export default {
         }
     },
     methods: {
-
+        async removeAccess() {
+            return false;
+        }
     }
 }
 </script>

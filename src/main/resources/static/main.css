@@ -369,6 +369,7 @@ dl[data-v-58d9a18e] {
 .scroll[data-v-18bc8ef4] {
     overflow: auto;
     max-height: calc(100vh - 110px);
+    background: #f2f2f2;
 }
 
 

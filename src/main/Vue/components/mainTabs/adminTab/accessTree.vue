@@ -94,5 +94,6 @@ export default {
 .scroll {
     overflow: auto;
     max-height: calc(100vh - 110px);
+    background: #f2f2f2;
 }
 </style>
