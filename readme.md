@@ -1,7 +1,6 @@
 TODO:
-+ group access view
-+ password generator
 + defence
-+ logging
++ password generator
 + search
++ logging
 + liquibase

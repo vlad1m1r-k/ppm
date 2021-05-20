@@ -10,7 +10,7 @@
                 </div>
             </div>
             <div class="scroll mt-3 p-1">
-                <access-item :item="tree"></access-item>
+                <access-item :item="tree" :group="group" @update-tree="getAccessTree"></access-item>
             </div>
         </div>
     </div>
