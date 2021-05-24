@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManagerFactory;
+import java.util.Set;
 
 @Service
 public class SettingsProviderImpl implements SettingsProvider {
@@ -61,6 +62,26 @@ public class SettingsProviderImpl implements SettingsProvider {
     }
 
     @Override
+    public int getIncorrectLoginAttempts() {
+        return settings.getIncorrectLoginAttempts();
+    }
+
+    @Override
+    public int getIpBanTimeDays() {
+        return settings.getIpBanTimeDays();
+    }
+
+    @Override
+    public Set<String> getIpBlacklist() {
+        return settings.getIpBlackList();
+    }
+
+    @Override
+    public Set<String> getIpWhiteList() {
+        return settings.getIpWhiteList();
+    }
+
+    @Override
     @Transactional
     public void setServerKeyLifeTimeDays(int lifeTime) {
         this.settings.setServerKeyLifeTimeDays(lifeTime);
@@ -106,5 +127,37 @@ public class SettingsProviderImpl implements SettingsProvider {
         Settings settings = settingsRepository.getOne(1L);
         this.settings.setPwdSpecialChar(specialChar);
         settings.setPwdSpecialChar(specialChar);
+    }
+
+    @Override
+    @Transactional
+    public void setIncorrectLoginAttempts(int attempts) {
+        Settings settings = settingsRepository.getOne(1L);
+        this.settings.setIncorrectLoginAttempts(attempts);
+        settings.setIncorrectLoginAttempts(attempts);
+    }
+
+    @Override
+    @Transactional
+    public void setIpBanTimeDays(int days) {
+        Settings settings = settingsRepository.getOne(1L);
+        this.settings.setIpBanTimeDays(days);
+        settings.setIpBanTimeDays(days);
+    }
+
+    @Override
+    @Transactional
+    public void addIpToBlackList(String ip) {
+        Settings settings = settingsRepository.getOne(1L);
+        this.settings.getIpBlackList().add(ip);
+        settings.getIpBlackList().add(ip);
+    }
+
+    @Override
+    @Transactional
+    public void addIpToWhiteList(String ip) {
+        Settings settings = settingsRepository.getOne(1L);
+        this.settings.getIpWhiteList().add(ip);
+        settings.getIpWhiteList().add(ip);
     }
 }

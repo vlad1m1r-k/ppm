@@ -112,6 +112,7 @@
     "amg5": "Full access",
     "amg6": "Set \"pass through\" to containers above",
     "amg7": "Set the same rights to containers below",
-    "amg8": "Remove access for "
+    "amg8": "Remove access for ",
+    "sec1": "Security"
   }
 }

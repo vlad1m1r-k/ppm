@@ -1,10 +1,13 @@
 package com.vladimir.ppm.domain;
 
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "settings")
@@ -18,6 +21,14 @@ public class Settings {
     private volatile Integer pwdMinLength;
     private volatile Boolean pwdComplexity;
     private volatile Boolean pwdSpecialChar;
+    private volatile Integer incorrectLoginAttempts;
+    private volatile Integer ipBanTimeDays;
+
+    @ElementCollection
+    private final Set<String> ipBlackList = new HashSet<>();
+
+    @ElementCollection
+    private final Set<String> ipWhiteList = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -47,6 +58,22 @@ public class Settings {
         return pwdSpecialChar;
     }
 
+    public Integer getIncorrectLoginAttempts() {
+        return incorrectLoginAttempts;
+    }
+
+    public Integer getIpBanTimeDays() {
+        return ipBanTimeDays;
+    }
+
+    public Set<String> getIpBlackList() {
+        return ipBlackList;
+    }
+
+    public Set<String> getIpWhiteList() {
+        return ipWhiteList;
+    }
+
     public void setEncryptionKeyId(Long encryptionKeyId) {
         this.encryptionKeyId = encryptionKeyId;
     }
@@ -69,5 +96,13 @@ public class Settings {
 
     public void setPwdSpecialChar(Boolean pwdSpecialChar) {
         this.pwdSpecialChar = pwdSpecialChar;
+    }
+
+    public void setIncorrectLoginAttempts(Integer incorrectLoginAttempt) {
+        this.incorrectLoginAttempts = incorrectLoginAttempt;
+    }
+
+    public void setIpBanTimeDays(Integer ipBanTimeDays) {
+        this.ipBanTimeDays = ipBanTimeDays;
     }
 }
