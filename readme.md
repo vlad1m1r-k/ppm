@@ -1,8 +1,8 @@
 TODO:
 + defence
-  + ip blacklist
-  + ip whitelist
-  + allowed ip for user
+  + ip blacklist with subnet
+  + ip whitelist with subnet
+  + allowed ip for user with subnet
 + password generator
 + search
 + logging

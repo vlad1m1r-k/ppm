@@ -113,6 +113,10 @@
     "amg6": "Set \"pass through\" to containers above",
     "amg7": "Set the same rights to containers below",
     "amg8": "Remove access for ",
-    "sec1": "Security"
+    "sec1": "Security",
+    "sec2": "Incorrect login attempts before block IP",
+    "sec3": "Period of blocking IP, Days",
+    "sec4": "(0 - add to blacklist)",
+    "sec5": "Incorrect password attempts before block user "
   }
 }

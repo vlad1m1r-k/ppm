@@ -72,6 +72,11 @@ public class SettingsProviderImpl implements SettingsProvider {
     }
 
     @Override
+    public int getIncorrectPasswdAttempts() {
+        return settings.getIncorrectPasswdAttempts();
+    }
+
+    @Override
     public Set<String> getIpBlacklist() {
         return settings.getIpBlackList();
     }
@@ -143,6 +148,14 @@ public class SettingsProviderImpl implements SettingsProvider {
         Settings settings = settingsRepository.getOne(1L);
         this.settings.setIpBanTimeDays(days);
         settings.setIpBanTimeDays(days);
+    }
+
+    @Override
+    @Transactional
+    public void setIncorrectPasswdAttempts(int attempts) {
+        Settings settings = settingsRepository.getOne(1L);
+        this.settings.setIncorrectPasswdAttempts(attempts);
+        settings.setIncorrectPasswdAttempts(attempts);
     }
 
     @Override

@@ -32,6 +32,9 @@ public class SettingsServiceImpl implements SettingsService {
                     .pwdMinLength(settingsProvider.getPwdMinLength())
                     .pwdComplexity(settingsProvider.getPwdComplexity())
                     .pwdSpecialChar(settingsProvider.getPwdSpecialChar())
+                    .incorrectLoginAttempts(settingsProvider.getIncorrectLoginAttempts())
+                    .ipBanTimeDays(settingsProvider.getIpBanTimeDays())
+                    .incorrectPasswdAttempts(settingsProvider.getIncorrectPasswdAttempts())
                     .build();
         }
         return null;

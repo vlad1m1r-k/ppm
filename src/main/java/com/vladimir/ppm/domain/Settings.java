@@ -23,6 +23,7 @@ public class Settings {
     private volatile Boolean pwdSpecialChar;
     private volatile Integer incorrectLoginAttempts;
     private volatile Integer ipBanTimeDays;
+    private volatile Integer incorrectPasswdAttempts;
 
     @ElementCollection
     private final Set<String> ipBlackList = new HashSet<>();
@@ -66,6 +67,10 @@ public class Settings {
         return ipBanTimeDays;
     }
 
+    public Integer getIncorrectPasswdAttempts() {
+        return incorrectPasswdAttempts;
+    }
+
     public Set<String> getIpBlackList() {
         return ipBlackList;
     }
@@ -104,5 +109,9 @@ public class Settings {
 
     public void setIpBanTimeDays(Integer ipBanTimeDays) {
         this.ipBanTimeDays = ipBanTimeDays;
+    }
+
+    public void setIncorrectPasswdAttempts(Integer incorrectPasswdAttempts) {
+        this.incorrectPasswdAttempts = incorrectPasswdAttempts;
     }
 }
