@@ -67,6 +67,21 @@ public class ValidatorServiceImpl implements ValidatorService {
     }
 
     @Override
+    public boolean validateIncLoginAtt(int incLogAtt) {
+        return incLogAtt > 0 && incLogAtt <= 20;
+    }
+
+    @Override
+    public boolean validateIpBanTime(int banTime) {
+        return banTime >= 0 && banTime <= 20;
+    }
+
+    @Override
+    public boolean validateIncPassAtt(int passAtt) {
+        return validateIncLoginAtt(passAtt);
+    }
+
+    @Override
     public boolean validateString(String str) {
         return str != null && str.length() > 0;
     }

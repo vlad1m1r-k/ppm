@@ -79,6 +79,24 @@ public class SettingsRestController {
         return null;
     }
 
+    @PostMapping("/saveSecuritySettings")
+    public CryptoDto saveSecuritySettings(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = new ObjectMapper().readTree(cryptoProvider.decrypt(key, data));
+            String token = json.get("token").textValue();
+            String publicKeyPEM = json.get("publicKey").textValue();
+            int incorrectLoginAttempts = json.get("incorrectLoginAttempts").asInt();
+            int ipBanTimeDays = json.get("ipBanTimeDays").asInt();
+            int incorrectPasswdAttempts = json.get("incorrectPasswdAttempts").asInt();
+            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                MessageDto message = settingsService.saveSecuritySettings(decryptedToken, incorrectLoginAttempts, ipBanTimeDays, incorrectPasswdAttempts);
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
+            }
+        }
+        return null;
+    }
+
     @PostMapping("/dbStatus")
     public CryptoDto getDbStatus(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {

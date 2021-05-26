@@ -68,4 +68,22 @@ public class SettingsServiceImpl implements SettingsService {
         }
         return MessageDto.builder().message("srve1").build();
     }
+
+    @Override
+    public MessageDto saveSecuritySettings(Token token, int incorrectLoginAttempts, int ipBanTimeDays, int incorrectPasswdAttempts) {
+        if (userService.isAdmin(token) && validatorService.validateIncLoginAtt(incorrectLoginAttempts)
+                && validatorService.validateIpBanTime(ipBanTimeDays) && validatorService.validateIncPassAtt(incorrectPasswdAttempts)) {
+            if (settingsProvider.getIncorrectLoginAttempts() != incorrectLoginAttempts) {
+                settingsProvider.setIncorrectLoginAttempts(incorrectLoginAttempts);
+            }
+            if (settingsProvider.getIpBanTimeDays() != ipBanTimeDays) {
+                settingsProvider.setIpBanTimeDays(ipBanTimeDays);
+            }
+            if (settingsProvider.getIncorrectPasswdAttempts() != incorrectPasswdAttempts) {
+                settingsProvider.setIncorrectPasswdAttempts(incorrectPasswdAttempts);
+            }
+            return MessageDto.builder().build();
+        }
+        return MessageDto.builder().message("sece1").build();
+    }
 }

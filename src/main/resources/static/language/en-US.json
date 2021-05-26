@@ -117,6 +117,7 @@
     "sec2": "Incorrect login attempts before block IP",
     "sec3": "Period of blocking IP, Days",
     "sec4": "(0 - add to blacklist)",
-    "sec5": "Incorrect password attempts before block user "
+    "sec5": "Incorrect password attempts before block user ",
+    "sece1": "Error saving settings."
   }
 }

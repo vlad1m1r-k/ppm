@@ -58,7 +58,27 @@ export default {
             }
         },
         async saveSettings() {
-            //TODO
+            this.eventHub.emit("show-msg", "");
+            try {
+                const token = await this.tokenProvider.getToken();
+                const encryptedData = await cryptoProvider.encrypt({
+                    token: token,
+                    incorrectLoginAttempts: this.incorrectLoginAttempts,
+                    ipBanTimeDays: this.ipBanTimeDays,
+                    incorrectPasswdAttempts: this.incorrectPasswdAttempts
+                });
+                const answer = await $.ajax({
+                    url: "/settings/saveSecuritySettings",
+                    method: "POST",
+                    data: encryptedData
+                });
+                const data = cryptoProvider.decrypt(answer);
+                if (data.message) {
+                    this.eventHub.emit("show-msg", this.language.data[data.message]);
+                }
+            } catch (e) {
+                this.eventHub.emit("show-msg", this.errorParser(e));
+            }
         }
     },
     beforeMount() {

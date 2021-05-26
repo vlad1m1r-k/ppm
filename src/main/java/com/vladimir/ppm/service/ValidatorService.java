@@ -11,4 +11,7 @@ public interface ValidatorService {
     boolean validatePwdSpecialChar(String pwd);
     boolean validatePwdLoginIncluded(String pwd, String login);
     boolean validatePwdRepeatedChars(String pwd);
+    boolean validateIncLoginAtt(int incLogAtt);
+    boolean validateIpBanTime(int banTime);
+    boolean validateIncPassAtt(int passAtt);
 }
