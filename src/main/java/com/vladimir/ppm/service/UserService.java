@@ -23,4 +23,5 @@ public interface UserService {
     MessageDto addUser(Token token, String login, String pwd, UserStatus status);
     MessageDto editUser(Token token, long userId, String login, String pwd, UserStatus status);
     MessageDto deleteUser(Token token, long userId);
+    void banUser(long userId);
 }

@@ -1,19 +1,10 @@
 package com.vladimir.ppm.security;
 
-public class IpAddr {
-    private final String ip;
+public class DynamicListItem {
     private long lastLoginAttemptTime;
     private int totalLoginAttempts;
     private boolean banned;
     private long unbanTime;
-
-    public IpAddr(String ip) {
-        this.ip = ip;
-    }
-
-    public String getIp() {
-        return ip;
-    }
 
     public long getLastLoginAttemptTime() {
         return lastLoginAttemptTime;

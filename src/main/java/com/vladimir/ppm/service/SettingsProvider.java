@@ -25,4 +25,6 @@ public interface SettingsProvider {
     void setIncorrectPasswdAttempts(int attempts);
     void addIpToBlackList(String ip);
     void addIpToWhiteList(String ip);
+    boolean isIpWhitelisted(String ip);
+    boolean isIpBlackListed(String ip);
 }

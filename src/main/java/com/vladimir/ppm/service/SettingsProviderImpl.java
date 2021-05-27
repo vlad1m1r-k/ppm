@@ -5,6 +5,7 @@ import com.vladimir.ppm.repository.SettingsRepository;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.springframework.security.web.util.matcher.IpAddressMatcher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -172,5 +173,27 @@ public class SettingsProviderImpl implements SettingsProvider {
         Settings settings = settingsRepository.getOne(1L);
         this.settings.getIpWhiteList().add(ip);
         settings.getIpWhiteList().add(ip);
+    }
+
+    @Override
+    public boolean isIpWhitelisted(String ip) {
+        for (String address : getIpWhiteList()) {
+            IpAddressMatcher matcher = new IpAddressMatcher(address);
+            if (matcher.matches(ip)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isIpBlackListed(String ip) {
+        for (String address : getIpBlacklist()) {
+            IpAddressMatcher matcher = new IpAddressMatcher(address);
+            if (matcher.matches(ip)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

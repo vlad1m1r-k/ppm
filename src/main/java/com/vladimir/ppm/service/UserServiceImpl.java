@@ -203,6 +203,13 @@ public class UserServiceImpl implements UserService {
         return MessageDto.builder().build();
     }
 
+    @Override
+    @Transactional
+    public void banUser(long userId) {
+        User user = userRepository.getOne(userId);
+        user.setStatus(UserStatus.DISABLED);
+    }
+
     private boolean isAdmin(Set<Group> groups) {
         for (Group group : groups) {
             if (group.isAdminSettings()) {
