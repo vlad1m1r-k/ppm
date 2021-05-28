@@ -40,7 +40,7 @@ public class SecurityServiceImpl implements SecurityService {
         } else {
             ipAddr.setLastLoginAttemptTime(System.currentTimeMillis());
             ipAddr.setTotalLoginAttempts(ipAddr.getTotalLoginAttempts() + 1);
-            if (ipAddr.getTotalLoginAttempts() > settingsProvider.getIncorrectLoginAttempts()) {
+            if (ipAddr.getTotalLoginAttempts() >= settingsProvider.getIncorrectLoginAttempts()) {
                 ipAddr.setBanned(true);
                 ipAddr.setUnbanTime(System.currentTimeMillis() + (long) settingsProvider.getIpBanTimeDays() * 24 * 60 * 60 * 1000);
             }
@@ -62,7 +62,7 @@ public class SecurityServiceImpl implements SecurityService {
         } else {
             userItem.setLastLoginAttemptTime(System.currentTimeMillis());
             userItem.setTotalLoginAttempts(userItem.getTotalLoginAttempts() + 1);
-            if (userItem.getTotalLoginAttempts() > settingsProvider.getIncorrectPasswdAttempts()) {
+            if (userItem.getTotalLoginAttempts() >= settingsProvider.getIncorrectPasswdAttempts()) {
                 //TODO
             }
         }
