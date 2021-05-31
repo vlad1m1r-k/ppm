@@ -2,6 +2,7 @@ package com.vladimir.ppm.domain;
 
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -25,10 +26,10 @@ public class Settings {
     private volatile Integer ipBanTimeDays;
     private volatile Integer incorrectPasswdAttempts;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private final Set<String> ipBlackList = new HashSet<>();
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     private final Set<String> ipWhiteList = new HashSet<>();
 
     public Long getId() {

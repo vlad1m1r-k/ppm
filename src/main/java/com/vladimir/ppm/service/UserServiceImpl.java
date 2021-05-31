@@ -27,22 +27,30 @@ public class UserServiceImpl implements UserService {
     private final CryptoProvider cryptoProvider;
     private final ValidatorService validatorService;
     private final SettingsProvider settingsProvider;
+    private final SecurityService securityService;
 
     public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder encoder, TokenService tokenService,
-                           CryptoProvider cryptoProvider, ValidatorService validatorService, SettingsProvider settingsProvider) {
+                           CryptoProvider cryptoProvider, ValidatorService validatorService, SettingsProvider settingsProvider,
+                           SecurityService securityService) {
         this.userRepository = userRepository;
         this.encoder = encoder;
         this.tokenService = tokenService;
         this.cryptoProvider = cryptoProvider;
         this.validatorService = validatorService;
         this.settingsProvider = settingsProvider;
+        this.securityService = securityService;
     }
 
     @Override
     @Transactional
     public TokenDto login(String login, String password, String remoteAddr, String userAgent) {
         User user = userRepository.findUserByLogin(login);
-        if (user == null || !encoder.matches(password, user.getPassword())) {
+        if (user == null) {
+            securityService.registerLoginAttempt(remoteAddr, false);
+            return TokenDto.builder().message("lfe1").build();
+        }
+        if (!encoder.matches(password, user.getPassword())) {
+            securityService.registerPasswordAttempt(user.getId(), false);
             return TokenDto.builder().message("lfe1").build();
         }
         if (!user.isEnabled()) {
@@ -54,6 +62,8 @@ public class UserServiceImpl implements UserService {
         Token token = tokenService.getToken(user, remoteAddr, userAgent);
         long tokenLifeTime = token.getLifeTime();
         String encryptedToken = tokenService.encrypt(token);
+        securityService.registerLoginAttempt(remoteAddr, true);
+        securityService.registerPasswordAttempt(user.getId(), true);
         return TokenDto.builder()
                 .lifeTime(tokenLifeTime)
                 .token(encryptedToken)

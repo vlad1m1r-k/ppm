@@ -9,10 +9,12 @@ import org.springframework.stereotype.Service;
 public class TokenServiceImpl implements TokenService {
     private final CryptoProvider cryptoProvider;
     private final SettingsProvider settingsProvider;
+    private final SecurityService securityService;
 
-    public TokenServiceImpl(CryptoProvider cryptoProvider, SettingsProvider settingsProvider) {
+    public TokenServiceImpl(CryptoProvider cryptoProvider, SettingsProvider settingsProvider, SecurityService securityService) {
         this.cryptoProvider = cryptoProvider;
         this.settingsProvider = settingsProvider;
+        this.securityService = securityService;
     }
 
     @Override
@@ -33,6 +35,7 @@ public class TokenServiceImpl implements TokenService {
                 decryptedToken.getUserAgent().equals(userAgent)) {
             return decryptedToken;
         }
+        securityService.registerLoginAttempt(remoteAddr, false);
         return null;
     }
 }
