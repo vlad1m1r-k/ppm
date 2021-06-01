@@ -118,6 +118,10 @@
     "sec3": "Period of blocking IP, Days",
     "sec4": "(0 - add to blacklist)",
     "sec5": "Incorrect password attempts before block user ",
+    "sec6": "IP Black list",
+    "sec7": "IP White list",
+    "sec8": "IP Dynamic list",
+    "sec9": "Connects from those IP will never blocks",
     "sece1": "Error saving settings."
   }
 }

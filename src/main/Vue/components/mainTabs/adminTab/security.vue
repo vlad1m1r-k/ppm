@@ -24,6 +24,8 @@
         </tbody>
     </table>
     <button class="btn btn-sm btn-success" @click="saveSettings">{{ language.data.cm3 }}</button>
+    <hr>
+<!--    TODO-->
 </template>
 
 <script>

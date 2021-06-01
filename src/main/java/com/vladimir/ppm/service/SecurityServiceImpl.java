@@ -26,10 +26,20 @@ public class SecurityServiceImpl implements SecurityService {
     }
 
     @Scheduled(fixedRate = 2 * 60 * 60 * 1000)
-    private void clearDynamicLists() {
-
-        //TODO delete users and ip from dynamic lists
-        //TODO unban ip
+    public void clearDynamicLists() {
+        for (Map.Entry<String, DynamicListItem> entry : ipAddrMap.entrySet()) {
+            if (!entry.getValue().isBanned() && entry.getValue().getLastLoginAttemptTime() + 2 * 60 * 60 * 1000 < System.currentTimeMillis()) {
+                ipAddrMap.remove(entry.getKey());
+            }
+            if (entry.getValue().isBanned() && entry.getValue().getUnbanTime() < System.currentTimeMillis()) {
+                ipAddrMap.remove(entry.getKey());
+            }
+        }
+        for (Map.Entry<Long, DynamicListItem> entry : usersMap.entrySet()) {
+            if (entry.getValue().getLastLoginAttemptTime() + 2 * 60 * 60 * 1000 < System.currentTimeMillis()) {
+                usersMap.remove(entry.getKey());
+            }
+        }
     }
 
     @Override
@@ -40,22 +50,29 @@ public class SecurityServiceImpl implements SecurityService {
 
     @Override
     public void registerLoginAttempt(String ip, boolean success) {
-        if (success) {
-            ipAddrMap.remove(ip);
-            return;
-        }
-        DynamicListItem ipAddr = ipAddrMap.get(ip);
-        if (ipAddr == null) {
-            ipAddr = new DynamicListItem();
-            ipAddr.setLastLoginAttemptTime(System.currentTimeMillis());
-            ipAddr.setTotalLoginAttempts(1);
-            ipAddrMap.put(ip, ipAddr);
-        } else {
-            ipAddr.setLastLoginAttemptTime(System.currentTimeMillis());
-            ipAddr.setTotalLoginAttempts(ipAddr.getTotalLoginAttempts() + 1);
-            if (ipAddr.getTotalLoginAttempts() >= settingsProvider.getIncorrectLoginAttempts()) {
-                ipAddr.setBanned(true);
-                ipAddr.setUnbanTime(System.currentTimeMillis() + (long) settingsProvider.getIpBanTimeDays() * 24 * 60 * 60 * 1000);
+        if (settingsProvider.isIpWhitelisted(ip)) {
+            if (success) {
+                ipAddrMap.remove(ip);
+                return;
+            }
+            DynamicListItem ipAddr = ipAddrMap.get(ip);
+            if (ipAddr == null) {
+                ipAddr = new DynamicListItem();
+                ipAddr.setLastLoginAttemptTime(System.currentTimeMillis());
+                ipAddr.setTotalLoginAttempts(1);
+                ipAddrMap.put(ip, ipAddr);
+            } else {
+                ipAddr.setLastLoginAttemptTime(System.currentTimeMillis());
+                ipAddr.setTotalLoginAttempts(ipAddr.getTotalLoginAttempts() + 1);
+                if (ipAddr.getTotalLoginAttempts() >= settingsProvider.getIncorrectLoginAttempts()) {
+                    if (settingsProvider.getIpBanTimeDays() == 0) {
+                        settingsProvider.addIpToBlackList(ip);
+                        ipAddrMap.remove(ip);
+                    } else {
+                        ipAddr.setBanned(true);
+                        ipAddr.setUnbanTime(System.currentTimeMillis() + (long) settingsProvider.getIpBanTimeDays() * 24 * 60 * 60 * 1000);
+                    }
+                }
             }
         }
     }
