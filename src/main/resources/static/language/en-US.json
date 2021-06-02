@@ -121,7 +121,8 @@
     "sec6": "IP Black list",
     "sec7": "IP White list",
     "sec8": "IP Dynamic list",
-    "sec9": "Connects from those IP will never blocks",
+    "sec9": "Connections from those IP or subnets will never blocks",
+    "sec10": "Connections from those IP or subnets will always blocks",
     "sece1": "Error saving settings."
   }
 }

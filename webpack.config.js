@@ -5,7 +5,7 @@ const { VueLoaderPlugin } = require('vue-loader');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
-    mode: 'development',
+    mode: 'production',
     entry: './src/main/Vue/controller.js',
     output: {
         path: path.resolve(__dirname, 'src/main/resources/static'),

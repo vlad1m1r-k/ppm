@@ -1,4 +1,5 @@
 <template>
+    <black-list v-if="showBlackList" @close-dlg="showBlackList = false"></black-list>
     <table>
         <thead></thead>
         <tbody>
@@ -25,19 +26,27 @@
     </table>
     <button class="btn btn-sm btn-success" @click="saveSettings">{{ language.data.cm3 }}</button>
     <hr>
-<!--    TODO-->
+    <button class="btn btn-sm btn-outline-primary m-1" @click="showBlackList = true">{{ language.data.sec6 }}</button>{{ language.data.sec10 }}<br>
+    <button class="btn btn-sm btn-outline-primary m-1" @click="">{{ language.data.sec7 }}</button>{{ language.data.sec9 }}<br>
+    <button class="btn btn-sm btn-outline-primary m-1" @click="">{{ language.data.sec8 }}</button><br>
 </template>
 
 <script>
+import blackList from "./ipLists/blackList.vue";
+
 export default {
     name: "security",
+    components: {
+        blackList
+    },
     data() {
         return {
             tokenProvider: this.$root.$data.tokenProvider,
             language: this.$root.$data.language,
             incorrectLoginAttempts: null,
             ipBanTimeDays: null,
-            incorrectPasswdAttempts: null
+            incorrectPasswdAttempts: null,
+            showBlackList: false
         }
     },
     methods: {
