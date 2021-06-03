@@ -118,7 +118,7 @@ public class ContainerRestController {
             String publicKeyPEM = json.get("publicKey").textValue();
             String token = json.get("token").textValue();
             long itemId = json.get("item").longValue();
-            boolean permanent = Optional.ofNullable(json.get("permanent")).orElse(new ObjectMapper().createObjectNode().booleanNode(false)).asBoolean();
+            boolean permanent = Optional.ofNullable(json.get("permanent")).orElse(mapper.createObjectNode().booleanNode(false)).asBoolean();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 MessageDto message = containerService.delete(decryptedToken, itemId, permanent);
@@ -204,7 +204,7 @@ public class ContainerRestController {
             String publicKeyPEM = json.get("publicKey").textValue();
             String token = json.get("token").textValue();
             long noteId = json.get("note").longValue();
-            boolean permanent = Optional.ofNullable(json.get("permanent")).orElse(new ObjectMapper().createObjectNode().booleanNode(false)).asBoolean();
+            boolean permanent = Optional.ofNullable(json.get("permanent")).orElse(mapper.createObjectNode().booleanNode(false)).asBoolean();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 MessageDto message = containerService.removeNote(decryptedToken, noteId, permanent);
@@ -293,7 +293,7 @@ public class ContainerRestController {
             String publicKeyPEM = json.get("publicKey").textValue();
             String token = json.get("token").textValue();
             long pwdId = json.get("pwd").longValue();
-            boolean permanent = Optional.ofNullable(json.get("permanent")).orElse(new ObjectMapper().createObjectNode().booleanNode(false)).asBoolean();
+            boolean permanent = Optional.ofNullable(json.get("permanent")).orElse(mapper.createObjectNode().booleanNode(false)).asBoolean();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 MessageDto message = containerService.removePassword(decryptedToken, pwdId, permanent);

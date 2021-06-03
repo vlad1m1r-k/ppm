@@ -111,7 +111,7 @@
     "amg4": "Read only",
     "amg5": "Full access",
     "amg6": "Set \"pass through\" to containers above",
-    "amg7": "Set the same rights to containers below",
+    "amg7": "Set the same access to containers below",
     "amg8": "Remove access for ",
     "sec1": "Security",
     "sec2": "Incorrect login attempts before block IP",
@@ -123,6 +123,7 @@
     "sec8": "IP Dynamic list",
     "sec9": "Connections from those IP or subnets will never blocks",
     "sec10": "Connections from those IP or subnets will always blocks",
-    "sece1": "Error saving settings."
+    "sece1": "Error saving settings.",
+    "sece2": "Incorrect IP or subnet"
   }
 }

@@ -44,6 +44,7 @@ import java.util.Map;
 @EnableScheduling
 public class CryptoProviderImpl implements CryptoProvider {
     private final SettingsProvider settingsProvider;
+    private final ObjectMapper mapper;
     private final String RSACIPHER = "RSA/ECB/PKCS1Padding";
     private final String AESCIPHER = "AES/CBC/PKCS7Padding";
     private final String PROVIDER = "BC";
@@ -53,8 +54,9 @@ public class CryptoProviderImpl implements CryptoProvider {
     private SecretKeySpec dbAESKey;
     SecureRandom random = new SecureRandom();
 
-    public CryptoProviderImpl(SettingsProvider settingsProvider) {
+    public CryptoProviderImpl(SettingsProvider settingsProvider, ObjectMapper mapper) {
         this.settingsProvider = settingsProvider;
+        this.mapper = mapper;
     }
 
     @PostConstruct
@@ -126,7 +128,7 @@ public class CryptoProviderImpl implements CryptoProvider {
             PublicKey frontPublicKey = keyFactory.generatePublic(keySpec);
             Cipher rsaCipher = Cipher.getInstance(RSACIPHER, PROVIDER);
             rsaCipher.init(Cipher.ENCRYPT_MODE, frontPublicKey);
-            encryptedAesKey = rsaCipher.doFinal(new ObjectMapper().writeValueAsString(aesKeyBundle).getBytes());
+            encryptedAesKey = rsaCipher.doFinal(mapper.writeValueAsString(aesKeyBundle).getBytes());
         } catch (NoSuchAlgorithmException | InvalidKeySpecException | InvalidKeyException | IllegalBlockSizeException
                 | BadPaddingException | NoSuchProviderException | NoSuchPaddingException | JsonProcessingException e) {
             e.printStackTrace();
@@ -145,7 +147,7 @@ public class CryptoProviderImpl implements CryptoProvider {
         try {
             Cipher rsaCipher = Cipher.getInstance(RSACIPHER, PROVIDER);
             rsaCipher.init(Cipher.DECRYPT_MODE, keyPair.getPrivate());
-            JsonNode json = new ObjectMapper().readTree(new String(rsaCipher.doFinal(keyBytes)));
+            JsonNode json = mapper.readTree(new String(rsaCipher.doFinal(keyBytes)));
             byte[] aesKeyBytes = Base64.getDecoder().decode(json.get("key").textValue());
             byte[] aesIVBytes = Base64.getDecoder().decode(json.get("iv").textValue());
 
@@ -190,7 +192,7 @@ public class CryptoProviderImpl implements CryptoProvider {
                 NoSuchAlgorithmException | NoSuchProviderException | NoSuchPaddingException e) {
             e.printStackTrace();
         }
-        JsonNode json = new ObjectMapper().readTree(tokenStr);
+        JsonNode json = mapper.readTree(tokenStr);
         return new Token(json.get("login").textValue(), json.get("lifeTime").longValue(), json.get("remoteAddr").textValue(), json.get("userAgent").textValue());
     }
 

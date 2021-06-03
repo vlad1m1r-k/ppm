@@ -23,7 +23,20 @@
                         <button class="btn btn-sm btn-danger" @click="ip = ''; addDlg = false">X</button>
                     </div>
                 </div>
-                //
+                <table class="table table-bordered table-striped table-sm mt-1">
+                    <thead></thead>
+                    <tbody>
+                    <tr v-for="(item, id) in list" :key="'blcls' + id">
+                        <td>{{ item }}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-danger" :title="language.data.cm5"
+                                    @click="removeIp(item)">
+                                &#x1f5d1;
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -38,18 +51,63 @@ export default {
             tokenProvider: this.$root.$data.tokenProvider,
             language: this.$root.$data.language,
             addDlg: false,
+            list: [],
             ip: ""
         }
     },
     computed: {
         isIpValid() {
-            return !this.ip.match("^(?:(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])(\\.(?!$)|$|(\\/([1-3][0-2]|[0-9])))){4}$");
+            return !this.ip.match("^(?:(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])(\\.(?!$)|$|(\\/([1-2][0-9]|3[0-2]|[0-9])))){4}$");
         }
     },
     methods: {
-        addIp() {
+        async addIp() {
+            this.eventHub.emit("show-msg", "");
+            try {
+                const token = await this.tokenProvider.getToken();
+                const encryptedData = await cryptoProvider.encrypt({
+                    token: token,
+                    ip: this.ip,
+                });
+                const answer = await $.ajax({
+                    url: "/settings/addIpToBlackList",
+                    method: "POST",
+                    data: encryptedData
+                });
+                const data = cryptoProvider.decrypt(answer);
+                if (data.message) {
+                    this.eventHub.emit("show-msg", this.language.data[data.message]);
+                } else {
+                    this.ip = "";
+                    this.getIpList();
+                }
+            } catch (e) {
+                this.eventHub.emit("show-msg", this.errorParser(e));
+            }
+        },
+        async getIpList() {
+            this.eventHub.emit("show-msg", "");
+            try {
+                const token = await this.tokenProvider.getToken();
+                const encryptedData = await cryptoProvider.encrypt({
+                    token: token
+                });
+                const answer = await $.ajax({
+                    url: "/settings/getIpBlackList",
+                    method: "POST",
+                    data: encryptedData
+                });
+                this.list = cryptoProvider.decrypt(answer);
+            } catch (e) {
+                this.eventHub.emit("show-msg", this.errorParser(e));
+            }
+        },
+        async removeIp(ip) {
             //TODO
         }
+    },
+    beforeMount() {
+        this.getIpList();
     }
 }
 </script>

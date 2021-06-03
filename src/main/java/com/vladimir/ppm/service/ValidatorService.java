@@ -14,4 +14,5 @@ public interface ValidatorService {
     boolean validateIncLoginAtt(int incLogAtt);
     boolean validateIpBanTime(int banTime);
     boolean validateIncPassAtt(int passAtt);
+    boolean validateIpOrSubnet(String subnet);
 }

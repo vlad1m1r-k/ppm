@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 public class SettingsServiceImpl implements SettingsService {
@@ -85,5 +87,22 @@ public class SettingsServiceImpl implements SettingsService {
             return MessageDto.builder().build();
         }
         return MessageDto.builder().message("sece1").build();
+    }
+
+    @Override
+    public MessageDto addIpToBlackList(Token token, String ip) {
+        if (userService.isAdmin(token) && validatorService.validateIpOrSubnet(ip)) {
+            settingsProvider.addIpToBlackList(ip);
+            return MessageDto.builder().build();
+        }
+        return MessageDto.builder().message("sece2").build();
+    }
+
+    @Override
+    public Set<String> getIpBlackList(Token token) {
+        if (userService.isAdmin(token)) {
+            return settingsProvider.getIpBlacklist();
+        }
+        return new HashSet<>();
     }
 }

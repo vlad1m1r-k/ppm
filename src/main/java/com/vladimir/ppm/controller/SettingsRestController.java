@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/settings")
@@ -32,21 +33,23 @@ public class SettingsRestController {
     private final DatabaseService databaseService;
     private final SettingsService settingsService;
     private final UserService userService;
+    private final ObjectMapper mapper;
 
     public SettingsRestController(ValidatorService validatorService, CryptoProvider cryptoProvider, TokenService tokenService,
-                                  DatabaseService databaseService, SettingsService settingsService, UserService userService) {
+                                  DatabaseService databaseService, SettingsService settingsService, UserService userService, ObjectMapper mapper) {
         this.validatorService = validatorService;
         this.cryptoProvider = cryptoProvider;
         this.tokenService = tokenService;
         this.databaseService = databaseService;
         this.settingsService = settingsService;
         this.userService = userService;
+        this.mapper = mapper;
     }
 
     @PostMapping("/getSettings")
     public CryptoDto getSettings(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
-            JsonNode json = new ObjectMapper().readTree(cryptoProvider.decrypt(key, data));
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").textValue();
             String publicKeyPEM = json.get("publicKey").textValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
@@ -61,7 +64,7 @@ public class SettingsRestController {
     @PostMapping("/saveSettings")
     public CryptoDto saveSettings(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException, NoSuchAlgorithmException, NoSuchProviderException {
         if (validatorService.validateCrypto(key, data)) {
-            JsonNode json = new ObjectMapper().readTree(cryptoProvider.decrypt(key, data));
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").textValue();
             String publicKeyPEM = json.get("publicKey").textValue();
             int serverKeyLifeTime = json.get("serverKeyLifeTime").asInt();
@@ -82,7 +85,7 @@ public class SettingsRestController {
     @PostMapping("/saveSecuritySettings")
     public CryptoDto saveSecuritySettings(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
-            JsonNode json = new ObjectMapper().readTree(cryptoProvider.decrypt(key, data));
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").textValue();
             String publicKeyPEM = json.get("publicKey").textValue();
             int incorrectLoginAttempts = json.get("incorrectLoginAttempts").asInt();
@@ -100,7 +103,7 @@ public class SettingsRestController {
     @PostMapping("/dbStatus")
     public CryptoDto getDbStatus(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
-            JsonNode json = new ObjectMapper().readTree(cryptoProvider.decrypt(key, data));
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").textValue();
             String publicKeyPEM = json.get("publicKey").textValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
@@ -115,7 +118,7 @@ public class SettingsRestController {
     @PostMapping("/keyGen")
     public CryptoDto generateKey(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
-            JsonNode json = new ObjectMapper().readTree(cryptoProvider.decrypt(key, data));
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").textValue();
             String publicKeyPEM = json.get("publicKey").textValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
@@ -127,10 +130,10 @@ public class SettingsRestController {
         return null;
     }
 
-    @PostMapping("setKey")
+    @PostMapping("/setKey")
     public CryptoDto setKey(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws IOException {
         if (validatorService.validateCrypto(key, data)) {
-            JsonNode json = new ObjectMapper().readTree(cryptoProvider.decrypt(key, data));
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").textValue();
             String publicKeyPEM = json.get("publicKey").textValue();
             String dbKey = json.get("key").textValue();
@@ -138,6 +141,37 @@ public class SettingsRestController {
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 MessageDto answer = databaseService.installDbKey(decryptedToken, dbKey);
                 return cryptoProvider.encrypt(publicKeyPEM, answer.toJson());
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/addIpToBlackList")
+    public CryptoDto addIpToBlackList(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String token = json.get("token").textValue();
+            String publicKeyPEM = json.get("publicKey").textValue();
+            String ip = json.get("ip").textValue();
+            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                MessageDto message = settingsService.addIpToBlackList(decryptedToken, ip);
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/getIpBlackList")
+    public CryptoDto getIpBlackList(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String token = json.get("token").textValue();
+            String publicKeyPEM = json.get("publicKey").textValue();
+            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                Set<String> ipSet = settingsService.getIpBlackList(decryptedToken);
+                return cryptoProvider.encrypt(publicKeyPEM, mapper.writeValueAsString(ipSet));
             }
         }
         return null;

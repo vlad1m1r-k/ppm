@@ -82,6 +82,11 @@ public class ValidatorServiceImpl implements ValidatorService {
     }
 
     @Override
+    public boolean validateIpOrSubnet(String subnet) {
+        return subnet != null && subnet.matches("^(?:(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])(\\.(?!$)|$|(\\/([1-2][0-9]|3[0-2]|[0-9])))){4}$");
+    }
+
+    @Override
     public boolean validateString(String str) {
         return str != null && str.length() > 0;
     }
