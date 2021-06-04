@@ -9,6 +9,7 @@
     "cm6": "Copy to clipboard",
     "cm7": "Restore",
     "cm8": "Info",
+    "cm9": "The list is empty",
     "lf1": "Login",
     "lf2": "Password",
     "lf3": "Enter",
@@ -123,6 +124,8 @@
     "sec8": "IP Dynamic list",
     "sec9": "Connections from those IP or subnets will never blocks",
     "sec10": "Connections from those IP or subnets will always blocks",
+    "sec11": "Ip",
+    "sec12": "Unban time",
     "sece1": "Error saving settings.",
     "sece2": "Incorrect IP or subnet"
   }

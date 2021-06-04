@@ -3,18 +3,21 @@ package com.vladimir.ppm.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.domain.User;
+import com.vladimir.ppm.provider.CryptoProvider;
+import com.vladimir.ppm.provider.SecurityProvider;
+import com.vladimir.ppm.provider.SettingsProvider;
 import org.springframework.stereotype.Service;
 
 @Service
 public class TokenServiceImpl implements TokenService {
     private final CryptoProvider cryptoProvider;
     private final SettingsProvider settingsProvider;
-    private final SecurityService securityService;
+    private final SecurityProvider securityProvider;
 
-    public TokenServiceImpl(CryptoProvider cryptoProvider, SettingsProvider settingsProvider, SecurityService securityService) {
+    public TokenServiceImpl(CryptoProvider cryptoProvider, SettingsProvider settingsProvider, SecurityProvider securityProvider) {
         this.cryptoProvider = cryptoProvider;
         this.settingsProvider = settingsProvider;
-        this.securityService = securityService;
+        this.securityProvider = securityProvider;
     }
 
     @Override
@@ -35,7 +38,7 @@ public class TokenServiceImpl implements TokenService {
                 decryptedToken.getUserAgent().equals(userAgent)) {
             return decryptedToken;
         }
-        securityService.registerLoginAttempt(remoteAddr, false);
+        securityProvider.registerLoginAttempt(remoteAddr, false);
         return null;
     }
 }

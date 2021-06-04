@@ -3,7 +3,7 @@
         <div class="modal-dlg-body">
             <div class="row">
                 <div class="col">
-                    {{ language.data.sec6 }}
+                    {{ language.data.sec7 }}
                     <button class="close" @click="$emit('close-dlg')">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -29,7 +29,7 @@
                     <tr v-if="list.length === 0">
                         <td>{{ language.data.cm9 }}</td>
                     </tr>
-                    <tr v-for="(item, id) in list" :key="'blcls' + id">
+                    <tr v-for="(item, id) in list" :key="'whtls' + id">
                         <td>{{ item }}</td>
                         <td>
                             <button class="btn btn-sm btn-outline-danger" :title="language.data.cm5"
@@ -47,7 +47,7 @@
 
 <script>
 export default {
-    name: "blackList",
+    name: "whiteList",
     emits: ["close-dlg"],
     data() {
         return {
@@ -73,7 +73,7 @@ export default {
                     ip: this.ip
                 });
                 const answer = await $.ajax({
-                    url: "/settings/addIpToBlackList",
+                    url: "/settings/addIpToWhiteList",
                     method: "POST",
                     data: encryptedData
                 });
@@ -96,7 +96,7 @@ export default {
                     token: token
                 });
                 const answer = await $.ajax({
-                    url: "/settings/getIpBlackList",
+                    url: "/settings/getIpWhiteList",
                     method: "POST",
                     data: encryptedData
                 });
@@ -115,7 +115,7 @@ export default {
                         ip: ip
                     });
                     await $.ajax({
-                        url: "/settings/removeIpFromBlackList",
+                        url: "/settings/removeIpFromWhiteList",
                         method: "POST",
                         data: encryptedData
                     });

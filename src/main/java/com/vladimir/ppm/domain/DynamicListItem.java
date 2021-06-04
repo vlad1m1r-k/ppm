@@ -1,4 +1,4 @@
-package com.vladimir.ppm.security;
+package com.vladimir.ppm.domain;
 
 public class DynamicListItem {
     private long lastLoginAttemptTime;

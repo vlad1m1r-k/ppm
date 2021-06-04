@@ -1,4 +1,4 @@
-package com.vladimir.ppm.service;
+package com.vladimir.ppm.provider;
 
 import com.vladimir.ppm.domain.Settings;
 import com.vladimir.ppm.repository.SettingsRepository;
@@ -195,5 +195,21 @@ public class SettingsProviderImpl implements SettingsProvider {
             }
         }
         return false;
+    }
+
+    @Override
+    @Transactional
+    public void removeIpFromBlackList(String ip) {
+        Settings settings = settingsRepository.getOne(1L);
+        this.settings.getIpBlackList().remove(ip);
+        settings.getIpBlackList().remove(ip);
+    }
+
+    @Override
+    @Transactional
+    public void removeIpFromWhiteList(String ip) {
+        Settings settings = settingsRepository.getOne(1L);
+        this.settings.getIpWhiteList().remove(ip);
+        settings.getIpWhiteList().remove(ip);
     }
 }

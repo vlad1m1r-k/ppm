@@ -1,4 +1,4 @@
-package com.vladimir.ppm.service;
+package com.vladimir.ppm.provider;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;

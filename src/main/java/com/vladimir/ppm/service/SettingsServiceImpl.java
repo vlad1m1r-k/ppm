@@ -1,14 +1,20 @@
 package com.vladimir.ppm.service;
 
 import com.vladimir.ppm.domain.Token;
+import com.vladimir.ppm.dto.DynamicListEntryDto;
 import com.vladimir.ppm.dto.MessageDto;
 import com.vladimir.ppm.dto.SettingsDto;
+import com.vladimir.ppm.provider.CryptoProvider;
+import com.vladimir.ppm.provider.SecurityProvider;
+import com.vladimir.ppm.provider.SettingsProvider;
 import org.springframework.stereotype.Service;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class SettingsServiceImpl implements SettingsService {
@@ -16,13 +22,15 @@ public class SettingsServiceImpl implements SettingsService {
     private final SettingsProvider settingsProvider;
     private final ValidatorService validatorService;
     private final CryptoProvider cryptoProvider;
+    private final SecurityProvider securityProvider;
 
     public SettingsServiceImpl(UserService userService, SettingsProvider settingsProvider, ValidatorService validatorService,
-                               CryptoProvider cryptoProvider) {
+                               CryptoProvider cryptoProvider, SecurityProvider securityProvider) {
         this.userService = userService;
         this.settingsProvider = settingsProvider;
         this.validatorService = validatorService;
         this.cryptoProvider = cryptoProvider;
+        this.securityProvider = securityProvider;
     }
 
     @Override
@@ -47,7 +55,7 @@ public class SettingsServiceImpl implements SettingsService {
                                    boolean pwdComplexity, boolean pwdSpecialChar) throws NoSuchAlgorithmException, NoSuchProviderException {
         if (userService.isAdmin(token) && validatorService.validateSrvKeyLT(serverKeyLifeTime) &&
                 validatorService.validateUsrTknLT(tokenLifeTime) && validatorService.validatePwdMinLength(pwdMinLength)) {
-            if (settingsProvider.getServerKeyLifeTimeDays() != serverKeyLifeTime ) {
+            if (settingsProvider.getServerKeyLifeTimeDays() != serverKeyLifeTime) {
                 if (settingsProvider.getServerKeyLifeTimeDays() > serverKeyLifeTime) {
                     settingsProvider.setServerKeyLifeTimeDays(serverKeyLifeTime);
                     cryptoProvider.generateServerKeypair();
@@ -99,10 +107,66 @@ public class SettingsServiceImpl implements SettingsService {
     }
 
     @Override
-    public Set<String> getIpBlackList(Token token) {
-        if (userService.isAdmin(token)) {
-            return settingsProvider.getIpBlacklist();
+    public MessageDto addIpToWhiteList(Token token, String ip) {
+        if (userService.isAdmin(token) && validatorService.validateIpOrSubnet(ip)) {
+            settingsProvider.addIpToWhiteList(ip);
+            return MessageDto.builder().build();
         }
-        return new HashSet<>();
+        return MessageDto.builder().message("sece2").build();
+    }
+
+    @Override
+    public List<String> getIpBlackList(Token token) {
+        if (userService.isAdmin(token)) {
+            return settingsProvider.getIpBlacklist().stream().sorted().collect(Collectors.toList());
+        }
+        return new ArrayList<>();
+    }
+
+    @Override
+    public List<String> getIpWhiteList(Token token) {
+        if (userService.isAdmin(token)) {
+            return settingsProvider.getIpWhiteList().stream().sorted().collect(Collectors.toList());
+        }
+        return new ArrayList<>();
+    }
+
+    @Override
+    public List<DynamicListEntryDto> getDynamicList(Token token) {
+        if (userService.isAdmin(token)) {
+            return securityProvider.getDynamicIpMap().entrySet().stream()
+                    .filter(e -> e.getValue().isBanned())
+                    .map(e -> DynamicListEntryDto.builder()
+                            .ip(e.getKey())
+                            .expire(e.getValue().getUnbanTime())
+                            .build())
+                    .sorted(Comparator.comparing(DynamicListEntryDto::getIp))
+                    .collect(Collectors.toList());
+        }
+        return new ArrayList<>();
+    }
+
+    @Override
+    public MessageDto removeIpFromBlackList(Token token, String ip) {
+        if (userService.isAdmin(token) && validatorService.validateString(ip)) {
+            settingsProvider.removeIpFromBlackList(ip);
+        }
+        return MessageDto.builder().build();
+    }
+
+    @Override
+    public MessageDto removeIpFromWhiteList(Token token, String ip) {
+        if (userService.isAdmin(token) && validatorService.validateString(ip)) {
+            settingsProvider.removeIpFromWhiteList(ip);
+        }
+        return MessageDto.builder().build();
+    }
+
+    @Override
+    public MessageDto removeIpFromDynamicList(Token token, String ip) {
+        if (userService.isAdmin(token) && validatorService.validateString(ip)) {
+            securityProvider.getDynamicIpMap().remove(ip);
+        }
+        return MessageDto.builder().build();
     }
 }

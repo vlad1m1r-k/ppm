@@ -5,9 +5,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.dto.CryptoDto;
+import com.vladimir.ppm.dto.DynamicListEntryDto;
 import com.vladimir.ppm.dto.MessageDto;
 import com.vladimir.ppm.dto.SettingsDto;
-import com.vladimir.ppm.service.CryptoProvider;
+import com.vladimir.ppm.provider.CryptoProvider;
 import com.vladimir.ppm.service.DatabaseService;
 import com.vladimir.ppm.service.SettingsService;
 import com.vladimir.ppm.service.TokenService;
@@ -22,7 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.util.Set;
+import java.util.List;
 
 @RestController
 @RequestMapping("/settings")
@@ -162,6 +163,22 @@ public class SettingsRestController {
         return null;
     }
 
+    @PostMapping("/addIpToWhiteList")
+    public CryptoDto addIpToWhiteList(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String token = json.get("token").textValue();
+            String publicKeyPEM = json.get("publicKey").textValue();
+            String ip = json.get("ip").textValue();
+            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                MessageDto message = settingsService.addIpToWhiteList(decryptedToken, ip);
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
+            }
+        }
+        return null;
+    }
+
     @PostMapping("/getIpBlackList")
     public CryptoDto getIpBlackList(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
         if (validatorService.validateCrypto(key, data)) {
@@ -170,8 +187,85 @@ public class SettingsRestController {
             String publicKeyPEM = json.get("publicKey").textValue();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
-                Set<String> ipSet = settingsService.getIpBlackList(decryptedToken);
+                List<String> ipSet = settingsService.getIpBlackList(decryptedToken);
                 return cryptoProvider.encrypt(publicKeyPEM, mapper.writeValueAsString(ipSet));
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/getIpWhiteList")
+    public CryptoDto getIpWhiteList(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String token = json.get("token").textValue();
+            String publicKeyPEM = json.get("publicKey").textValue();
+            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                List<String> ipSet = settingsService.getIpWhiteList(decryptedToken);
+                return cryptoProvider.encrypt(publicKeyPEM, mapper.writeValueAsString(ipSet));
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/removeIpFromBlackList")
+    public CryptoDto removeIpFromBlackList(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String token = json.get("token").textValue();
+            String publicKeyPEM = json.get("publicKey").textValue();
+            String ip = json.get("ip").textValue();
+            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                MessageDto message = settingsService.removeIpFromBlackList(decryptedToken, ip);
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/removeIpFromWhiteList")
+    public CryptoDto removeIpFromWhiteList(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String token = json.get("token").textValue();
+            String publicKeyPEM = json.get("publicKey").textValue();
+            String ip = json.get("ip").textValue();
+            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                MessageDto message = settingsService.removeIpFromWhiteList(decryptedToken, ip);
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/getDynamicList")
+    public CryptoDto getDynamicList(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String token = json.get("token").textValue();
+            String publicKeyPEM = json.get("publicKey").textValue();
+            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                return cryptoProvider.encrypt(publicKeyPEM, mapper.writeValueAsString(settingsService.getDynamicList(decryptedToken)));
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/removeIpFromDynamicList")
+    public CryptoDto removeIpFromDynamicList(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String token = json.get("token").textValue();
+            String publicKeyPEM = json.get("publicKey").textValue();
+            String ip = json.get("ip").textValue();
+            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                MessageDto message = settingsService.removeIpFromDynamicList(decryptedToken, ip);
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
             }
         }
         return null;

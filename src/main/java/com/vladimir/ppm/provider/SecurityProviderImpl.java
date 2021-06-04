@@ -1,9 +1,9 @@
-package com.vladimir.ppm.service;
+package com.vladimir.ppm.provider;
 
 import com.vladimir.ppm.domain.User;
 import com.vladimir.ppm.domain.UserStatus;
 import com.vladimir.ppm.repository.UserRepository;
-import com.vladimir.ppm.security.DynamicListItem;
+import com.vladimir.ppm.domain.DynamicListItem;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -14,13 +14,13 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @EnableScheduling
-public class SecurityServiceImpl implements SecurityService {
+public class SecurityProviderImpl implements SecurityProvider {
     private final SettingsProvider settingsProvider;
     private final UserRepository userRepository;
     private final Map<String, DynamicListItem> ipAddrMap = new ConcurrentHashMap<>();
     private final Map<Long, DynamicListItem> usersMap = new ConcurrentHashMap<>();
 
-    public SecurityServiceImpl(SettingsProvider settingsProvider, UserRepository userRepository) {
+    public SecurityProviderImpl(SettingsProvider settingsProvider, UserRepository userRepository) {
         this.settingsProvider = settingsProvider;
         this.userRepository = userRepository;
     }
@@ -44,13 +44,13 @@ public class SecurityServiceImpl implements SecurityService {
 
     @Override
     public boolean isIpBanned(String ip) {
-        return settingsProvider.isIpWhitelisted(ip) || settingsProvider.isIpBlackListed(ip)
-                || ipAddrMap.get(ip) != null && ipAddrMap.get(ip).isBanned();
+        return !settingsProvider.isIpWhitelisted(ip) && (settingsProvider.isIpBlackListed(ip)
+                || ipAddrMap.get(ip) != null && ipAddrMap.get(ip).isBanned());
     }
 
     @Override
     public void registerLoginAttempt(String ip, boolean success) {
-        if (settingsProvider.isIpWhitelisted(ip)) {
+        if (!settingsProvider.isIpWhitelisted(ip)) {
             if (success) {
                 ipAddrMap.remove(ip);
                 return;
@@ -98,5 +98,10 @@ public class SecurityServiceImpl implements SecurityService {
                 user.setStatus(UserStatus.DISABLED);
             }
         }
+    }
+
+    @Override
+    public Map<String, DynamicListItem> getDynamicIpMap() {
+        return ipAddrMap;
     }
 }

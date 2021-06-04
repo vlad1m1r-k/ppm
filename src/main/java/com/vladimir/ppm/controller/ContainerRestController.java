@@ -12,7 +12,7 @@ import com.vladimir.ppm.dto.CryptoDto;
 import com.vladimir.ppm.dto.MessageDto;
 import com.vladimir.ppm.dto.PasswordDto;
 import com.vladimir.ppm.service.ContainerService;
-import com.vladimir.ppm.service.CryptoProvider;
+import com.vladimir.ppm.provider.CryptoProvider;
 import com.vladimir.ppm.service.TokenService;
 import com.vladimir.ppm.service.UserService;
 import com.vladimir.ppm.service.ValidatorService;

@@ -1,6 +1,7 @@
 package com.vladimir.ppm.service;
 
 import com.vladimir.ppm.dto.CryptoDto;
+import com.vladimir.ppm.provider.CryptoProviderImpl;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;

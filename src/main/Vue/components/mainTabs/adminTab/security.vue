@@ -1,5 +1,7 @@
 <template>
     <black-list v-if="showBlackList" @close-dlg="showBlackList = false"></black-list>
+    <white-list v-if="showWhiteList" @close-dlg="showWhiteList = false"></white-list>
+    <dynamic-list v-if="showDynList" @close-dlg="showDynList = false"></dynamic-list>
     <table>
         <thead></thead>
         <tbody>
@@ -27,17 +29,19 @@
     <button class="btn btn-sm btn-success" @click="saveSettings">{{ language.data.cm3 }}</button>
     <hr>
     <button class="btn btn-sm btn-outline-primary m-1" @click="showBlackList = true">{{ language.data.sec6 }}</button>{{ language.data.sec10 }}<br>
-    <button class="btn btn-sm btn-outline-primary m-1" @click="">{{ language.data.sec7 }}</button>{{ language.data.sec9 }}<br>
-    <button class="btn btn-sm btn-outline-primary m-1" @click="">{{ language.data.sec8 }}</button><br>
+    <button class="btn btn-sm btn-outline-primary m-1" @click="showWhiteList = true">{{ language.data.sec7 }}</button>{{ language.data.sec9 }}<br>
+    <button class="btn btn-sm btn-outline-primary m-1" @click="showDynList = true">{{ language.data.sec8 }}</button><br>
 </template>
 
 <script>
 import blackList from "./ipLists/blackList.vue";
+import whiteList from "./ipLists/whiteList.vue";
+import dynamicList from "./ipLists/dynamicList.vue";
 
 export default {
     name: "security",
     components: {
-        blackList
+        blackList, whiteList, dynamicList
     },
     data() {
         return {
@@ -46,7 +50,9 @@ export default {
             incorrectLoginAttempts: null,
             ipBanTimeDays: null,
             incorrectPasswdAttempts: null,
-            showBlackList: false
+            showBlackList: false,
+            showWhiteList: false,
+            showDynList: false
         }
     },
     methods: {

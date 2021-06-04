@@ -12,6 +12,7 @@ import com.vladimir.ppm.dto.ContainerDto;
 import com.vladimir.ppm.dto.MessageDto;
 import com.vladimir.ppm.dto.NoteDto;
 import com.vladimir.ppm.dto.PasswordDto;
+import com.vladimir.ppm.provider.CryptoProvider;
 import com.vladimir.ppm.repository.ContainerRepository;
 import com.vladimir.ppm.repository.NoteRepository;
 import com.vladimir.ppm.repository.PasswordRepository;

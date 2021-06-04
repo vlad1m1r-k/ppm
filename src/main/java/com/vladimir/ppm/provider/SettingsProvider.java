@@ -1,4 +1,4 @@
-package com.vladimir.ppm.service;
+package com.vladimir.ppm.provider;
 
 import java.util.Set;
 
@@ -27,4 +27,6 @@ public interface SettingsProvider {
     void addIpToWhiteList(String ip);
     boolean isIpWhitelisted(String ip);
     boolean isIpBlackListed(String ip);
+    void removeIpFromBlackList(String ip);
+    void removeIpFromWhiteList(String ip);
 }

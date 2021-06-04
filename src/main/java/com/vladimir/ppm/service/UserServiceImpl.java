@@ -8,6 +8,9 @@ import com.vladimir.ppm.dto.GroupDto;
 import com.vladimir.ppm.dto.MessageDto;
 import com.vladimir.ppm.dto.TokenDto;
 import com.vladimir.ppm.dto.UserDto;
+import com.vladimir.ppm.provider.CryptoProvider;
+import com.vladimir.ppm.provider.SecurityProvider;
+import com.vladimir.ppm.provider.SettingsProvider;
 import com.vladimir.ppm.repository.UserRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -27,18 +30,18 @@ public class UserServiceImpl implements UserService {
     private final CryptoProvider cryptoProvider;
     private final ValidatorService validatorService;
     private final SettingsProvider settingsProvider;
-    private final SecurityService securityService;
+    private final SecurityProvider securityProvider;
 
     public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder encoder, TokenService tokenService,
                            CryptoProvider cryptoProvider, ValidatorService validatorService, SettingsProvider settingsProvider,
-                           SecurityService securityService) {
+                           SecurityProvider securityProvider) {
         this.userRepository = userRepository;
         this.encoder = encoder;
         this.tokenService = tokenService;
         this.cryptoProvider = cryptoProvider;
         this.validatorService = validatorService;
         this.settingsProvider = settingsProvider;
-        this.securityService = securityService;
+        this.securityProvider = securityProvider;
     }
 
     @Override
@@ -46,11 +49,11 @@ public class UserServiceImpl implements UserService {
     public TokenDto login(String login, String password, String remoteAddr, String userAgent) {
         User user = userRepository.findUserByLogin(login);
         if (user == null) {
-            securityService.registerLoginAttempt(remoteAddr, false);
+            securityProvider.registerLoginAttempt(remoteAddr, false);
             return TokenDto.builder().message("lfe1").build();
         }
         if (!encoder.matches(password, user.getPassword())) {
-            securityService.registerPasswordAttempt(user.getId(), false);
+            securityProvider.registerPasswordAttempt(user.getId(), false);
             return TokenDto.builder().message("lfe1").build();
         }
         if (!user.isEnabled()) {
@@ -62,8 +65,8 @@ public class UserServiceImpl implements UserService {
         Token token = tokenService.getToken(user, remoteAddr, userAgent);
         long tokenLifeTime = token.getLifeTime();
         String encryptedToken = tokenService.encrypt(token);
-        securityService.registerLoginAttempt(remoteAddr, true);
-        securityService.registerPasswordAttempt(user.getId(), true);
+        securityProvider.registerLoginAttempt(remoteAddr, true);
+        securityProvider.registerPasswordAttempt(user.getId(), true);
         return TokenDto.builder()
                 .lifeTime(tokenLifeTime)
                 .token(encryptedToken)
