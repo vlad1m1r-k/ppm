@@ -14,6 +14,7 @@ import com.vladimir.ppm.provider.SettingsProvider;
 import com.vladimir.ppm.repository.UserRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.util.matcher.IpAddressMatcher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,6 +52,10 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             securityProvider.registerLoginAttempt(remoteAddr, false);
             return TokenDto.builder().message("lfe1").build();
+        }
+        if (!isIpAllowed(user, remoteAddr)) {
+            securityProvider.registerLoginAttempt(remoteAddr, false);
+            return TokenDto.builder().message("lfe4").build();
         }
         if (!encoder.matches(password, user.getPassword())) {
             securityProvider.registerPasswordAttempt(user.getId(), false);
@@ -218,14 +223,49 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void banUser(long userId) {
-        User user = userRepository.getOne(userId);
-        user.setStatus(UserStatus.DISABLED);
+    public MessageDto addAllowedIp(Token token, long userId, String ip) {
+        if (isAdmin(token) && validatorService.validateIpOrSubnet(ip)) {
+            User user = userRepository.getOne(userId);
+            user.getAllowedIps().add(ip);
+        }
+        return MessageDto.builder().build();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<String> getAllowedIp(Token token, long userId) {
+        if (isAdmin(token)) {
+            User user = userRepository.getOne(userId);
+            return user.getAllowedIps().stream().sorted().collect(Collectors.toList());
+        }
+        return new ArrayList<>();
+    }
+
+    @Override
+    @Transactional
+    public void removeAllowedIp(Token token, long userId, String ip) {
+        if (isAdmin(token) && validatorService.validateIpOrSubnet(ip)) {
+            User user = userRepository.getOne(userId);
+            user.getAllowedIps().remove(ip);
+        }
     }
 
     private boolean isAdmin(Set<Group> groups) {
         for (Group group : groups) {
             if (group.isAdminSettings()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isIpAllowed(User user, String remoteAddr) {
+        if (user.getAllowedIps().size() == 0) {
+            return true;
+        }
+        for (String ip : user.getAllowedIps()) {
+            IpAddressMatcher matcher = new IpAddressMatcher(ip);
+            if (matcher.matches(remoteAddr)) {
                 return true;
             }
         }

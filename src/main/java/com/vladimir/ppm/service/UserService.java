@@ -23,5 +23,7 @@ public interface UserService {
     MessageDto addUser(Token token, String login, String pwd, UserStatus status);
     MessageDto editUser(Token token, long userId, String login, String pwd, UserStatus status);
     MessageDto deleteUser(Token token, long userId);
-    void banUser(long userId);
+    MessageDto addAllowedIp(Token token, long userId, String ip);
+    List<String> getAllowedIp(Token token, long userId);
+    void removeAllowedIp(Token token, long userId, String ip);
 }

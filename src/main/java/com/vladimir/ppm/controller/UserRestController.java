@@ -165,4 +165,53 @@ public class UserRestController {
         }
         return null;
     }
+
+    @PostMapping("/addAllowedIp")
+    public CryptoDto addAllowedIp(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String token = json.get("token").textValue();
+            String publicKeyPEM = json.get("publicKey").textValue();
+            long userId = json.get("userId").asLong();
+            String ip = json.get("ip").asText();
+            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                MessageDto message = userService.addAllowedIp(decryptedToken, userId, ip);
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/getAllowedIp")
+    public CryptoDto getAllowedIp(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String token = json.get("token").textValue();
+            String publicKeyPEM = json.get("publicKey").textValue();
+            long userId = json.get("userId").asLong();
+            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                return cryptoProvider.encrypt(publicKeyPEM, mapper.writeValueAsString(userService.getAllowedIp(decryptedToken, userId)));
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/removeAllowedIp")
+    public CryptoDto removeAllowedIp(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String token = json.get("token").textValue();
+            String publicKeyPEM = json.get("publicKey").textValue();
+            long userId = json.get("userId").asLong();
+            String ip = json.get("ip").asText();
+            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                userService.removeAllowedIp(decryptedToken, userId, ip);
+                return cryptoProvider.encrypt(publicKeyPEM, mapper.writeValueAsString(""));
+            }
+        }
+        return null;
+    }
 }

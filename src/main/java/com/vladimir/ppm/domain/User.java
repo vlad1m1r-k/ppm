@@ -1,8 +1,10 @@
 package com.vladimir.ppm.domain;
 
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -25,6 +27,9 @@ public class User {
 
     @ManyToMany(mappedBy = "users")
     private final Set<Group> groups = new HashSet<>();
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    private final Set<String> allowedIps = new HashSet<>();
 
     public User() {}
 
@@ -52,6 +57,10 @@ public class User {
 
     public UserStatus getStatus() {
         return status;
+    }
+
+    public Set<String> getAllowedIps() {
+        return allowedIps;
     }
 
     public void setLogin(String login) {

@@ -5,6 +5,7 @@
             <th><button class="btn btn-sm btn-link" @click="setSort('login')">{{ language.data.lf1 }}</button></th>
             <th><button class="btn btn-sm btn-link" @click="setSort('status')">{{ language.data.us2 }}</button></th>
             <th>{{ language.data.gp1 }}</th>
+            <th>{{ language.data.us4 }}</th>
             <th><span class="btn-dc text-success" @click="showAddDlg = !showAddDlg">&#x2795;</span></th>
             <th></th>
         </tr>

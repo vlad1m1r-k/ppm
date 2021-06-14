@@ -1,5 +1,6 @@
 <template>
     <group-selector v-if="showGroupSelector" @close-dlg="showGroupSelector = false; $emit('user-changed')" :user="user"></group-selector>
+    <user-ip-view v-if="showIpEditor" @close-dlg="showIpEditor = false" :user="user"></user-ip-view>
     <tr v-if="showEditDlg">
         <td colspan="10">
             <input type="text" class="form-control-sm align-middle" :placeholder="language.data.lf1" v-model="login">
@@ -19,6 +20,9 @@
         <td>
             <button class="btn btn-sm btn-outline-success" @click="showGroupSelector = true">{{ language.data.gp1 }} ({{ user.groups.length }})</button>
         </td>
+        <td>
+            <button class="btn btn-sm btn-outline-success" @click="showIpEditor = true">{{ language.data.us4 }}</button>
+        </td>
         <td><button class="btn btn-sm btn-outline-success" :title="language.data.cm2" @click="showEditDlg = true">&#x1f589;</button></td>
         <td><button class="btn btn-sm btn-outline-danger" :title="language.data.cm5" @click="deleteUser">&#x1f5d1;</button></td>
     </tr>
@@ -26,6 +30,7 @@
 
 <script>
 import groupSelector from "./groupSelector.vue";
+import userIpView from "./userIpView.vue";
 
 export default {
     name: "userView",
@@ -34,13 +39,14 @@ export default {
         user: Object,
         statuses: Array
     },
-    components: {groupSelector},
+    components: {groupSelector, userIpView},
     data() {
         return {
             tokenProvider: this.$root.$data.tokenProvider,
             language: this.$root.$data.language,
             showEditDlg: false,
             showGroupSelector: false,
+            showIpEditor: false,
             login: this.user.login,
             pwd: "",
             status: this.user.status
