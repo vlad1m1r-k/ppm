@@ -6,6 +6,7 @@
                     <button class="btn btn-sm btn-outline-secondary" @click="currentTab = 'mainTab'">{{ language.data.mp1 }}</button>
                     <button class="btn btn-sm btn-outline-danger" @click="currentTab = 'adminSettings'" v-if="tokenProvider.adminSettings">{{ language.data.as1 }}</button>
                     <button class="btn btn-sm btn-outline-danger" @click="showTrash" v-if="tokenProvider.adminSettings" :title="language.data.di1">&#x1f5d1;</button>
+                    <pwd-gen></pwd-gen>
                 </div>
                 <div class="col-sm-auto">
                     <div class="row">
@@ -45,6 +46,7 @@ import userMenu from "./header/userMenu.vue";
 import mainTab from "./mainTabs/mainTab.vue";
 import userSettings from "./mainTabs/userSettings.vue";
 import adminSettings from "./mainTabs/adminSettings.vue";
+import pwdGen from "./header/pwdGen.vue";
 
 export default {
     name: "mainBlock",
@@ -53,7 +55,8 @@ export default {
         userMenu,
         mainTab,
         userSettings,
-        adminSettings
+        adminSettings,
+        pwdGen
     },
     data() {
         return {

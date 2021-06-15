@@ -1,6 +1,7 @@
 package com.vladimir.ppm.service;
 
 import com.vladimir.ppm.domain.Group;
+import com.vladimir.ppm.domain.PwdGenSettings;
 import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.domain.User;
 import com.vladimir.ppm.domain.UserStatus;
@@ -248,6 +249,13 @@ public class UserServiceImpl implements UserService {
             User user = userRepository.getOne(userId);
             user.getAllowedIps().remove(ip);
         }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PwdGenSettings getPwdGenSettings(Token token) {
+        User user = userRepository.findUserByLogin(token.getLogin());
+        return user.getPwdGenSettings() == null ? new PwdGenSettings() : user.getPwdGenSettings();
     }
 
     private boolean isAdmin(Set<Group> groups) {

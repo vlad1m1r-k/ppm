@@ -130,6 +130,10 @@
     "sec11": "Ip",
     "sec12": "Unban time",
     "sece1": "Error saving settings.",
-    "sece2": "Incorrect IP or subnet"
+    "sece2": "Incorrect IP or subnet",
+    "pg1": "Generator settings",
+    "pg2": "Password length",
+    "pg3": "Include digits",
+    "pg4": "Include symbols"
   }
 }

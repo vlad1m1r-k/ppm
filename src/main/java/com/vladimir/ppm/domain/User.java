@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.util.HashSet;
 import java.util.Set;
@@ -30,6 +31,9 @@ public class User {
 
     @ElementCollection(fetch = FetchType.EAGER)
     private final Set<String> allowedIps = new HashSet<>();
+
+    @OneToOne
+    private PwdGenSettings pwdGenSettings;
 
     public User() {}
 
@@ -61,6 +65,10 @@ public class User {
 
     public Set<String> getAllowedIps() {
         return allowedIps;
+    }
+
+    public PwdGenSettings getPwdGenSettings() {
+        return pwdGenSettings;
     }
 
     public void setLogin(String login) {

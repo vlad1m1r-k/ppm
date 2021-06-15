@@ -1,6 +1,7 @@
 package com.vladimir.ppm.service;
 
 import com.vladimir.ppm.domain.Group;
+import com.vladimir.ppm.domain.PwdGenSettings;
 import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.domain.User;
 import com.vladimir.ppm.domain.UserStatus;
@@ -26,4 +27,5 @@ public interface UserService {
     MessageDto addAllowedIp(Token token, long userId, String ip);
     List<String> getAllowedIp(Token token, long userId);
     void removeAllowedIp(Token token, long userId, String ip);
+    PwdGenSettings getPwdGenSettings(Token token);
 }
