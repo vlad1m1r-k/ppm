@@ -134,6 +134,7 @@
     "pg1": "Generator settings",
     "pg2": "Password length",
     "pg3": "Include digits",
-    "pg4": "Include symbols"
+    "pg4": "Include symbols",
+    "pge1": "Error saving settings."
   }
 }

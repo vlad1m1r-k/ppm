@@ -33,7 +33,7 @@ public class User {
     private final Set<String> allowedIps = new HashSet<>();
 
     @OneToOne
-    private PwdGenSettings pwdGenSettings;
+    private final PwdGenSettings pwdGenSettings = new PwdGenSettings();
 
     public User() {}
 

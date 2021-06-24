@@ -228,4 +228,22 @@ public class UserRestController {
         }
         return null;
     }
+
+    @PostMapping("/setPwdGenSettings")
+    public CryptoDto setPwdGenSettings(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String token = json.get("token").textValue();
+            String publicKeyPEM = json.get("publicKey").textValue();
+            int pwdLength = json.get("pwdLength").asInt();
+            boolean numbers = json.get("numbers").asBoolean();
+            boolean symbols = json.get("symbols").asBoolean();
+            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                MessageDto message = userService.setPwdGenSettings(decryptedToken, pwdLength, numbers, symbols);
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
+            }
+        }
+        return null;
+    }
 }

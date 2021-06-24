@@ -258,6 +258,21 @@ public class UserServiceImpl implements UserService {
         return user.getPwdGenSettings() == null ? new PwdGenSettings() : user.getPwdGenSettings();
     }
 
+    @Override
+    @Transactional
+    public MessageDto setPwdGenSettings(Token token, int pwdLength, boolean numbers, boolean symbols) {
+        if (pwdLength > 0) {
+            User user = userRepository.findUserByLogin(token.getLogin());
+            PwdGenSettings settings = user.getPwdGenSettings();
+            //TODO it returns null
+            settings.setPwdLength(pwdLength);
+            settings.setNumbers(numbers);
+            settings.setSymbols(symbols);
+            return MessageDto.builder().build();
+        }
+        return MessageDto.builder().message("pge1").build();
+    }
+
     private boolean isAdmin(Set<Group> groups) {
         for (Group group : groups) {
             if (group.isAdminSettings()) {

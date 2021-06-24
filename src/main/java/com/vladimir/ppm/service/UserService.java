@@ -28,4 +28,5 @@ public interface UserService {
     List<String> getAllowedIp(Token token, long userId);
     void removeAllowedIp(Token token, long userId, String ip);
     PwdGenSettings getPwdGenSettings(Token token);
+    MessageDto setPwdGenSettings(Token token, int pwdLength, boolean numbers, boolean symbols);
 }

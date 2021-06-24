@@ -1,8 +1,8 @@
 <template>
-    <pwd-gen-settings v-if="showSettings" @close-dlg="showSettings = false"></pwd-gen-settings>
+    <pwd-gen-settings v-if="showSettings" @close-dlg="showSettings = false" :settings="settings"></pwd-gen-settings>
     <span class="ml-2">
         <button class="btn btn-sm btn-outline-secondary" :title="language.data.um1" @click="showSettings = true">&#x2699;</button>
-        <input type="text" class="form-control-sm align-middle" readonly size="15">
+        <input type="text" class="form-control-sm align-middle" readonly size="20">
         <button class="btn btn-sm btn-outline-secondary" :title="language.data.db6">G</button>
     </span>
 </template>
