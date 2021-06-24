@@ -264,10 +264,13 @@ public class UserServiceImpl implements UserService {
         if (pwdLength > 0) {
             User user = userRepository.findUserByLogin(token.getLogin());
             PwdGenSettings settings = user.getPwdGenSettings();
-            //TODO it returns null
+            if (settings == null) {
+                settings = new PwdGenSettings();
+            }
             settings.setPwdLength(pwdLength);
             settings.setNumbers(numbers);
             settings.setSymbols(symbols);
+            user.setPwdGenSettings(settings);
             return MessageDto.builder().build();
         }
         return MessageDto.builder().message("pge1").build();

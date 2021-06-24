@@ -33,7 +33,7 @@ public class User {
     private final Set<String> allowedIps = new HashSet<>();
 
     @OneToOne
-    private final PwdGenSettings pwdGenSettings = new PwdGenSettings();
+    private PwdGenSettings pwdGenSettings;
 
     public User() {}
 
@@ -81,6 +81,10 @@ public class User {
 
     public void setStatus(UserStatus status) {
         this.status = status;
+    }
+
+    public void setPwdGenSettings(PwdGenSettings pwdGenSettings) {
+        this.pwdGenSettings = pwdGenSettings;
     }
 
     public boolean isEnabled() {
