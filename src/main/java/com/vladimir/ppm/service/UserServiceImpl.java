@@ -12,6 +12,7 @@ import com.vladimir.ppm.dto.UserDto;
 import com.vladimir.ppm.provider.CryptoProvider;
 import com.vladimir.ppm.provider.SecurityProvider;
 import com.vladimir.ppm.provider.SettingsProvider;
+import com.vladimir.ppm.repository.PwdGenSettingsRepository;
 import com.vladimir.ppm.repository.UserRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -33,10 +34,11 @@ public class UserServiceImpl implements UserService {
     private final ValidatorService validatorService;
     private final SettingsProvider settingsProvider;
     private final SecurityProvider securityProvider;
+    private final PwdGenSettingsRepository pwdGenSettingsRepository;
 
     public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder encoder, TokenService tokenService,
                            CryptoProvider cryptoProvider, ValidatorService validatorService, SettingsProvider settingsProvider,
-                           SecurityProvider securityProvider) {
+                           SecurityProvider securityProvider, PwdGenSettingsRepository pwdGenSettingsRepository) {
         this.userRepository = userRepository;
         this.encoder = encoder;
         this.tokenService = tokenService;
@@ -44,6 +46,7 @@ public class UserServiceImpl implements UserService {
         this.validatorService = validatorService;
         this.settingsProvider = settingsProvider;
         this.securityProvider = securityProvider;
+        this.pwdGenSettingsRepository = pwdGenSettingsRepository;
     }
 
     @Override
@@ -266,6 +269,7 @@ public class UserServiceImpl implements UserService {
             PwdGenSettings settings = user.getPwdGenSettings();
             if (settings == null) {
                 settings = new PwdGenSettings();
+                pwdGenSettingsRepository.save(settings);
             }
             settings.setPwdLength(pwdLength);
             settings.setNumbers(numbers);
