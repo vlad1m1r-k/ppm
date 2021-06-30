@@ -2,7 +2,7 @@
     <access-mgmt-dlg v-if="showAccessMgmtDlg" :item="item" @close-dlg="showAccessMgmtDlg = false"></access-mgmt-dlg>
     <div class="decor-iv">
         <div class="row m-0">
-            <div class="col">
+            <div class="col-sm-auto">
                 <div class="dropdown" v-if="item.access === 'RW'">
                     <button class="btn-sm btn-outline-primary dropdown-toggle" type="button" id="dropdownMenuButton"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -30,6 +30,9 @@
                         </span>
                     </div>
                 </div>
+            </div>
+            <div class="col">
+                <span style="user-select: none">{{ language.data.cm10 }} &nbsp;</span>$id:{{ item.id }}
             </div>
         </div>
         <div class="row m-0">

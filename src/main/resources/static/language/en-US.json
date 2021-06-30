@@ -10,6 +10,7 @@
     "cm7": "Restore",
     "cm8": "Info",
     "cm9": "The list is empty",
+    "cm10": "Link:",
     "lf1": "Login",
     "lf2": "Password",
     "lf3": "Enter",
@@ -135,6 +136,7 @@
     "pg2": "Password length",
     "pg3": "Include digits",
     "pg4": "Include symbols",
-    "pge1": "Error saving settings."
+    "pge1": "Error saving settings.",
+    "sf1": "Search"
   }
 }

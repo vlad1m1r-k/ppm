@@ -11,6 +11,9 @@
                 <div class="col-sm-auto">
                     <div class="row">
                         <div class="col-sm p-0">
+                            <search-form></search-form>
+                        </div>
+                        <div class="col-sm p-0">
                             <user-menu @change-tab="setTab"></user-menu>
                         </div>
                         <div class="col-sm pl-0">
@@ -47,6 +50,7 @@ import mainTab from "./mainTabs/mainTab.vue";
 import userSettings from "./mainTabs/userSettings.vue";
 import adminSettings from "./mainTabs/adminSettings.vue";
 import pwdGen from "./header/pwdGen.vue";
+import searchForm from "./header/searchForm.vue";
 
 export default {
     name: "mainBlock",
@@ -56,7 +60,8 @@ export default {
         mainTab,
         userSettings,
         adminSettings,
-        pwdGen
+        pwdGen,
+        searchForm
     },
     data() {
         return {
