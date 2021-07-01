@@ -9,7 +9,7 @@
         </li>
         <li v-show="isOpen">
             <tree-item :item="child" :selected-item="selectedItem" v-for="child in item.children"
-                       @item-select="$emit('item-select', $event)" @expand-item="expand" :key="'TREE' + child.id"></tree-item>
+                       @item-select="itemSelect" @expand-item="expand" :key="'TREE' + child.id"></tree-item>
         </li>
     </ul>
 </template>
@@ -76,15 +76,18 @@ export default {
                 }
             }
         },
-        selectItem(itemId) {
-            if (this.item.id === itemId) {
-                this.$emit('item-select', this.item);
+        selectItem(data) {
+            if (this.item.id === data.cntId) {
+                this.$emit('item-select', this.item, data);
                 this.expand();
             }
         },
         expand() {
             this.isOpen = true;
             this.$emit("expand-item");
+        },
+        itemSelect(item, data) {
+            this.$emit('item-select', item, data);
         }
     },
     beforeMount() {

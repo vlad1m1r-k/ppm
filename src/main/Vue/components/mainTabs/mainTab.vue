@@ -6,7 +6,7 @@
                 <tree-item :item="tree" :selected-item="selectedItem" @item-select="selectItem"></tree-item>
             </div>
             <div class="col p-0">
-                <item-view :item="selectedItem" v-if="!trash"></item-view>
+                <item-view :item="selectedItem" :search-data="searchData" v-if="!trash"></item-view>
                 <trash-view :item="selectedItem" v-if="trash"></trash-view>
             </div>
         </div>
@@ -31,6 +31,7 @@ export default {
             language: this.$root.$data.language,
             tree: {},
             selectedItem: {},
+            searchData: null,
             trash: false
         }
     },
@@ -50,8 +51,13 @@ export default {
                 this.eventHub.emit("show-msg", this.errorParser(e));
             }
         },
-        selectItem(evt) {
+        selectItem(evt, data) {
             this.selectedItem = evt;
+            if (data) {
+                this.searchData = data;
+            } else {
+                this.searchData = null;
+            }
         },
         toggleTrash(currentTab) {
             if (currentTab === "mainTab") {

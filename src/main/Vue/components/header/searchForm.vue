@@ -27,8 +27,12 @@ export default {
             }
         },
         localSearch(link) {
-            const containerId = link.match("(?:^\\$id:)(.*)")[1];
-            this.eventHub.emit("select-item", Number.parseInt(containerId));
+            const matchArray = link.match("(?:^\\$id:)(\\d*)(\\D)?(\\d*)?");
+            this.eventHub.emit("select-item", {
+                cntId: Number.parseInt(matchArray[1]),
+                type: matchArray[2],
+                itemId: Number.parseInt(matchArray[3])
+            });
         }
     }
 }

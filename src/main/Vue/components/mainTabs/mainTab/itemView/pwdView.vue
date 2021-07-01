@@ -9,6 +9,7 @@
             <span class="btn-dc" v-show="show && access === 'RW' && edit" :title="language.data.cm3" @click="save">&#x2705;</span>
             <span class="btn-dc" v-show="show && access === 'RW' && edit" :title="language.data.cm4" @click="cancel">&#x274c;</span>
             <span class="btn-dc float-right" v-show="access === 'RW'" :title="language.data.cm5" @click="remove">&#x1f5d1;</span>
+            <span class="float-right"><span style="user-select: none">{{ language.data.cm10 }} &nbsp;</span>$id:{{ $parent.$props.item.id }}p{{ pwd.id }}&nbsp;</span>
         </div>
         <input class="form-control" v-show="show && edit" v-model="name">
         <input class="form-control" v-show="show" v-model="login" :readonly="!edit">
@@ -28,7 +29,8 @@ export default {
     name: "pwdView",
     props: {
         pwd: Object,
-        access: String
+        access: String,
+        searchData: Object
     },
     components: {
         itemInfo
