@@ -1,26 +1,26 @@
 
-ul[data-v-121468da] {
+ul[data-v-748fc701] {
     list-style-type: none;
     padding-left: 20px;
 }
-.caret[data-v-121468da] {
+.caret[data-v-748fc701] {
     cursor: pointer;
 }
-.caret[data-v-121468da]::before {
+.caret[data-v-748fc701]::before {
     content: "\25B7";
     color: black;
 }
-.caret-down[data-v-121468da]::before {
+.caret-down[data-v-748fc701]::before {
     content: "\25BD";
 }
-.branch[data-v-121468da] {
+.branch[data-v-748fc701] {
     cursor: pointer;
     background-color:#dadada;
     padding-right: 5px;
     padding-left: 5px;
     border-radius: .2rem;
 }
-.selected[data-v-121468da] {
+.selected[data-v-748fc701] {
     border: 2px solid blue;
 }
 

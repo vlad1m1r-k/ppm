@@ -9,7 +9,7 @@
         </li>
         <li v-show="isOpen">
             <tree-item :item="child" :selected-item="selectedItem" v-for="child in item.children"
-                       @item-select="$emit('item-select', $event)" :key="'TREE' + child.id"></tree-item>
+                       @item-select="$emit('item-select', $event)" @expand-item="expand" :key="'TREE' + child.id"></tree-item>
         </li>
     </ul>
 </template>
@@ -17,6 +17,7 @@
 <script>
 export default {
     name: "treeItem",
+    emits: ["item-select", "expand-item"],
     props: {
         item: Object,
         selectedItem: Object
@@ -74,9 +75,23 @@ export default {
                     this.eventHub.emit("show-msg", this.errorParser(e));
                 }
             }
+        },
+        selectItem(itemId) {
+            if (this.item.id === itemId) {
+                this.$emit('item-select', this.item);
+                this.expand();
+            }
+        },
+        expand() {
+            this.isOpen = true;
+            this.$emit("expand-item");
         }
     },
+    beforeMount() {
+        this.eventHub.on("select-item", this.selectItem);
+    },
     beforeUnmount() {
+        this.eventHub.off("select-item", this.selectItem);
         if (this.item.id === this.selectedItem.id) {
             this.$emit('item-select', this.$parent.$props.item);
         }
