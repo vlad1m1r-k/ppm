@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div :class="{'searchTarget': isSearchTarget}">
         <div class="decor">
             &#x1f512;
             <span class="btn-dc" @click="toggle" :title="language.data.cm1">&#x1f441;</span>
@@ -45,6 +45,14 @@ export default {
             login: "",
             pass: "",
             note: ""
+        }
+    },
+    computed: {
+        isSearchTarget() {
+            if (this.searchData) {
+                return this.searchData.cntId === this.$parent.$props.item.id && this.searchData.type === "p" && this.searchData.itemId === this.pwd.id;
+            }
+            return false;
         }
     },
     methods: {
