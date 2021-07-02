@@ -28,7 +28,7 @@ export default {
         },
         localSearch(link) {
             const matchArray = link.match("(?:^\\$id:)(\\d*)(\\D)?(\\d*)?");
-            this.eventHub.emit("select-item", {
+            this.eventHub.emit("search-event", {
                 cntId: Number.parseInt(matchArray[1]),
                 type: matchArray[2],
                 itemId: Number.parseInt(matchArray[3])

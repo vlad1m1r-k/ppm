@@ -76,7 +76,7 @@ export default {
                 }
             }
         },
-        selectItem(data) {
+        searchEvent(data) {
             if (this.item.id === data.cntId) {
                 this.$emit('item-select', this.item, data);
                 this.expand();
@@ -91,10 +91,10 @@ export default {
         }
     },
     beforeMount() {
-        this.eventHub.on("select-item", this.selectItem);
+        this.eventHub.on("search-event", this.searchEvent);
     },
     beforeUnmount() {
-        this.eventHub.off("select-item", this.selectItem);
+        this.eventHub.off("search-event", this.searchEvent);
         if (this.item.id === this.selectedItem.id) {
             this.$emit('item-select', this.$parent.$props.item);
         }
