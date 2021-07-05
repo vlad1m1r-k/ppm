@@ -1,26 +1,26 @@
 
-ul[data-v-4445d8b3] {
+ul[data-v-2affa334] {
     list-style-type: none;
     padding-left: 20px;
 }
-.caret[data-v-4445d8b3] {
+.caret[data-v-2affa334] {
     cursor: pointer;
 }
-.caret[data-v-4445d8b3]::before {
+.caret[data-v-2affa334]::before {
     content: "\25B7";
     color: black;
 }
-.caret-down[data-v-4445d8b3]::before {
+.caret-down[data-v-2affa334]::before {
     content: "\25BD";
 }
-.branch[data-v-4445d8b3] {
+.branch[data-v-2affa334] {
     cursor: pointer;
     background-color:#dadada;
     padding-right: 5px;
     padding-left: 5px;
     border-radius: .2rem;
 }
-.selected[data-v-4445d8b3] {
+.selected[data-v-2affa334] {
     border: 2px solid blue;
 }
 
@@ -394,10 +394,10 @@ dl[data-v-23f41347] {
 }
 
 
-.blur[data-v-618bafd5] {
+.blur[data-v-4e67e02b] {
         filter: blur(5px);
 }
-.form-bg[data-v-618bafd5] {
+.form-bg[data-v-4e67e02b] {
         background-color: lightgrey;
 }
 

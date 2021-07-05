@@ -438,4 +438,20 @@ public class ContainerRestController {
         }
         return null;
     }
+
+    @PostMapping("/search")
+    public CryptoDto search(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String token = json.get("token").textValue();
+            String publicKeyPEM = json.get("publicKey").textValue();
+            String text = json.get("text").textValue();
+            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                List<ContainerDto> searchResult = containerService.search(decryptedToken, text);
+                return cryptoProvider.encrypt(publicKeyPEM, mapper.writeValueAsString(searchResult));
+            }
+        }
+        return null;
+    }
 }

@@ -3,7 +3,7 @@
         <div class="container-fluid">
             <div class="row justify-content-between form-bg">
                 <div class="col-sm mr-auto">
-                    <button class="btn btn-sm btn-outline-secondary" @click="currentTab = 'mainTab'">{{ language.data.mp1 }}</button>
+                    <button class="btn btn-sm btn-outline-secondary" @click="showMain">{{ language.data.mp1 }}</button>
                     <button class="btn btn-sm btn-outline-danger" @click="currentTab = 'adminSettings'" v-if="tokenProvider.adminSettings">{{ language.data.as1 }}</button>
                     <button class="btn btn-sm btn-outline-danger" @click="showTrash" v-if="tokenProvider.adminSettings" :title="language.data.di1">&#x1f5d1;</button>
                     <pwd-gen></pwd-gen>
@@ -79,8 +79,12 @@ export default {
             this.message = msg;
         },
         showTrash() {
-            this.eventHub.emit('toggle-trash', this.currentTab);
-            this.setTab('mainTab');
+            this.eventHub.emit("toggle-trash", this.currentTab);
+            this.setTab("mainTab");
+        },
+        showMain() {
+            this.setTab("mainTab");
+            this.eventHub.emit("show-main");
         }
     },
     created() {

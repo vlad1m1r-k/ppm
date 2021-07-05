@@ -36,15 +36,17 @@ public class ContainerServiceImpl implements ContainerService {
     private final NoteRepository noteRepository;
     private final PasswordRepository passwordRepository;
     private final GroupService groupService;
+    private final ValidatorService validatorService;
 
     public ContainerServiceImpl(UserService userService, ContainerRepository containerRepository, CryptoProvider cryptoProvider,
-                                NoteRepository noteRepository, PasswordRepository passwordRepository, GroupService groupService) {
+                                NoteRepository noteRepository, PasswordRepository passwordRepository, GroupService groupService, ValidatorService validatorService) {
         this.userService = userService;
         this.containerRepository = containerRepository;
         this.cryptoProvider = cryptoProvider;
         this.noteRepository = noteRepository;
         this.passwordRepository = passwordRepository;
         this.groupService = groupService;
+        this.validatorService = validatorService;
     }
 
     @Override
@@ -417,6 +419,57 @@ public class ContainerServiceImpl implements ContainerService {
             return buildAccessTree(root, group);
         }
         return AccessTreeDto.builder().build();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ContainerDto> search(Token token, String text) {
+        if (validatorService.validateString(text)) {
+            Set<Group> groups = userService.getGroups(token);
+            Container root = containerRepository.getContainerByName("root");
+            List<ContainerDto> searchResult = new ArrayList<>();
+            searchInTree(root, groups, text, searchResult);
+            return searchResult;
+        }
+        return new ArrayList<>();
+    }
+
+    private void searchInTree(Container container, Set<Group> groups, String text, List<ContainerDto> searchResult) {
+        Access access = getAccess(container, groups);
+        if (access != Access.NA && !container.isDeleted()) {
+            if (!container.getChildren().isEmpty()) {
+                for (Container childContainer : container.getChildren()) {
+                    searchInTree(childContainer, groups, text, searchResult);
+                }
+            }
+            List<NoteDto> notes = new ArrayList<>();
+            List<PasswordDto> passwords = new ArrayList<>();
+            for (Note note : container.getNotes()) {
+                if (!note.isDeleted() && (note.getName().contains(text) || cryptoProvider.decryptDbEntry(note.getEncryptedText()).contains(text))) {
+                    notes.add(NoteDto.builder()
+                            .id(note.getId())
+                            .name(note.getName())
+                            .build());
+                }
+            }
+            for (Password pwd : container.getPasswords()) {
+                if (!pwd.isDeleted() && (pwd.getName().contains(text) || cryptoProvider.decryptDbEntry(pwd.getEncryptedLogin()).contains(text))
+                        || cryptoProvider.decryptDbEntry(pwd.getEncryptedNote()).contains(text)) {
+                    passwords.add(PasswordDto.builder()
+                            .id(pwd.getId())
+                            .name(pwd.getName())
+                            .build());
+                }
+            }
+            if (!notes.isEmpty() || !passwords.isEmpty() || container.getName().contains(text)) {
+                searchResult.add(ContainerDto.builder()
+                        .id(container.getId())
+                        .name(containerPathBuilder(container))
+                        .notes(notes)
+                        .passwords(passwords)
+                        .build());
+            }
+        }
     }
 
     private AccessTreeDto buildAccessTree(Container container, Group group) {

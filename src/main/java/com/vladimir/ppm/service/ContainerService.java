@@ -34,4 +34,5 @@ public interface ContainerService {
     void removeAccess(Token token, long containerId, long groupId, Access access);
     List<AccessDto> getAssignedGroups(Token token, long containerId);
     AccessTreeDto getAccessTree(Token token, long groupId);
+    List<ContainerDto> search(Token token, String text);
 }

@@ -12,7 +12,13 @@ export default {
         return {
             tokenProvider: this.$root.$data.tokenProvider,
             language: this.$root.$data.language,
-            text: ""
+            text: "",
+            result: []
+        }
+    },
+    watch: {
+        text() {
+            this.result = [];
         }
     },
     methods: {
@@ -21,8 +27,27 @@ export default {
                 if (this.text.trim().match("^\\$id:.*")) {
                     this.localSearch(this.text.trim());
                 } else {
-                    //TODO
-                    console.log("remote search")
+                    if (this.result) {
+                        this.eventHub.emit("search-result", this.result);
+                    } else {
+                        this.eventHub.emit("show-msg", "");
+                        try {
+                            const token = await this.tokenProvider.getToken();
+                            const encryptedData = await cryptoProvider.encrypt({
+                                token: token,
+                                text: this.text
+                            });
+                            const answer = await $.ajax({
+                                url: "/container/search",
+                                method: "POST",
+                                data: encryptedData
+                            });
+                            this.result = cryptoProvider.decrypt(answer);
+                            this.eventHub.emit("search-result", this.result);
+                        } catch (e) {
+                            this.eventHub.emit("show-msg", this.errorParser(e));
+                        }
+                    }
                 }
             }
         },
