@@ -8,7 +8,7 @@
             <div class="col p-0">
                 <item-view :item="selectedItem" :search-data="searchData" v-if="currentTab.name === 'itemView'"></item-view>
                 <trash-view :item="selectedItem" v-if="currentTab.name === 'trashView'"></trash-view>
-                <search-view v-if="currentTab.name === 'searchView'"></search-view>
+                <search-view v-if="currentTab.name === 'searchView'" :search-result="searchResult" :search-text="searchText" @close-dlg="showMain"></search-view>
             </div>
         </div>
     </div>
@@ -35,6 +35,8 @@ export default {
             tree: {},
             selectedItem: {},
             searchData: null,
+            searchResult: [],
+            searchText: "",
             currentTab: itemView
         }
     },
@@ -72,9 +74,10 @@ export default {
         showMain() {
             this.currentTab = itemView;
         },
-        searchResult(data) {
+        showSearch(data) {
             this.currentTab = searchView;
-            //TODO
+            this.searchResult = data.result;
+            this.searchText = data.text;
         }
     },
     watch: {
@@ -92,13 +95,13 @@ export default {
     created() {
         this.eventHub.on("update-tree", this.updateTree);
         this.eventHub.on("toggle-trash", this.toggleTrash);
-        this.eventHub.on("search-result", this.searchResult);
+        this.eventHub.on("search-result", this.showSearch);
         this.eventHub.on("show-main", this.showMain);
     },
     beforeUnmount() {
         this.eventHub.off("update-tree", this.updateTree);
         this.eventHub.off("toggle-trash", this.toggleTrash);
-        this.eventHub.off("search-result", this.searchResult);
+        this.eventHub.off("search-result", this.showSearch);
         this.eventHub.off("show-main", this.showMain);
     }
 }

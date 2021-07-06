@@ -40,3 +40,12 @@
 .searchTarget {
     background-color: #b7f696;
 }
+
+.area-body {
+    background-color: #eaeaea;
+    border-radius: 3px;
+}
+
+.area-header {
+    background-color: #d0d0d0;
+}

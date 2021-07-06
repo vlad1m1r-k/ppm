@@ -27,8 +27,8 @@ export default {
                 if (this.text.trim().match("^\\$id:.*")) {
                     this.localSearch(this.text.trim());
                 } else {
-                    if (this.result) {
-                        this.eventHub.emit("search-result", this.result);
+                    if (this.result.length > 0) {
+                        this.eventHub.emit("search-result", {result: this.result, text: this.text});
                     } else {
                         this.eventHub.emit("show-msg", "");
                         try {
@@ -43,7 +43,7 @@ export default {
                                 data: encryptedData
                             });
                             this.result = cryptoProvider.decrypt(answer);
-                            this.eventHub.emit("search-result", this.result);
+                            this.eventHub.emit("search-result", {result: this.result, text: this.text});
                         } catch (e) {
                             this.eventHub.emit("show-msg", this.errorParser(e));
                         }

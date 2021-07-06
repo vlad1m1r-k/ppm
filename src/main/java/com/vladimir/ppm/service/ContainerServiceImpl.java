@@ -453,8 +453,8 @@ public class ContainerServiceImpl implements ContainerService {
                 }
             }
             for (Password pwd : container.getPasswords()) {
-                if (!pwd.isDeleted() && (pwd.getName().contains(text) || cryptoProvider.decryptDbEntry(pwd.getEncryptedLogin()).contains(text))
-                        || cryptoProvider.decryptDbEntry(pwd.getEncryptedNote()).contains(text)) {
+                if (!pwd.isDeleted() && (pwd.getName().contains(text) || cryptoProvider.decryptDbEntry(pwd.getEncryptedLogin()).contains(text)
+                        || cryptoProvider.decryptDbEntry(pwd.getEncryptedNote()).contains(text))) {
                     passwords.add(PasswordDto.builder()
                             .id(pwd.getId())
                             .name(pwd.getName())

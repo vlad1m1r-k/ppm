@@ -137,6 +137,8 @@
     "pg3": "Include digits",
     "pg4": "Include symbols",
     "pge1": "Error saving settings.",
-    "sf1": "Search"
+    "sf1": "Search",
+    "sf2": "Search results",
+    "sf3": "No results found."
   }
 }
