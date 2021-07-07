@@ -1,5 +1,6 @@
 <template>
     <access-mgmt-dlg v-if="showAccessMgmtDlg" :item="item" @close-dlg="showAccessMgmtDlg = false"></access-mgmt-dlg>
+    <input type="file" v-if="item.access === 'RW'" style="display: none" ref="cnt_file" @change="addFile">
     <div class="decor-iv">
         <div class="row m-0">
             <div class="col-sm-auto">
@@ -15,6 +16,7 @@
                         </a>
                         <a class="dropdown-item cursor-pointer" @click="showAddNoteDlg = true">{{ language.data.iv5 }}</a>
                         <a class="dropdown-item cursor-pointer" @click="showAddPwdDlg = true">{{ language.data.iv11 }}</a>
+                        <a class="dropdown-item cursor-pointer" @click="$refs.cnt_file.click()">{{ language.data.iv13 }}</a>
                         <a class="dropdown-item cursor-pointer" v-if="tokenProvider.adminSettings"
                            @click="showAccessMgmtDlg = true">
                             {{ language.data.iv12 }}
@@ -121,6 +123,16 @@ export default {
                     }
                 }
             }
+        },
+        addFile() {
+            const reader = new FileReader();
+            reader.onload = d => this.sendFile(d.target.result);
+            reader.readAsArrayBuffer(this.$refs.cnt_file.files[0]);
+        },
+        sendFile(data) {
+            console.log(this.$refs.cnt_file.files[0].name)
+            console.log(data)
+            //TODO
         }
     }
 }
