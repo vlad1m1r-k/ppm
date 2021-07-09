@@ -127,12 +127,33 @@ export default {
         addFile() {
             const reader = new FileReader();
             reader.onload = d => this.sendFile(d.target.result);
-            reader.readAsArrayBuffer(this.$refs.cnt_file.files[0]);
+            reader.readAsDataURL(this.$refs.cnt_file.files[0]);
         },
-        sendFile(data) {
-            console.log(this.$refs.cnt_file.files[0].name)
-            console.log(data)
-            //TODO
+        async sendFile(data) {
+            this.eventHub.emit("show-msg", "");
+            try {
+                const token = await this.tokenProvider.getToken();
+                const encryptedData = await cryptoProvider.encrypt({
+                    token: token,
+                    containerId: this.item.id,
+                    name: this.$refs.cnt_file.files[0].name,
+                    size: this.$refs.cnt_file.files[0].size,
+                    body: data
+                });
+                const answer = await $.ajax({
+                    url: "/container/addFile",
+                    method: "POST",
+                    data: encryptedData
+                });
+                const data = cryptoProvider.decrypt(answer);
+                if (data.message) {
+                    this.eventHub.emit("show-msg", this.language.data[data.message]);
+                } else {
+                    this.eventHub.emit("update-tree");
+                }
+            } catch (e) {
+                this.eventHub.emit("show-msg", this.errorParser(e));
+            }
         }
     }
 }

@@ -140,6 +140,8 @@
     "pge1": "Error saving settings.",
     "sf1": "Search",
     "sf2": "Search results",
-    "sf3": "No results found."
+    "sf3": "No results found.",
+    "fl1": "Files:",
+    "fle1": "Error adding file."
   }
 }

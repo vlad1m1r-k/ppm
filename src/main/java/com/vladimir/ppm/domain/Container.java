@@ -47,11 +47,14 @@ public class Container {
     @ManyToMany
     private Set<Group> groupsRW = new HashSet<>();
 
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
     private final Set<Note> notes = new HashSet<>();
 
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
     private final Set<Password> passwords = new HashSet<>();
+
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
+    private final Set<File> files = new HashSet<>();
 
     public Container() {
     }
@@ -101,6 +104,10 @@ public class Container {
 
     public Set<Password> getPasswords() {
         return passwords;
+    }
+
+    public Set<File> getFiles() {
+        return files;
     }
 
     public Date getCreatedDate() {
@@ -178,22 +185,6 @@ public class Container {
     public void addChild(Container child) {
         child.setParent(this);
         children.add(child);
-    }
-
-    public void addGroupRO(Group group) {
-        groupsRO.add(group);
-    }
-
-    public void addGroupRW(Group group) {
-        groupsRW.add(group);
-    }
-
-    public void addNote(Note note) {
-        notes.add(note);
-    }
-
-    public void addPassword(Password password) {
-        passwords.add(password);
     }
 
     @Override

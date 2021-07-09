@@ -35,4 +35,5 @@ public interface ContainerService {
     List<AccessDto> getAssignedGroups(Token token, long containerId);
     AccessTreeDto getAccessTree(Token token, long groupId);
     List<ContainerDto> search(Token token, String text);
+    MessageDto addFile(Token token, long containerId, String name, int size, String body);
 }

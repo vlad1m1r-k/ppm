@@ -454,4 +454,23 @@ public class ContainerRestController {
         }
         return null;
     }
+
+    @PostMapping("/addFile")
+    public CryptoDto addFile(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String token = json.get("token").textValue();
+            String publicKeyPEM = json.get("publicKey").textValue();
+            long containerId = json.get("containerId").asLong();
+            String name = json.get("name").textValue();
+            int size = json.get("size").intValue();
+            String body = json.get("body").textValue();
+            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                MessageDto message = containerService.addFile(decryptedToken, containerId, name, size, body);
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
+            }
+        }
+        return null;
+    }
 }

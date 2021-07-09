@@ -2,6 +2,7 @@ package com.vladimir.ppm.service;
 
 import com.vladimir.ppm.domain.Access;
 import com.vladimir.ppm.domain.Container;
+import com.vladimir.ppm.domain.File;
 import com.vladimir.ppm.domain.Group;
 import com.vladimir.ppm.domain.Note;
 import com.vladimir.ppm.domain.Password;
@@ -14,6 +15,7 @@ import com.vladimir.ppm.dto.NoteDto;
 import com.vladimir.ppm.dto.PasswordDto;
 import com.vladimir.ppm.provider.CryptoProvider;
 import com.vladimir.ppm.repository.ContainerRepository;
+import com.vladimir.ppm.repository.FileRepository;
 import com.vladimir.ppm.repository.NoteRepository;
 import com.vladimir.ppm.repository.PasswordRepository;
 import org.springframework.data.domain.Sort;
@@ -34,16 +36,19 @@ public class ContainerServiceImpl implements ContainerService {
     private final ContainerRepository containerRepository;
     private final CryptoProvider cryptoProvider;
     private final NoteRepository noteRepository;
+    private final FileRepository fileRepository;
     private final PasswordRepository passwordRepository;
     private final GroupService groupService;
     private final ValidatorService validatorService;
 
     public ContainerServiceImpl(UserService userService, ContainerRepository containerRepository, CryptoProvider cryptoProvider,
-                                NoteRepository noteRepository, PasswordRepository passwordRepository, GroupService groupService, ValidatorService validatorService) {
+                                NoteRepository noteRepository, FileRepository fileRepository, PasswordRepository passwordRepository,
+                                GroupService groupService, ValidatorService validatorService) {
         this.userService = userService;
         this.containerRepository = containerRepository;
         this.cryptoProvider = cryptoProvider;
         this.noteRepository = noteRepository;
+        this.fileRepository = fileRepository;
         this.passwordRepository = passwordRepository;
         this.groupService = groupService;
         this.validatorService = validatorService;
@@ -432,6 +437,20 @@ public class ContainerServiceImpl implements ContainerService {
             return searchResult;
         }
         return new ArrayList<>();
+    }
+
+    @Override
+    @Transactional
+    public MessageDto addFile(Token token, long containerId, String name, int size, String body) {
+        Container container = containerRepository.getOne(containerId);
+        if (cryptoProvider.isSystemClosed() || container.isDeleted() || !validatorService.validateString(name)
+                || !validatorService.validateString(body) || getAccess(container, userService.getGroups(token)) != Access.RW) {
+            return MessageDto.builder().message("fle1").build();
+        }
+        byte[] encryptedBody = cryptoProvider.encryptDbEntry(body);
+        File file = new File(container, name, size, encryptedBody, token.getLogin());
+        fileRepository.save(file);
+        return MessageDto.builder().build();
     }
 
     private void searchInTree(Container container, Set<Group> groups, String text, List<ContainerDto> searchResult) {

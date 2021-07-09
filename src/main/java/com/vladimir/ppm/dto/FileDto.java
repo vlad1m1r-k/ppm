@@ -1,20 +1,11 @@
 package com.vladimir.ppm.dto;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vladimir.ppm.domain.Access;
-
 import java.util.Date;
-import java.util.List;
 
-public class ContainerDto {
+public class FileDto {
     private final Long id;
     private final String name;
-    private final List<ContainerDto> children;
-    private final List<NoteDto> notes;
-    private final List<PasswordDto> passwords;
-    private final List<FileDto> files;
-    private final Access access;
+    private final Integer size;
     private final String createdDate;
     private final String createdBy;
     private final String editedDate;
@@ -22,14 +13,10 @@ public class ContainerDto {
     private final String deletedDate;
     private final String deletedBy;
 
-    private ContainerDto(Builder builder) {
+    private FileDto(Builder builder) {
         id = builder.id;
         name = builder.name;
-        children = builder.children;
-        notes = builder.notes;
-        passwords = builder.passwords;
-        files = builder.files;
-        access = builder.access;
+        size = builder.size;
         createdDate = builder.createdDate;
         createdBy = builder.createdBy;
         editedDate = builder.editedDate;
@@ -46,24 +33,8 @@ public class ContainerDto {
         return name;
     }
 
-    public List<ContainerDto> getChildren() {
-        return children;
-    }
-
-    public List<NoteDto> getNotes() {
-        return notes;
-    }
-
-    public List<PasswordDto> getPasswords() {
-        return passwords;
-    }
-
-    public List<FileDto> getFiles() {
-        return files;
-    }
-
-    public Access getAccess() {
-        return access;
+    public Integer getSize() {
+        return size;
     }
 
     public String getCreatedDate() {
@@ -90,10 +61,6 @@ public class ContainerDto {
         return deletedBy;
     }
 
-    public String toJson() throws JsonProcessingException {
-        return new ObjectMapper().writeValueAsString(this);
-    }
-
     public static Builder builder() {
         return new Builder();
     }
@@ -101,11 +68,7 @@ public class ContainerDto {
     public static class Builder {
         private Long id;
         private String name;
-        private List<ContainerDto> children;
-        private List<NoteDto> notes;
-        private List<PasswordDto> passwords;
-        private List<FileDto> files;
-        private Access access;
+        private Integer size;
         private String createdDate;
         private String createdBy;
         private String editedDate;
@@ -123,28 +86,8 @@ public class ContainerDto {
             return this;
         }
 
-        public Builder children(List<ContainerDto> children) {
-            this.children = children;
-            return this;
-        }
-
-        public Builder notes(List<NoteDto> notes) {
-            this.notes = notes;
-            return this;
-        }
-
-        public Builder passwords(List<PasswordDto> passwords) {
-            this.passwords = passwords;
-            return this;
-        }
-
-        public Builder files(List<FileDto> files) {
-            this.files = files;
-            return this;
-        }
-
-        public Builder access(Access access) {
-            this.access = access;
+        public Builder size(Integer size) {
+            this.size = size;
             return this;
         }
 
@@ -178,8 +121,8 @@ public class ContainerDto {
             return this;
         }
 
-        public ContainerDto build() {
-            return new ContainerDto(this);
+        public FileDto build() {
+            return new FileDto(this);
         }
     }
 }
