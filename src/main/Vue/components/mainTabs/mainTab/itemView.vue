@@ -129,7 +129,7 @@ export default {
             reader.onload = d => this.sendFile(d.target.result);
             reader.readAsDataURL(this.$refs.cnt_file.files[0]);
         },
-        async sendFile(data) {
+        async sendFile(fileBody) {
             this.eventHub.emit("show-msg", "");
             try {
                 const token = await this.tokenProvider.getToken();
@@ -138,7 +138,7 @@ export default {
                     containerId: this.item.id,
                     name: this.$refs.cnt_file.files[0].name,
                     size: this.$refs.cnt_file.files[0].size,
-                    body: data
+                    body: fileBody
                 });
                 const answer = await $.ajax({
                     url: "/container/addFile",
