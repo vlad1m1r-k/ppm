@@ -11,7 +11,7 @@
             <span class="btn-dc float-right" v-show="access === 'RW'" :title="language.data.cm5" @click="remove">&#x1f5d1;</span>
             <span class="float-right"><span style="user-select: none">{{ language.data.cm10 }} &nbsp;</span>$id:{{ $parent.$props.item.id }}n{{ note.id }}&nbsp;</span>
         </div>
-        <input class="form-control" v-show="show && edit" v-model="name">
+        <input type="text" class="form-control" v-show="show && edit" v-model="name">
         <textarea class="form-control" rows="4" :readonly="!edit" v-show="show" v-model="text"></textarea>
     </div>
 </template>

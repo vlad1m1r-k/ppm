@@ -47,6 +47,13 @@
                 <note-view v-for="note in item.notes" :note="note" :access="item.access" :key="'N' + note.id" :search-data="searchData"></note-view>
                 {{ language.data.iv8 }} <br>
                 <pwd-view v-for="pwd in item.passwords" :pwd="pwd" :access="item.access" :key="'P' + pwd.id" :search-data="searchData"></pwd-view>
+                {{ language.data.fl1 }} <br>
+                <table class="table table-bordered table-striped table-sm">
+                    <thead></thead>
+                    <tbody>
+                        <fls-view v-for="file in item.files" :file="file" :access="item.access" :key="'F' + file.id" :search-data="searchData"></fls-view>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -60,6 +67,7 @@ import noteView from "./itemView/noteView.vue";
 import addPwd from "./itemView/addPwdDlg.vue";
 import pwdView from "./itemView/pwdView.vue";
 import accessMgmtDlg from "./itemView/accessMgmtDlg.vue";
+import flsView from "./itemView/flsView.vue";
 
 export default {
     name: "itemView",
@@ -70,7 +78,7 @@ export default {
         "note-view": noteView,
         "add-pwd": addPwd,
         "pwd-view": pwdView,
-        accessMgmtDlg
+        accessMgmtDlg, flsView
     },
     props: {
         item: Object,

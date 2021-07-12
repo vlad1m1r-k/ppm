@@ -10,6 +10,7 @@ import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.dto.AccessDto;
 import com.vladimir.ppm.dto.AccessTreeDto;
 import com.vladimir.ppm.dto.ContainerDto;
+import com.vladimir.ppm.dto.FileDto;
 import com.vladimir.ppm.dto.MessageDto;
 import com.vladimir.ppm.dto.NoteDto;
 import com.vladimir.ppm.dto.PasswordDto;
@@ -453,6 +454,19 @@ public class ContainerServiceImpl implements ContainerService {
         return MessageDto.builder().build();
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public MessageDto getFile(Token token, long fileId) {
+        File file = fileRepository.getOne(fileId);
+        Container parent = file.getParent();
+        if (cryptoProvider.isSystemClosed() || getAccess(parent, userService.getGroups(token)) != Access.RW
+                && getAccess(parent, userService.getGroups(token)) != Access.RO) {
+            return MessageDto.builder().build();
+        }
+        String fileBody = cryptoProvider.decryptDbEntry(file.getEncryptedBody());
+        return MessageDto.builder().message(fileBody).build();
+    }
+
     private void searchInTree(Container container, Set<Group> groups, String text, List<ContainerDto> searchResult) {
         Access access = getAccess(container, groups);
         if (access != Access.NA && !container.isDeleted()) {
@@ -589,6 +603,7 @@ public class ContainerServiceImpl implements ContainerService {
         children.sort(Comparator.comparing(ContainerDto::getName));
         List<NoteDto> notes = new ArrayList<>();
         List<PasswordDto> passwords = new ArrayList<>();
+        List<FileDto> files = new ArrayList<>();
         if (access == Access.RW) {
             notes = container.getNotes().stream()
                     .filter(n -> !n.isDeleted())
@@ -618,6 +633,21 @@ public class ContainerServiceImpl implements ContainerService {
                             .build())
                     .sorted(Comparator.comparing(PasswordDto::getName))
                     .collect(Collectors.toList());
+            files = container.getFiles().stream()
+                    .filter(f -> !f.isDeleted())
+                    .map(f -> FileDto.builder()
+                            .id(f.getId())
+                            .name(f.getName())
+                            .size(f.getSize())
+                            .createdDate(f.getCreatedDate())
+                            .createdBy(f.getCreatedBy())
+                            .editedDate(f.getEditedDate())
+                            .editedBy(f.getEditedBy())
+                            .deletedDate(f.getDeletedDate())
+                            .deletedBy(f.getDeletedBy())
+                            .build())
+                    .sorted(Comparator.comparing(FileDto::getName))
+                    .collect(Collectors.toList());
         }
         if (access == Access.RO) {
             notes = container.getNotes().stream()
@@ -630,6 +660,11 @@ public class ContainerServiceImpl implements ContainerService {
                     .map(p -> PasswordDto.builder().id(p.getId()).name(p.getName()).build())
                     .sorted(Comparator.comparing(PasswordDto::getName))
                     .collect(Collectors.toList());
+            files = container.getFiles().stream()
+                    .filter(f -> !f.isDeleted())
+                    .map(f -> FileDto.builder().id(f.getId()).name(f.getName()).size(f.getSize()).build())
+                    .sorted(Comparator.comparing(FileDto::getName))
+                    .collect(Collectors.toList());
         }
         return ContainerDto.builder()
                 .id(container.getId())
@@ -638,6 +673,7 @@ public class ContainerServiceImpl implements ContainerService {
                 .children(children)
                 .notes(notes)
                 .passwords(passwords)
+                .files(files)
                 .build();
     }
 

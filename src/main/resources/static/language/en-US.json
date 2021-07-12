@@ -142,6 +142,7 @@
     "sf2": "Search results",
     "sf3": "No results found.",
     "fl1": "Files:",
-    "fle1": "Error adding file."
+    "fle1": "Error adding file.",
+    "fle2": "Error downloading file."
   }
 }
