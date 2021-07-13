@@ -85,14 +85,58 @@ export default {
             }
         },
         async save() {
-            //TODO
+            this.eventHub.emit("show-msg", "");
+            try {
+                const token = await this.tokenProvider.getToken();
+                const encryptedData = await cryptoProvider.encrypt({
+                    token: token,
+                    fileId: this.file.id,
+                    name: this.name
+                });
+                const answer = await $.ajax({
+                    url: "/container/editFile",
+                    method: "POST",
+                    data: encryptedData
+                });
+                const data = cryptoProvider.decrypt(answer);
+                if (data.message) {
+                    this.eventHub.emit("show-msg", this.language.data[data.message]);
+                } else {
+                    this.edit = false;
+                    this.eventHub.emit("update-tree");
+                }
+            } catch (e) {
+                this.eventHub.emit("show-msg", this.errorParser(e));
+            }
         },
         cancel() {
             this.edit = false;
             this.name = this.file.name;
         },
         async remove() {
-            //TODO
+            if (this.name && confirm(this.language.data.cm5 + " " + this.file.name + "?")) {
+                this.eventHub.emit("show-msg", "");
+                try {
+                    const token = await this.tokenProvider.getToken();
+                    const encryptedData = await cryptoProvider.encrypt({
+                        token: token,
+                        fileId: this.file.id
+                    });
+                    const answer = await $.ajax({
+                        url: "/container/removeFile",
+                        method: "POST",
+                        data: encryptedData
+                    });
+                    const data = cryptoProvider.decrypt(answer);
+                    if (data.message) {
+                        this.eventHub.emit("show-msg", this.language.data[data.message]);
+                    } else {
+                        this.eventHub.emit("update-tree");
+                    }
+                } catch (e) {
+                    this.eventHub.emit("show-msg", this.errorParser(e));
+                }
+            }
         }
     },
     mounted() {

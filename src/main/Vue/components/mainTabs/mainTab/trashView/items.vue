@@ -60,18 +60,48 @@
                 </tbody>
             </table>
         </div>
+        <div class="decor" @click="showFls = !showFls">
+            {{ items.files.length }} {{ language.data.fl1 }}
+            <span class="btn-dc text-success" :title="language.data.cm7" @click.stop="restoreFiles">&#x21ba;</span>
+            <span class="btn-dc" :title="language.data.cm5" @click.stop="removeFiles">&#x1f5d1;</span>
+        </div>
+        <div v-show="showFls">
+            <table class="table table-bordered table-striped table-sm">
+                <thead class="tab-header-area">
+                <tr>
+                    <th><input type="checkbox" @change="checkToggle($event.target.checked, 'files')"></th>
+                    <th>
+                        <button class="btn btn-sm btn-link" @click="setFlsSort('name')">{{ language.data.div1 }}</button>
+                    </th>
+                    <th><button class="btn btn-sm btn-link" @click="setFlsSort('size')">{{ language.data.div8 }}</button></th>
+                    <th><button class="btn btn-sm btn-link" @click="setFlsSort('createdDate')">{{ language.data.div2 }}</button></th>
+                    <th><button class="btn btn-sm btn-link" @click="setFlsSort('createdBy')">{{ language.data.div3 }}</button></th>
+                    <th><button class="btn btn-sm btn-link" @click="setFlsSort('editedDate')">{{ language.data.div4 }}</button></th>
+                    <th><button class="btn btn-sm btn-link" @click="setFlsSort('editedBy')">{{ language.data.div5 }}</button></th>
+                    <th><button class="btn btn-sm btn-link" @click="setFlsSort('deletedDate')">{{ language.data.div6 }}</button></th>
+                    <th><button class="btn btn-sm btn-link" @click="setFlsSort('deletedBy')">{{ language.data.div7 }}</button></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                    <fls-view v-for="file in items.files" :file="file" @update-items="getItems" :key="'DF' + file.id"></fls-view>
+                </tbody>
+            </table>
+        </div>
     </div>
 </template>
 
 <script>
 import noteView from "./noteView.vue";
 import pwdView from "./pwdView.vue";
+import flsView from "./flsView.vue";
 import Sort from "../../../../sort";
 
 export default {
     name: "items",
     components: {
-        noteView, pwdView
+        noteView, pwdView, flsView
     },
     props: {
         item: Object
@@ -80,13 +110,16 @@ export default {
         return {
             language: this.$root.$data.language,
             tokenProvider: this.$root.$data.tokenProvider,
-            items: {notes: [], passwords: []},
+            items: {notes: [], passwords: [], files: []},
             showNotes: true,
             showPass: true,
+            showFls: true,
             sortNotes: new Sort("name", "desc"),
             sortPwd: new Sort("name", "desc"),
+            sortFls: new Sort("name", "desc"),
             checkedNotes: [],
-            checkedPass: []
+            checkedPass: [],
+            checkedFls: []
         }
     },
     watch: {
@@ -103,7 +136,8 @@ export default {
                     token: token,
                     item: this.item.id,
                     sortNotes: this.sortNotes.toString(),
-                    sortPwd: this.sortPwd.toString()
+                    sortPwd: this.sortPwd.toString(),
+                    sortFls: this.sortFls.toString()
                 });
                 const answer = await $.ajax({
                     url: "/container/getDeletedItems",
@@ -123,6 +157,14 @@ export default {
                         this.checkedNotes.push(note.id);
                     })
                 }
+            }
+            if (item === "files") {
+                this.checkedFls = [];
+                if (checked) {
+                    this.items.files.forEach(file => {
+                        this.checkedFls.push(file.id);
+                    })
+                }
             } else {
                 this.checkedPass = [];
                 if (checked) {
@@ -138,6 +180,10 @@ export default {
         },
         setPwdSort(field) {
             this.sortPwd.setField(field);
+            this.getItems();
+        },
+        setFlsSort(field) {
+            this.sortFls.setField(field);
             this.getItems();
         },
         removeNotes() {
@@ -159,6 +205,16 @@ export default {
             if (this.checkedPass.length && confirm(this.language.data.di8)) {
                 this.eventHub.emit("restore-passwords", this.checkedPass);
             }
+        },
+        removeFiles() {
+            if (this.checkedFls.length && confirm(this.language.data.di11)) {
+                this.eventHub.emit("remove-files", this.checkedFls);
+            }
+        },
+        restoreFiles() {
+            if (this.checkedFls.length && confirm(this.language.data.di10)) {
+                this.eventHub.emit("restore-files", this.checkedFls);
+            }
         }
     },
     mounted() {
@@ -174,16 +230,5 @@ export default {
     border-radius: 10px;
     padding-left: 5px;
     cursor: pointer;
-}
-.btn-dc {
-    cursor: pointer;
-    user-select: none;
-    padding-left: 2px;
-    padding-right: 2px;
-}
-
-.btn-dc:hover {
-    background-color: darkgray;
-    border-radius: 4px;
 }
 </style>

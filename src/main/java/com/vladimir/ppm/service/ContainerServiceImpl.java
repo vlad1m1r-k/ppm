@@ -286,7 +286,7 @@ public class ContainerServiceImpl implements ContainerService {
 
     @Override
     @Transactional(readOnly = true)
-    public ContainerDto getDeletedItems(Token token, long containerId, String sortNotes, String sortPwd) {
+    public ContainerDto getDeletedItems(Token token, long containerId, String sortNotes, String sortPwd, String sortFls) {
         Container container = containerRepository.getOne(containerId);
         if (cryptoProvider.isSystemClosed() || container.isDeleted() || !userService.isAdmin(token)) {
             return ContainerDto.builder().build();
@@ -297,6 +297,9 @@ public class ContainerServiceImpl implements ContainerService {
         String pwdSortField = sortPwd.substring(0, sortPwd.indexOf(","));
         Sort.Direction pwdSortDirection = Sort.Direction.fromString(sortPwd.substring(sortPwd.indexOf(",") + 1));
         List<Password> deletedPasswords = passwordRepository.getAllByParentAndDeleted(container, true, Sort.by(pwdSortDirection, pwdSortField));
+        String fileSortField = sortFls.substring(0, sortFls.indexOf(","));
+        Sort.Direction filesSortDirection = Sort.Direction.fromString(sortFls.substring(sortFls.indexOf(",") + 1));
+        List<File> deletedFiles = fileRepository.getAllByParentAndDeleted(container, true, Sort.by(filesSortDirection, fileSortField));
         return ContainerDto.builder()
                 .id(containerId)
                 .notes(deletedNotes.stream().map(n -> NoteDto.builder()
@@ -319,6 +322,18 @@ public class ContainerServiceImpl implements ContainerService {
                         .editedBy(p.getEditedBy())
                         .deletedDate(p.getDeletedDate())
                         .deletedBy(p.getDeletedBy())
+                        .build())
+                        .collect(Collectors.toList()))
+                .files(deletedFiles.stream().map(f -> FileDto.builder()
+                        .id(f.getId())
+                        .name(f.getName())
+                        .size(f.getSize())
+                        .createdDate(f.getCreatedDate())
+                        .createdBy(f.getCreatedBy())
+                        .editedDate(f.getEditedDate())
+                        .editedBy(f.getEditedBy())
+                        .deletedDate(f.getDeletedDate())
+                        .deletedBy(f.getDeletedBy())
                         .build())
                         .collect(Collectors.toList()))
                 .build();
@@ -465,6 +480,50 @@ public class ContainerServiceImpl implements ContainerService {
         }
         String fileBody = cryptoProvider.decryptDbEntry(file.getEncryptedBody());
         return MessageDto.builder().message(fileBody).build();
+    }
+
+    @Override
+    @Transactional
+    public MessageDto editFile(Token token, long fileId, String name) {
+        File file = fileRepository.getOne(fileId);
+        Container parent = file.getParent();
+        if (cryptoProvider.isSystemClosed() || getAccess(parent, userService.getGroups(token)) != Access.RW || name == null || name.length() == 0 ||
+                parent.isDeleted() || file.isDeleted()) {
+            return MessageDto.builder().message("fle4").build();
+        }
+        file.setName(name);
+        file.setEditedBy(token.getLogin());
+        file.setEditedDate(new Date());
+        return MessageDto.builder().build();
+    }
+
+    @Override
+    @Transactional
+    public MessageDto removeFile(Token token, long fileId, boolean permanent) {
+        File file = fileRepository.getOne(fileId);
+        Container parent = file.getParent();
+        if (getAccess(parent, userService.getGroups(token)) != Access.RW) {
+            return MessageDto.builder().message("fle5").build();
+        }
+        if (file.isDeleted() && userService.isAdmin(token) && permanent) {
+            fileRepository.delete(file);
+        } else {
+            file.setDeleted(true);
+            file.setDeletedDate(new Date());
+            file.setDeletedBy(token.getLogin());
+        }
+        return MessageDto.builder().build();
+    }
+
+    @Override
+    @Transactional
+    public MessageDto restoreFile(Token token, long fileId) {
+        if (!userService.isAdmin(token)) {
+            return MessageDto.builder().message("die4").build();
+        }
+        File file = fileRepository.getOne(fileId);
+        file.setDeleted(false);
+        return MessageDto.builder().build();
     }
 
     private void searchInTree(Container container, Set<Group> groups, String text, List<ContainerDto> searchResult) {

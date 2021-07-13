@@ -82,9 +82,12 @@
     "di7": "Delete selected notes?",
     "di8": "Restore selected passwords?",
     "di9": "Delete selected passwords?",
+    "di10": "Restore selected files?",
+    "di11": "Delete selected files?",
     "die1": "Error restoring note",
     "die2": "Error restoring password",
     "die3": "Error restoring container",
+    "die4": "Error restoring file.",
     "div1": "Name",
     "div2": "Created",
     "div3": "Created by",
@@ -92,6 +95,7 @@
     "div5": "Edited by",
     "div6": "Deleted",
     "div7": "Deleted by",
+    "div8": "Size",
     "srv1": "Server",
     "srv2": "Server RSA key life time, Days",
     "srv3": "User token life time, Minutes",
@@ -144,6 +148,8 @@
     "fl1": "Files:",
     "fle1": "Error adding file.",
     "fle2": "Error downloading file.",
-    "fle3": "The file is too big. Max size: 26 Mb"
+    "fle3": "The file is too big. Max size: 26 Mb",
+    "fle4": "Error renaming file.",
+    "fle5": "Error deleting file."
   }
 }

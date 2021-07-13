@@ -143,15 +143,4 @@ export default {
 </script>
 
 <style scoped>
-.btn-dc {
-    cursor: pointer;
-    user-select: none;
-    padding-left: 2px;
-    padding-right: 2px;
-}
-
-.btn-dc:hover {
-    background-color: darkgray;
-    border-radius: 4px;
-}
 </style>

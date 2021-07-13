@@ -1,6 +1,8 @@
 package com.vladimir.ppm.domain;
 
+import javax.persistence.Basic;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -27,12 +29,15 @@ public class Password {
     private String deletedBy;
 
     @Lob
+    @Basic(fetch = FetchType.LAZY)
     private byte[] encryptedLogin;
 
     @Lob
+    @Basic(fetch = FetchType.LAZY)
     private byte[] encryptedPass;
 
     @Lob
+    @Basic(fetch = FetchType.LAZY)
     private byte[] encryptedNote;
 
     @ManyToOne
