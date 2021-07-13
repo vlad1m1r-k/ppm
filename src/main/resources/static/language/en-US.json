@@ -143,6 +143,7 @@
     "sf3": "No results found.",
     "fl1": "Files:",
     "fle1": "Error adding file.",
-    "fle2": "Error downloading file."
+    "fle2": "Error downloading file.",
+    "fle3": "The file is too big. Max size: 26 Mb"
   }
 }

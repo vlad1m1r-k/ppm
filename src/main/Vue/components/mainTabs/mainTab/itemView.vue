@@ -133,6 +133,10 @@ export default {
             }
         },
         addFile() {
+            if (this.$refs.cnt_file.files[0].size > 27262976) {
+                this.eventHub.emit("show-msg", this.language.data.fle3);
+                return;
+            }
             const reader = new FileReader();
             reader.onload = d => this.sendFile(d.target.result);
             reader.readAsDataURL(this.$refs.cnt_file.files[0]);
