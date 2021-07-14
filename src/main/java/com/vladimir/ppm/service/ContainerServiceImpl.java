@@ -375,6 +375,7 @@ public class ContainerServiceImpl implements ContainerService {
                 .name(containerPathBuilder(c))
                 .notes(c.getNotes().stream().map(n -> NoteDto.builder().name(n.getName()).build()).collect(Collectors.toList()))
                 .passwords(c.getPasswords().stream().map(p -> PasswordDto.builder().name(p.getName()).build()).collect(Collectors.toList()))
+                .files(c.getFiles().stream().map(f -> FileDto.builder().name(f.getName()).build()).collect(Collectors.toList()))
                 .createdDate(c.getCreatedDate())
                 .createdBy(c.getCreatedBy())
                 .editedDate(c.getEditedDate())

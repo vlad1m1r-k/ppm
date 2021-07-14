@@ -153,18 +153,6 @@ ul[data-v-2affa334] {
 }
 
 
-.btn-dc[data-v-dfef1796] {
-    cursor: pointer;
-    user-select: none;
-    padding-left: 2px;
-    padding-right: 2px;
-}
-.btn-dc[data-v-dfef1796]:hover {
-    background-color: darkgray;
-    border-radius: 4px;
-}
-
-
 .btn-dc[data-v-118415e3] {
     cursor: pointer;
     user-select: none;

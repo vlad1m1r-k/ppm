@@ -7,6 +7,7 @@
             </th>
             <th>{{ language.data.iv7 }}</th>
             <th>{{ language.data.iv8 }}</th>
+            <th>{{ language.data.fl1 }}</th>
             <th><button class="btn btn-sm btn-link" @click="setSort('createdDate')">{{ language.data.div2 }}</button></th>
             <th><button class="btn btn-sm btn-link" @click="setSort('createdBy')">{{ language.data.div3 }}</button></th>
             <th><button class="btn btn-sm btn-link" @click="setSort('editedDate')">{{ language.data.div4 }}</button></th>
@@ -30,6 +31,12 @@
                     <select class="form-control-sm">
                         <option selected>{{ language.data.iv8 }} {{ cont.passwords.length }}</option>
                         <option v-for="pwd in cont.passwords" disabled>{{ pwd.name }}</option>
+                    </select>
+                </td>
+                <td>
+                    <select class="form-control-sm">
+                        <option selected>{{ language.data.fl1 }} {{ cont.files.length }}</option>
+                        <option v-for="file in cont.files" disabled>{{ file.name }}</option>
                     </select>
                 </td>
                 <td>{{ cont.createdDate }}</td>
