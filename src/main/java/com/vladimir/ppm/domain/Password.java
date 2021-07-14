@@ -1,6 +1,7 @@
 package com.vladimir.ppm.domain;
 
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -8,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.util.Date;
 import java.util.Objects;
@@ -28,17 +30,14 @@ public class Password {
     private Date deletedDate;
     private String deletedBy;
 
-    @Lob
-    @Basic(fetch = FetchType.LAZY)
-    private byte[] encryptedLogin;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private LobHolder encryptedLogin;
 
-    @Lob
-    @Basic(fetch = FetchType.LAZY)
-    private byte[] encryptedPass;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private LobHolder encryptedPass;
 
-    @Lob
-    @Basic(fetch = FetchType.LAZY)
-    private byte[] encryptedNote;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private LobHolder encryptedNote;
 
     @ManyToOne
     private Container parent;
@@ -89,15 +88,15 @@ public class Password {
     }
 
     public byte[] getEncryptedLogin() {
-        return encryptedLogin;
+        return encryptedLogin.getData();
     }
 
     public byte[] getEncryptedPass() {
-        return encryptedPass;
+        return encryptedPass.getData();
     }
 
     public byte[] getEncryptedNote() {
-        return encryptedNote;
+        return encryptedNote.getData();
     }
 
     public Container getParent() {
@@ -129,15 +128,15 @@ public class Password {
     }
 
     public void setEncryptedLogin(byte[] encryptedLogin) {
-        this.encryptedLogin = encryptedLogin;
+        this.encryptedLogin.setData(encryptedLogin);
     }
 
     public void setEncryptedPass(byte[] encryptedPass) {
-        this.encryptedPass = encryptedPass;
+        this.encryptedPass.setData(encryptedPass);
     }
 
     public void setEncryptedNote(byte[] encryptedNote) {
-        this.encryptedNote = encryptedNote;
+        this.encryptedNote.setData(encryptedNote);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.vladimir.ppm.domain;
 
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -9,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.util.Date;
 import java.util.Objects;
@@ -23,9 +25,8 @@ public class File {
     private String name;
     private int size;
 
-    @Lob
-    @Basic(fetch = FetchType.LAZY)
-    private byte[] encryptedBody;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private LobHolder encryptedBody;
 
     private Date createdDate;
     private String createdBy;
@@ -44,7 +45,7 @@ public class File {
         this.parent = parent;
         this.name = name;
         this.size = size;
-        this.encryptedBody = encryptedBody;
+        this.encryptedBody = new LobHolder(encryptedBody);
         this.createdBy = createdBy;
         createdDate = new Date();
     }
@@ -62,7 +63,7 @@ public class File {
     }
 
     public byte[] getEncryptedBody() {
-        return encryptedBody;
+        return encryptedBody.getData();
     }
 
     public Date getCreatedDate() {

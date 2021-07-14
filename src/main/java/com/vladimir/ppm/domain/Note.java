@@ -1,6 +1,7 @@
 package com.vladimir.ppm.domain;
 
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -8,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.util.Date;
 import java.util.Objects;
@@ -21,9 +23,8 @@ public class Note {
 
     private String name;
 
-    @Lob
-    @Basic(fetch = FetchType.LAZY)
-    private byte[] encryptedText;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private LobHolder encryptedText;
 
     private Date createdDate;
     private String createdBy;
@@ -41,7 +42,7 @@ public class Note {
     public Note(Container parent, String name, byte[] encryptedText, String createdBy) {
         this.parent = parent;
         this.name = name;
-        this.encryptedText = encryptedText;
+        this.encryptedText = new LobHolder(encryptedText);
         this.createdBy = createdBy;
         createdDate = new Date();
     }
@@ -55,7 +56,7 @@ public class Note {
     }
 
     public byte[] getEncryptedText() {
-        return encryptedText;
+        return encryptedText.getData();
     }
 
     public Container getParent() {
@@ -91,7 +92,7 @@ public class Note {
     }
 
     public void setEncryptedText(byte[] encryptedText) {
-        this.encryptedText = encryptedText;
+        this.encryptedText.setData(encryptedText);
     }
 
     public void setDeleted(boolean deleted) {

@@ -165,7 +165,8 @@ export default {
                         this.checkedFls.push(file.id);
                     })
                 }
-            } else {
+            }
+            if (item === "pass") {
                 this.checkedPass = [];
                 if (checked) {
                     this.items.passwords.forEach(pwd => {
