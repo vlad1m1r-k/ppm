@@ -13,21 +13,29 @@
                 <div>{{ language.data.sf3 }}</div>
                 <ul>
                     <li v-for="cn in searchResult">
-                        <a href="javascript:void(0);" @click="localSearch(cn.id)"><span v-html="markText(cn.name, searchText)"></span></a>
+                        <button class="btn btn-sm btn-link" @click="localSearch(cn.id)"><span v-html="markText(cn.name, searchText)"></span></button>
                         <ul>
                             <li v-for="nt in cn.notes">
                                 {{ language.data.iv7 }}
-                                <a href="javascript:void(0);" @click="localSearch(cn.id, 'n', nt.id)">
+                                <button class="btn btn-sm btn-link" @click="localSearch(cn.id, 'n', nt.id)">
                                     <span v-html="markText(nt.name, searchText)"></span>
-                                </a>
+                                </button>
                             </li>
                         </ul>
                         <ul>
                             <li v-for="pw in cn.passwords">
                                 {{ language.data.iv8 }}
-                                <a href="javascript:void(0);" @click="localSearch(cn.id, 'p', pw.id)">
+                                <button class="btn btn-sm btn-link" @click="localSearch(cn.id, 'p', pw.id)">
                                     <span v-html="markText(pw.name, searchText)"></span>
-                                </a>
+                                </button>
+                            </li>
+                        </ul>
+                        <ul>
+                            <li v-for="file in cn.files">
+                                {{ language.data.fl1 }}
+                                <button class="btn btn-sm btn-link" @click="localSearch(cn.id, 'f', file.id)">
+                                    <span v-html="markText(file.name, searchText)"></span>
+                                </button>
                             </li>
                         </ul>
                     </li>

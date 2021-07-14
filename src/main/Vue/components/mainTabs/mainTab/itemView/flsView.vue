@@ -10,7 +10,7 @@
         <td class="fit-cell">&#x1f512;</td>
         <td class="fit-cell" v-if="access === 'RW'"><item-info :item="file"></item-info></td>
         <td class="fit-cell" v-if="access === 'RW'"><span class="btn-dc" :title="language.data.cm2" @click="edit = true">&#x1f589;</span></td>
-        <td><a href="javascript:void(0)" @click="download">{{ file.name }}</a></td>
+        <td><button class="btn btn-sm btn-link" @click="download">{{ file.name }}</button></td>
         <td>{{ file.size }} bytes</td>
         <td class="fit-cell">
             <span style="user-select: none">{{ language.data.cm10 }} &nbsp;</span>$id:{{ $parent.$props.item.id }}f{{ file.id }}&nbsp;

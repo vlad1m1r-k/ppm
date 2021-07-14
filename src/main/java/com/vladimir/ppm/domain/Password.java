@@ -44,9 +44,12 @@ public class Password {
 
     public Password() {}
 
-    public Password(String name, Container parent, String createdBy) {
+    public Password(String name, Container parent, byte[] encryptedLogin, byte[] encryptedPass, byte[] encryptedNote, String createdBy) {
         this.name = name;
         this.parent = parent;
+        this.encryptedLogin = new LobHolder(encryptedLogin);
+        this.encryptedPass = new LobHolder(encryptedPass);
+        this.encryptedNote = new LobHolder(encryptedNote);
         this.createdBy = createdBy;
         this.createdDate = new Date();
     }

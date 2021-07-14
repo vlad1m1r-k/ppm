@@ -38,7 +38,7 @@
 }
 
 .searchTarget {
-    background-color: #b7f696;
+    background-color: #b7f696 !important;
 }
 
 .area-body {

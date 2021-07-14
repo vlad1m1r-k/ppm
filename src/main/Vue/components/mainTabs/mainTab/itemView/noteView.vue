@@ -148,12 +148,4 @@ export default {
     border-radius: 10px;
     padding-left: 5px;
 }
-.btn-dc {
-    cursor: pointer;
-    user-select: none;
-}
-.btn-dc:hover {
-    background-color: darkgray;
-    border-radius: 4px;
-}
 </style>

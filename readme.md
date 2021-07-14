@@ -1,6 +1,4 @@
 TODO:
-+ search
-  + search for files
 + logging
 + liquibase
 
