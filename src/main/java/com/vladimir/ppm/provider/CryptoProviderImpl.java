@@ -3,10 +3,13 @@ package com.vladimir.ppm.provider;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vladimir.ppm.domain.Acts;
 import com.vladimir.ppm.domain.DbKey;
+import com.vladimir.ppm.domain.Objects;
 import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.dto.CryptoDto;
 import com.vladimir.ppm.dto.PublicKeyDto;
+import com.vladimir.ppm.service.LoggerService;
 import org.apache.commons.lang3.ArrayUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
@@ -37,6 +40,7 @@ import java.security.Security;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,6 +48,7 @@ import java.util.Map;
 @EnableScheduling
 public class CryptoProviderImpl implements CryptoProvider {
     private final SettingsProvider settingsProvider;
+    private final LoggerService logger;
     private final ObjectMapper mapper;
     private final String RSACIPHER = "RSA/ECB/PKCS1Padding";
     private final String AESCIPHER = "AES/CBC/PKCS7Padding";
@@ -54,8 +59,9 @@ public class CryptoProviderImpl implements CryptoProvider {
     private SecretKeySpec dbAESKey;
     SecureRandom random = new SecureRandom();
 
-    public CryptoProviderImpl(SettingsProvider settingsProvider, ObjectMapper mapper) {
+    public CryptoProviderImpl(SettingsProvider settingsProvider, LoggerService logger, ObjectMapper mapper) {
         this.settingsProvider = settingsProvider;
+        this.logger = logger;
         this.mapper = mapper;
     }
 
@@ -252,6 +258,7 @@ public class CryptoProviderImpl implements CryptoProvider {
         keyPairGenerator.initialize(2048, random);
         keyPair = keyPairGenerator.generateKeyPair();
         keyPairExpireDate = System.currentTimeMillis() + (long) settingsProvider.getServerKeyLifeTimeDays() * 24 * 60 * 60 * 1000;
+        logger.log("System", Acts.CREATE, Objects.KEY, "Server Keypair", new Date(), "");
     }
 
     private byte[] generateIV() {

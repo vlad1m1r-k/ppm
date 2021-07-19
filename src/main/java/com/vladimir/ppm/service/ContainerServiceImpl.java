@@ -1,10 +1,12 @@
 package com.vladimir.ppm.service;
 
 import com.vladimir.ppm.domain.Access;
+import com.vladimir.ppm.domain.Acts;
 import com.vladimir.ppm.domain.Container;
 import com.vladimir.ppm.domain.File;
 import com.vladimir.ppm.domain.Group;
 import com.vladimir.ppm.domain.Note;
+import com.vladimir.ppm.domain.Objects;
 import com.vladimir.ppm.domain.Password;
 import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.dto.AccessDto;
@@ -41,10 +43,11 @@ public class ContainerServiceImpl implements ContainerService {
     private final PasswordRepository passwordRepository;
     private final GroupService groupService;
     private final ValidatorService validatorService;
+    private final LoggerService logger;
 
     public ContainerServiceImpl(UserService userService, ContainerRepository containerRepository, CryptoProvider cryptoProvider,
                                 NoteRepository noteRepository, FileRepository fileRepository, PasswordRepository passwordRepository,
-                                GroupService groupService, ValidatorService validatorService) {
+                                GroupService groupService, ValidatorService validatorService, LoggerService logger) {
         this.userService = userService;
         this.containerRepository = containerRepository;
         this.cryptoProvider = cryptoProvider;
@@ -53,6 +56,7 @@ public class ContainerServiceImpl implements ContainerService {
         this.passwordRepository = passwordRepository;
         this.groupService = groupService;
         this.validatorService = validatorService;
+        this.logger = logger;
     }
 
     @Override
@@ -76,6 +80,8 @@ public class ContainerServiceImpl implements ContainerService {
         container.setEditedBy(token.getLogin());
         container.setEditedDate(new Date());
         cntMoveTo.addChild(container);
+        logger.log(token.getLogin(), Acts.MOVE, Objects.CONTAINER, containerPathBuilder(container), new Date(),
+                "to container " + containerPathBuilder(cntMoveTo));
         return MessageDto.builder().build();
     }
 
@@ -91,6 +97,8 @@ public class ContainerServiceImpl implements ContainerService {
             container.setGroupsRW(new HashSet<>(parent.getGroupsRW()));
             container = containerRepository.save(container);
             parent.addChild(container);
+            logger.log(token.getLogin(), Acts.CREATE, Objects.CONTAINER, container.getName(), new Date(),
+                    "parent: " + containerPathBuilder(parent));
         }
         return MessageDto.builder().build();
     }
@@ -106,6 +114,8 @@ public class ContainerServiceImpl implements ContainerService {
         container.getParent().getChildren().remove(container);
         cntRestoreTo.addChild(container);
         container.setDeleted(false);
+        logger.log(decryptedToken.getLogin(), Acts.RESTORE, Objects.CONTAINER, containerPathBuilder(container), new Date(),
+                "restored to: " + containerPathBuilder(cntRestoreTo));
         return MessageDto.builder().build();
     }
 
@@ -120,11 +130,13 @@ public class ContainerServiceImpl implements ContainerService {
         if (container.isDeleted() && userService.isAdmin(token) && permanent) {
             containerRepository.getContainersByParent(container).forEach(c -> c.setParent(null));
             containerRepository.delete(container);
+            logger.log(token.getLogin(), Acts.DELETE, Objects.CONTAINER, containerPathBuilder(container), new Date(), "Permanently");
         } else {
             container.getParent().getChildren().remove(container);
             container.setDeletedBy(token.getLogin());
             container.setDeletedDate(new Date());
             container.setDeleted(true);
+            logger.log(token.getLogin(), Acts.DELETE, Objects.CONTAINER, containerPathBuilder(container), new Date(), "Permanently");
         }
         return MessageDto.builder().build();
     }
@@ -140,6 +152,7 @@ public class ContainerServiceImpl implements ContainerService {
         container.setEditedBy(token.getLogin());
         container.setEditedDate(new Date());
         container.setName(name);
+        logger.log(token.getLogin(), Acts.UPDATE, Objects.CONTAINER, containerPathBuilder(container), new Date(), "rename");
         return MessageDto.builder().build();
     }
 
@@ -153,6 +166,7 @@ public class ContainerServiceImpl implements ContainerService {
         byte[] encryptedText = cryptoProvider.encryptDbEntry(text);
         Note note = new Note(container, name, encryptedText, token.getLogin());
         noteRepository.save(note);
+        logger.log(token.getLogin(), Acts.CREATE, Objects.NOTE, name, new Date(), "Container: " + containerPathBuilder(container));
         return MessageDto.builder().build();
     }
 
@@ -181,6 +195,7 @@ public class ContainerServiceImpl implements ContainerService {
         note.setEncryptedText(cryptoProvider.encryptDbEntry(text));
         note.setEditedDate(new Date());
         note.setEditedBy(token.getLogin());
+        logger.log(token.getLogin(), Acts.UPDATE, Objects.NOTE, name, new Date(), "Container: " + containerPathBuilder(parent));
         return MessageDto.builder().build();
     }
 
@@ -194,10 +209,14 @@ public class ContainerServiceImpl implements ContainerService {
         }
         if (note.isDeleted() && userService.isAdmin(token) && permanent) {
             noteRepository.delete(note);
+            logger.log(token.getLogin(), Acts.DELETE, Objects.NOTE, note.getName(), new Date(),
+                    "Permanently. Container: " + containerPathBuilder(parent));
         } else {
             note.setDeleted(true);
             note.setDeletedDate(new Date());
             note.setDeletedBy(token.getLogin());
+            logger.log(token.getLogin(), Acts.DELETE, Objects.NOTE, note.getName(), new Date(),
+                    "Container: " + containerPathBuilder(parent));
         }
         return MessageDto.builder().build();
     }
@@ -214,6 +233,7 @@ public class ContainerServiceImpl implements ContainerService {
         byte[] encryptedNote = cryptoProvider.encryptDbEntry(note);
         Password password = new Password(name, parent, encryptedLogin, encryptedPasswd, encryptedNote, token.getLogin());
         passwordRepository.save(password);
+        logger.log(token.getLogin(), Acts.CREATE, Objects.PASSWORD, name, new Date(), "Container: " + containerPathBuilder(parent));
         return MessageDto.builder().build();
     }
 
@@ -260,6 +280,7 @@ public class ContainerServiceImpl implements ContainerService {
         }
         password.setEditedDate(new Date());
         password.setEditedBy(token.getLogin());
+        logger.log(token.getLogin(), Acts.UPDATE, Objects.PASSWORD, name, new Date(), "Container: " + containerPathBuilder(parent));
         return MessageDto.builder().build();
     }
 
@@ -273,10 +294,14 @@ public class ContainerServiceImpl implements ContainerService {
         }
         if (password.isDeleted() && userService.isAdmin(token) && permanent) {
             passwordRepository.delete(password);
+            logger.log(token.getLogin(), Acts.DELETE, Objects.PASSWORD, password.getName(), new Date(),
+                    "Permanently. Container: " + containerPathBuilder(parent));
         } else {
             password.setDeleted(true);
             password.setDeletedDate(new Date());
             password.setDeletedBy(token.getLogin());
+            logger.log(token.getLogin(), Acts.DELETE, Objects.PASSWORD, password.getName(), new Date(),
+                    "Container: " + containerPathBuilder(parent));
         }
         return MessageDto.builder().build();
     }
@@ -344,6 +369,8 @@ public class ContainerServiceImpl implements ContainerService {
         }
         Note note = noteRepository.getOne(noteId);
         note.setDeleted(false);
+        logger.log(token.getLogin(), Acts.RESTORE, Objects.NOTE, note.getName(), new Date(),
+                "Container: " + containerPathBuilder(note.getParent()));
         return MessageDto.builder().build();
     }
 
@@ -355,6 +382,8 @@ public class ContainerServiceImpl implements ContainerService {
         }
         Password password = passwordRepository.getOne(pwdId);
         password.setDeleted(false);
+        logger.log(token.getLogin(), Acts.RESTORE, Objects.PASSWORD, password.getName(), new Date(),
+                "Container: " + containerPathBuilder(password.getParent()));
         return MessageDto.builder().build();
     }
 
@@ -400,6 +429,9 @@ public class ContainerServiceImpl implements ContainerService {
             if (sameBelow) {
                 setAccessRecursively(container, group, access);
             }
+            logger.log(token.getLogin(), Acts.CREATE, Objects.ACCESS, access.toString(), new Date(),
+                    "Group: " + group.getName() + " PTAbove:" + ptAbove + " SameBelow:" + sameBelow +
+                            " Container: " + containerPathBuilder(container));
         }
         return MessageDto.builder().build();
     }
@@ -411,6 +443,8 @@ public class ContainerServiceImpl implements ContainerService {
             Container container = containerRepository.getOne(containerId);
             Group group = groupService.getGroupById(groupId);
             removeAccessRecursively(container, group, access);
+            logger.log(token.getLogin(), Acts.DELETE, Objects.ACCESS, access.toString(), new Date(),
+                    "Group: " + group.getName() + " Container: " + containerPathBuilder(container));
         }
     }
 
