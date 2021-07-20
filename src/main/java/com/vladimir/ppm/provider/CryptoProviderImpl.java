@@ -48,7 +48,7 @@ import java.util.Map;
 @EnableScheduling
 public class CryptoProviderImpl implements CryptoProvider {
     private final SettingsProvider settingsProvider;
-    private final LoggerService logger;
+    private final Logger logger;
     private final ObjectMapper mapper;
     private final String RSACIPHER = "RSA/ECB/PKCS1Padding";
     private final String AESCIPHER = "AES/CBC/PKCS7Padding";
@@ -59,7 +59,7 @@ public class CryptoProviderImpl implements CryptoProvider {
     private SecretKeySpec dbAESKey;
     SecureRandom random = new SecureRandom();
 
-    public CryptoProviderImpl(SettingsProvider settingsProvider, LoggerService logger, ObjectMapper mapper) {
+    public CryptoProviderImpl(SettingsProvider settingsProvider, Logger logger, ObjectMapper mapper) {
         this.settingsProvider = settingsProvider;
         this.logger = logger;
         this.mapper = mapper;

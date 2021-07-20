@@ -17,6 +17,9 @@
                 <button class="btn btn-sm btn-outline-primary" @click="currentTab = 'security'" :class="{selected: currentTab === 'security'}">
                     {{ language.data.sec1 }}
                 </button>
+                <button class="btn btn-sm btn-outline-primary" @click="currentTab = 'logs'" :class="{selected: currentTab === 'logs'}">
+                    {{ language.data.lg1 }}
+                </button>
             </div>
         </div>
         <div class="row">
@@ -33,11 +36,12 @@ import users from "./adminTab/users.vue";
 import srvSettings from "./adminTab/srvSettings.vue";
 import groups from "./adminTab/groups.vue";
 import security from "./adminTab/security.vue";
+import logs from "./adminTab/logs.vue";
 
 export default {
     name: "adminSettings",
     components: {
-        dbSettings, users, srvSettings, groups, security
+        dbSettings, users, srvSettings, groups, security, logs
     },
     data() {
         return {

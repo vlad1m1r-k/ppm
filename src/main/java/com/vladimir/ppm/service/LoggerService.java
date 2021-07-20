@@ -1,10 +1,9 @@
 package com.vladimir.ppm.service;
 
-import com.vladimir.ppm.domain.Acts;
-import com.vladimir.ppm.domain.Objects;
-
-import java.util.Date;
+import com.vladimir.ppm.domain.LogRecord;
+import com.vladimir.ppm.domain.Token;
+import org.springframework.data.domain.Page;
 
 public interface LoggerService {
-    void log(String user, Acts act, Objects object, String objName, Date date, String comment);
+    Page<LogRecord> getLogs(Token token, int page, int size, String direction, String field);
 }

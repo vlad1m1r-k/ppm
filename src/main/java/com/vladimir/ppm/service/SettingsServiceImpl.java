@@ -1,10 +1,13 @@
 package com.vladimir.ppm.service;
 
+import com.vladimir.ppm.domain.Acts;
+import com.vladimir.ppm.domain.Objects;
 import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.dto.DynamicListEntryDto;
 import com.vladimir.ppm.dto.MessageDto;
 import com.vladimir.ppm.dto.SettingsDto;
 import com.vladimir.ppm.provider.CryptoProvider;
+import com.vladimir.ppm.provider.Logger;
 import com.vladimir.ppm.provider.SecurityProvider;
 import com.vladimir.ppm.provider.SettingsProvider;
 import org.springframework.stereotype.Service;
@@ -13,6 +16,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,14 +27,16 @@ public class SettingsServiceImpl implements SettingsService {
     private final ValidatorService validatorService;
     private final CryptoProvider cryptoProvider;
     private final SecurityProvider securityProvider;
+    private final Logger logger;
 
     public SettingsServiceImpl(UserService userService, SettingsProvider settingsProvider, ValidatorService validatorService,
-                               CryptoProvider cryptoProvider, SecurityProvider securityProvider) {
+                               CryptoProvider cryptoProvider, SecurityProvider securityProvider, Logger logger) {
         this.userService = userService;
         this.settingsProvider = settingsProvider;
         this.validatorService = validatorService;
         this.cryptoProvider = cryptoProvider;
         this.securityProvider = securityProvider;
+        this.logger = logger;
     }
 
     @Override
@@ -74,6 +80,7 @@ public class SettingsServiceImpl implements SettingsService {
             if (settingsProvider.getPwdSpecialChar() != pwdSpecialChar) {
                 settingsProvider.setPwdSpecialChar(pwdSpecialChar);
             }
+            logger.log(token.getLogin(), Acts.UPDATE, Objects.SETTINGS, "Server settings", new Date(), "");
             return MessageDto.builder().build();
         }
         return MessageDto.builder().message("srve1").build();
@@ -92,6 +99,7 @@ public class SettingsServiceImpl implements SettingsService {
             if (settingsProvider.getIncorrectPasswdAttempts() != incorrectPasswdAttempts) {
                 settingsProvider.setIncorrectPasswdAttempts(incorrectPasswdAttempts);
             }
+            logger.log(token.getLogin(), Acts.UPDATE, Objects.SETTINGS, "Security settings", new Date(), "");
             return MessageDto.builder().build();
         }
         return MessageDto.builder().message("sece1").build();
@@ -101,6 +109,7 @@ public class SettingsServiceImpl implements SettingsService {
     public MessageDto addIpToBlackList(Token token, String ip) {
         if (userService.isAdmin(token) && validatorService.validateIpOrSubnet(ip)) {
             settingsProvider.addIpToBlackList(ip);
+            logger.log(token.getLogin(), Acts.UPDATE, Objects.SETTINGS, "Ip BlackList", new Date(), "Added: " + ip);
             return MessageDto.builder().build();
         }
         return MessageDto.builder().message("sece2").build();
@@ -110,6 +119,7 @@ public class SettingsServiceImpl implements SettingsService {
     public MessageDto addIpToWhiteList(Token token, String ip) {
         if (userService.isAdmin(token) && validatorService.validateIpOrSubnet(ip)) {
             settingsProvider.addIpToWhiteList(ip);
+            logger.log(token.getLogin(), Acts.UPDATE, Objects.SETTINGS, "Ip WhiteList", new Date(), "Added: " + ip);
             return MessageDto.builder().build();
         }
         return MessageDto.builder().message("sece2").build();
@@ -150,6 +160,7 @@ public class SettingsServiceImpl implements SettingsService {
     public MessageDto removeIpFromBlackList(Token token, String ip) {
         if (userService.isAdmin(token) && validatorService.validateString(ip)) {
             settingsProvider.removeIpFromBlackList(ip);
+            logger.log(token.getLogin(), Acts.UPDATE, Objects.SETTINGS, "Ip BlackList", new Date(), "Removed: " + ip);
         }
         return MessageDto.builder().build();
     }
@@ -158,6 +169,7 @@ public class SettingsServiceImpl implements SettingsService {
     public MessageDto removeIpFromWhiteList(Token token, String ip) {
         if (userService.isAdmin(token) && validatorService.validateString(ip)) {
             settingsProvider.removeIpFromWhiteList(ip);
+            logger.log(token.getLogin(), Acts.UPDATE, Objects.SETTINGS, "Ip WhiteList", new Date(), "Removed: " + ip);
         }
         return MessageDto.builder().build();
     }

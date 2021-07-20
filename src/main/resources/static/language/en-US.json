@@ -150,6 +150,8 @@
     "fle2": "Error downloading file.",
     "fle3": "The file is too big. Max size: 26 Mb",
     "fle4": "Error renaming file.",
-    "fle5": "Error deleting file."
+    "fle5": "Error deleting file.",
+    "lg1": "Logs",
+    "lge1": "Error getting logs."
   }
 }

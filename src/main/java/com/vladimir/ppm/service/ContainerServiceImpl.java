@@ -17,6 +17,7 @@ import com.vladimir.ppm.dto.MessageDto;
 import com.vladimir.ppm.dto.NoteDto;
 import com.vladimir.ppm.dto.PasswordDto;
 import com.vladimir.ppm.provider.CryptoProvider;
+import com.vladimir.ppm.provider.Logger;
 import com.vladimir.ppm.repository.ContainerRepository;
 import com.vladimir.ppm.repository.FileRepository;
 import com.vladimir.ppm.repository.NoteRepository;
@@ -43,11 +44,11 @@ public class ContainerServiceImpl implements ContainerService {
     private final PasswordRepository passwordRepository;
     private final GroupService groupService;
     private final ValidatorService validatorService;
-    private final LoggerService logger;
+    private final Logger logger;
 
     public ContainerServiceImpl(UserService userService, ContainerRepository containerRepository, CryptoProvider cryptoProvider,
                                 NoteRepository noteRepository, FileRepository fileRepository, PasswordRepository passwordRepository,
-                                GroupService groupService, ValidatorService validatorService, LoggerService logger) {
+                                GroupService groupService, ValidatorService validatorService, Logger logger) {
         this.userService = userService;
         this.containerRepository = containerRepository;
         this.cryptoProvider = cryptoProvider;
@@ -498,6 +499,7 @@ public class ContainerServiceImpl implements ContainerService {
         byte[] encryptedBody = cryptoProvider.encryptDbEntry(body);
         File file = new File(container, name, size, encryptedBody, token.getLogin());
         fileRepository.save(file);
+        logger.log(token.getLogin(), Acts.CREATE, Objects.FILE, name, new Date(), "Container: " + containerPathBuilder(container));
         return MessageDto.builder().build();
     }
 
@@ -526,6 +528,7 @@ public class ContainerServiceImpl implements ContainerService {
         file.setName(name);
         file.setEditedBy(token.getLogin());
         file.setEditedDate(new Date());
+        logger.log(token.getLogin(), Acts.UPDATE, Objects.FILE, name, new Date(), "Container: " + containerPathBuilder(parent));
         return MessageDto.builder().build();
     }
 
@@ -539,10 +542,14 @@ public class ContainerServiceImpl implements ContainerService {
         }
         if (file.isDeleted() && userService.isAdmin(token) && permanent) {
             fileRepository.delete(file);
+            logger.log(token.getLogin(), Acts.DELETE, Objects.FILE, file.getName(), new Date(),
+                    "Permanent. Container: " + containerPathBuilder(parent));
         } else {
             file.setDeleted(true);
             file.setDeletedDate(new Date());
             file.setDeletedBy(token.getLogin());
+            logger.log(token.getLogin(), Acts.DELETE, Objects.FILE, file.getName(), new Date(),
+                    "Container: " + containerPathBuilder(parent));
         }
         return MessageDto.builder().build();
     }
@@ -555,6 +562,8 @@ public class ContainerServiceImpl implements ContainerService {
         }
         File file = fileRepository.getOne(fileId);
         file.setDeleted(false);
+        logger.log(token.getLogin(), Acts.RESTORE, Objects.FILE, file.getName(), new Date(),
+                "Container: " + containerPathBuilder(file.getParent()));
         return MessageDto.builder().build();
     }
 

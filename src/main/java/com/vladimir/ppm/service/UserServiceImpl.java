@@ -1,6 +1,8 @@
 package com.vladimir.ppm.service;
 
+import com.vladimir.ppm.domain.Acts;
 import com.vladimir.ppm.domain.Group;
+import com.vladimir.ppm.domain.Objects;
 import com.vladimir.ppm.domain.PwdGenSettings;
 import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.domain.User;
@@ -10,6 +12,7 @@ import com.vladimir.ppm.dto.MessageDto;
 import com.vladimir.ppm.dto.TokenDto;
 import com.vladimir.ppm.dto.UserDto;
 import com.vladimir.ppm.provider.CryptoProvider;
+import com.vladimir.ppm.provider.Logger;
 import com.vladimir.ppm.provider.SecurityProvider;
 import com.vladimir.ppm.provider.SettingsProvider;
 import com.vladimir.ppm.repository.PwdGenSettingsRepository;
@@ -21,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -35,10 +39,11 @@ public class UserServiceImpl implements UserService {
     private final SettingsProvider settingsProvider;
     private final SecurityProvider securityProvider;
     private final PwdGenSettingsRepository pwdGenSettingsRepository;
+    private final Logger logger;
 
     public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder encoder, TokenService tokenService,
                            CryptoProvider cryptoProvider, ValidatorService validatorService, SettingsProvider settingsProvider,
-                           SecurityProvider securityProvider, PwdGenSettingsRepository pwdGenSettingsRepository) {
+                           SecurityProvider securityProvider, PwdGenSettingsRepository pwdGenSettingsRepository, Logger logger) {
         this.userRepository = userRepository;
         this.encoder = encoder;
         this.tokenService = tokenService;
@@ -47,6 +52,7 @@ public class UserServiceImpl implements UserService {
         this.settingsProvider = settingsProvider;
         this.securityProvider = securityProvider;
         this.pwdGenSettingsRepository = pwdGenSettingsRepository;
+        this.logger = logger;
     }
 
     @Override
@@ -63,6 +69,7 @@ public class UserServiceImpl implements UserService {
         }
         if (!encoder.matches(password, user.getPassword())) {
             securityProvider.registerPasswordAttempt(user.getId(), false);
+            logger.log(login, Acts.LOGIN_FAILED, Objects.SYSTEM, "", new Date(), "Ip: " + remoteAddr);
             return TokenDto.builder().message("lfe1").build();
         }
         if (!user.isEnabled()) {
@@ -76,6 +83,7 @@ public class UserServiceImpl implements UserService {
         String encryptedToken = tokenService.encrypt(token);
         securityProvider.registerLoginAttempt(remoteAddr, true);
         securityProvider.registerPasswordAttempt(user.getId(), true);
+        logger.log(login, Acts.LOGIN_SUCCESS, Objects.SYSTEM, "", new Date(), "Ip: " + remoteAddr);
         return TokenDto.builder()
                 .lifeTime(tokenLifeTime)
                 .token(encryptedToken)
@@ -141,6 +149,7 @@ public class UserServiceImpl implements UserService {
             return MessageDto.builder().message("usse7").build();
         }
         user.setPassword(encoder.encode(newPwd));
+        logger.log(token.getLogin(), Acts.CHANGE_PASSWORD, Objects.USER, token.getLogin(), new Date(), "");
         return MessageDto.builder().build();
     }
 
@@ -190,6 +199,7 @@ public class UserServiceImpl implements UserService {
             }
             user = new User(login, encoder.encode(pwd), status);
             userRepository.save(user);
+            logger.log(token.getLogin(), Acts.CREATE, Objects.USER, login, new Date(), "");
         }
         return MessageDto.builder().build();
     }
@@ -204,12 +214,14 @@ public class UserServiceImpl implements UserService {
             User user = userRepository.getOne(userId);
             if (pwd != null && pwd.length() > 0) {
                 user.setPassword(encoder.encode(pwd));
+                logger.log(token.getLogin(), Acts.CHANGE_PASSWORD, Objects.USER, login, new Date(), "");
             }
             if (!user.getLogin().equals(login) && userRepository.findUserByLogin(login) != null) {
                 return MessageDto.builder().message("use3").build();
             }
             user.setLogin(login);
             user.setStatus(status);
+            logger.log(token.getLogin(), Acts.UPDATE, Objects.USER, login, new Date(), "");
         }
         return MessageDto.builder().build();
     }
@@ -221,6 +233,7 @@ public class UserServiceImpl implements UserService {
             User user = userRepository.getOne(userId);
             user.getGroups().forEach(g -> g.getUsers().remove(user));
             userRepository.delete(user);
+            logger.log(token.getLogin(), Acts.DELETE, Objects.USER, user.getLogin(), new Date(), "Permanently.");
         }
         return MessageDto.builder().build();
     }
@@ -231,6 +244,7 @@ public class UserServiceImpl implements UserService {
         if (isAdmin(token) && validatorService.validateIpOrSubnet(ip)) {
             User user = userRepository.getOne(userId);
             user.getAllowedIps().add(ip);
+            logger.log(token.getLogin(), Acts.UPDATE, Objects.USER, user.getLogin(), new Date(), "Added allowed Ip: " + ip);
         }
         return MessageDto.builder().build();
     }
@@ -251,6 +265,7 @@ public class UserServiceImpl implements UserService {
         if (isAdmin(token) && validatorService.validateIpOrSubnet(ip)) {
             User user = userRepository.getOne(userId);
             user.getAllowedIps().remove(ip);
+            logger.log(token.getLogin(), Acts.UPDATE, Objects.USER, user.getLogin(), new Date(), "Removed allowed Ip: " + ip);
         }
     }
 

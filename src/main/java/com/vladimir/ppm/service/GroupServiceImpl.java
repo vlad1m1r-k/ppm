@@ -1,18 +1,22 @@
 package com.vladimir.ppm.service;
 
+import com.vladimir.ppm.domain.Acts;
 import com.vladimir.ppm.domain.Group;
+import com.vladimir.ppm.domain.Objects;
 import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.domain.User;
 import com.vladimir.ppm.dto.AccessTreeDto;
 import com.vladimir.ppm.dto.GroupDto;
 import com.vladimir.ppm.dto.MessageDto;
 import com.vladimir.ppm.dto.UserDto;
+import com.vladimir.ppm.provider.Logger;
 import com.vladimir.ppm.repository.GroupRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,11 +25,14 @@ public class GroupServiceImpl implements GroupService {
     private final UserService userService;
     private final GroupRepository groupRepository;
     private final ValidatorService validatorService;
+    private final Logger logger;
 
-    public GroupServiceImpl(UserService userService, GroupRepository groupRepository, ValidatorService validatorService) {
+    public GroupServiceImpl(UserService userService, GroupRepository groupRepository, ValidatorService validatorService,
+                            Logger logger) {
         this.userService = userService;
         this.groupRepository = groupRepository;
         this.validatorService = validatorService;
+        this.logger = logger;
     }
 
     @Override
@@ -63,6 +70,7 @@ public class GroupServiceImpl implements GroupService {
             }
             group = new Group(name, adminSettings);
             groupRepository.save(group);
+            logger.log(token.getLogin(), Acts.CREATE, Objects.GROUP, name, new Date(), "Admin settings: " + adminSettings);
         }
         return MessageDto.builder().build();
     }
@@ -80,6 +88,7 @@ public class GroupServiceImpl implements GroupService {
             }
             group.setName(name);
             group.setAdminSettings(adminSettings);
+            logger.log(token.getLogin(), Acts.UPDATE, Objects.GROUP, name, new Date(), "Admin settings: " + adminSettings);
         }
         return MessageDto.builder().build();
     }
@@ -91,6 +100,7 @@ public class GroupServiceImpl implements GroupService {
             Group group = groupRepository.getOne(groupId);
             group.getUsers().forEach(u -> u.getGroups().remove(group));
             groupRepository.delete(group);
+            logger.log(token.getLogin(), Acts.DELETE, Objects.GROUP, group.getName(), new Date(), "");
         }
         return MessageDto.builder().build();
     }
@@ -106,6 +116,8 @@ public class GroupServiceImpl implements GroupService {
             } else {
                 group.getUsers().remove(user);
             }
+            logger.log(token.getLogin(), Acts.UPDATE, Objects.GROUP, group.getName(), new Date(),
+                    "User: " + user.getLogin() + " Member: " + member);
         }
         return MessageDto.builder().build();
     }
