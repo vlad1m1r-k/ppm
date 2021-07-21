@@ -71,12 +71,13 @@ public class SettingsRestController {
             int serverKeyLifeTime = json.get("serverKeyLifeTime").asInt();
             int tokenLifeTime = json.get("tokenLifeTime").asInt();
             int pwdMinLength = json.get("pwdMinLength").asInt();
+            int logLifeTime = json.get("logLifeTime").asInt();
             boolean pwdComplexity = json.get("pwdComplexity").asBoolean();
             boolean pwdSpecialChar = json.get("pwdSpecialChar").asBoolean();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 MessageDto message = settingsService.saveSettings(decryptedToken, serverKeyLifeTime, tokenLifeTime,
-                        pwdMinLength, pwdComplexity, pwdSpecialChar);
+                        pwdMinLength, pwdComplexity, pwdSpecialChar, logLifeTime);
                 return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
             }
         }

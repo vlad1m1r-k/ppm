@@ -12,6 +12,7 @@ public class SettingsDto {
     private final Integer incorrectLoginAttempts;
     private final Integer ipBanTimeDays;
     private final Integer incorrectPasswdAttempts;
+    private final Integer logLifeTime;
 
     private SettingsDto(Builder builder) {
         this.serverKeyLifeTimeDays = builder.serverKeyLifeTimeDays;
@@ -22,6 +23,7 @@ public class SettingsDto {
         this.incorrectLoginAttempts = builder.incorrectLoginAttempts;
         this.ipBanTimeDays = builder.ipBanTimeDays;
         this.incorrectPasswdAttempts = builder.incorrectPasswdAttempts;
+        this.logLifeTime = builder.logLifeTime;
     }
 
     public Integer getServerKeyLifeTimeDays() {
@@ -56,6 +58,10 @@ public class SettingsDto {
         return incorrectPasswdAttempts;
     }
 
+    public Integer getLogLifeTime() {
+        return logLifeTime;
+    }
+
     public String toJson() throws JsonProcessingException {
         return new ObjectMapper().writeValueAsString(this);
     }
@@ -73,6 +79,7 @@ public class SettingsDto {
         private Integer incorrectLoginAttempts;
         private Integer ipBanTimeDays;
         private Integer incorrectPasswdAttempts;
+        private Integer logLifeTime;
 
         public Builder serverKeyLifeTimeDays(Integer serverKeyLifeTimeDays) {
             this.serverKeyLifeTimeDays = serverKeyLifeTimeDays;
@@ -111,6 +118,11 @@ public class SettingsDto {
 
         public Builder incorrectPasswdAttempts(Integer incorrectPasswdAttempts) {
             this.incorrectPasswdAttempts = incorrectPasswdAttempts;
+            return this;
+        }
+
+        public Builder logLifeTime(Integer logLifeTime) {
+            this.logLifeTime = logLifeTime;
             return this;
         }
 

@@ -12,6 +12,7 @@ public interface SettingsProvider {
     int getIncorrectLoginAttempts();
     int getIpBanTimeDays();
     int getIncorrectPasswdAttempts();
+    int getLogLifeTime();
     Set<String> getIpBlacklist();
     Set<String> getIpWhiteList();
     void setServerKeyLifeTimeDays(int lifeTime);
@@ -23,6 +24,7 @@ public interface SettingsProvider {
     void setIncorrectLoginAttempts(int attempts);
     void setIpBanTimeDays(int days);
     void setIncorrectPasswdAttempts(int attempts);
+    void setLogLifeTime(int lifeTime);
     void addIpToBlackList(String ip);
     void addIpToWhiteList(String ip);
     boolean isIpWhitelisted(String ip);

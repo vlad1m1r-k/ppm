@@ -104,6 +104,8 @@
     "srv6": "Password Min length",
     "srv7": "Password complexity",
     "srv8": "Special characters required",
+    "srv9": "Logging:",
+    "srv10": "Remove log records older than, Days",
     "srve1": "Error saving settings.",
     "uss1": "Change password",
     "uss2": "Password",
@@ -151,7 +153,6 @@
     "fle3": "The file is too big. Max size: 26 Mb",
     "fle4": "Error renaming file.",
     "fle5": "Error deleting file.",
-    "lg1": "Logs",
-    "lge1": "Error getting logs."
+    "lg1": "Logs"
   }
 }

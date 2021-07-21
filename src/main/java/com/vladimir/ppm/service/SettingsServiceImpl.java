@@ -51,6 +51,7 @@ public class SettingsServiceImpl implements SettingsService {
                     .incorrectLoginAttempts(settingsProvider.getIncorrectLoginAttempts())
                     .ipBanTimeDays(settingsProvider.getIpBanTimeDays())
                     .incorrectPasswdAttempts(settingsProvider.getIncorrectPasswdAttempts())
+                    .logLifeTime(settingsProvider.getLogLifeTime())
                     .build();
         }
         return null;
@@ -58,9 +59,11 @@ public class SettingsServiceImpl implements SettingsService {
 
     @Override
     public MessageDto saveSettings(Token token, int serverKeyLifeTime, int tokenLifeTime, int pwdMinLength,
-                                   boolean pwdComplexity, boolean pwdSpecialChar) throws NoSuchAlgorithmException, NoSuchProviderException {
-        if (userService.isAdmin(token) && validatorService.validateSrvKeyLT(serverKeyLifeTime) &&
-                validatorService.validateUsrTknLT(tokenLifeTime) && validatorService.validatePwdMinLength(pwdMinLength)) {
+                                   boolean pwdComplexity, boolean pwdSpecialChar, int logLifeTime)
+            throws NoSuchAlgorithmException, NoSuchProviderException {
+        if (userService.isAdmin(token) && validatorService.validateSrvKeyLT(serverKeyLifeTime)
+                && validatorService.validateUsrTknLT(tokenLifeTime) && validatorService.validatePwdMinLength(pwdMinLength)
+                && logLifeTime > 0) {
             if (settingsProvider.getServerKeyLifeTimeDays() != serverKeyLifeTime) {
                 if (settingsProvider.getServerKeyLifeTimeDays() > serverKeyLifeTime) {
                     settingsProvider.setServerKeyLifeTimeDays(serverKeyLifeTime);
@@ -79,6 +82,9 @@ public class SettingsServiceImpl implements SettingsService {
             }
             if (settingsProvider.getPwdSpecialChar() != pwdSpecialChar) {
                 settingsProvider.setPwdSpecialChar(pwdSpecialChar);
+            }
+            if (settingsProvider.getLogLifeTime() != logLifeTime) {
+                settingsProvider.setLogLifeTime(logLifeTime);
             }
             logger.log(token.getLogin(), Acts.UPDATE, Objects.SETTINGS, "Server settings", new Date(), "");
             return MessageDto.builder().build();

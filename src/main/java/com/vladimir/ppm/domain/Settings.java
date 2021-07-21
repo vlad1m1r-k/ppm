@@ -25,6 +25,7 @@ public class Settings {
     private volatile Integer incorrectLoginAttempts;
     private volatile Integer ipBanTimeDays;
     private volatile Integer incorrectPasswdAttempts;
+    private volatile Integer logLifeTime;
 
     @ElementCollection(fetch = FetchType.EAGER)
     private final Set<String> ipBlackList = new HashSet<>();
@@ -80,6 +81,10 @@ public class Settings {
         return ipWhiteList;
     }
 
+    public Integer getLogLifeTime() {
+        return logLifeTime;
+    }
+
     public void setEncryptionKeyId(Long encryptionKeyId) {
         this.encryptionKeyId = encryptionKeyId;
     }
@@ -114,5 +119,9 @@ public class Settings {
 
     public void setIncorrectPasswdAttempts(Integer incorrectPasswdAttempts) {
         this.incorrectPasswdAttempts = incorrectPasswdAttempts;
+    }
+
+    public void setLogLifeTime(Integer logLifeTime) {
+        this.logLifeTime = logLifeTime;
     }
 }

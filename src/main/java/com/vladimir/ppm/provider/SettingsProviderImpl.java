@@ -78,6 +78,11 @@ public class SettingsProviderImpl implements SettingsProvider {
     }
 
     @Override
+    public int getLogLifeTime() {
+        return settings.getLogLifeTime();
+    }
+
+    @Override
     public Set<String> getIpBlacklist() {
         return settings.getIpBlackList();
     }
@@ -157,6 +162,14 @@ public class SettingsProviderImpl implements SettingsProvider {
         Settings settings = settingsRepository.getOne(1L);
         this.settings.setIncorrectPasswdAttempts(attempts);
         settings.setIncorrectPasswdAttempts(attempts);
+    }
+
+    @Override
+    @Transactional
+    public void setLogLifeTime(int lifeTime) {
+        Settings settings = settingsRepository.getOne(1L);
+        this.settings.setLogLifeTime(lifeTime);
+        settings.setLogLifeTime(lifeTime);
     }
 
     @Override

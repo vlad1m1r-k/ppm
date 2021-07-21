@@ -2,6 +2,7 @@
     <table>
         <thead></thead>
         <tbody>
+        <tr><td>&nbsp;</td></tr>
         <tr>
             <td>{{ language.data.srv2 }}</td>
             <td>
@@ -14,6 +15,7 @@
             <td>{{ language.data.srv3 }}</td>
             <td><input type="number" class="form-control-sm" min="1" max="59" v-model="userTokenLifeTime"> 1 - 59</td>
         </tr>
+        <tr><td>&nbsp;</td></tr>
         <tr>
             <td class="text-primary">{{ language.data.srv5 }}</td>
         </tr>
@@ -28,6 +30,14 @@
         <tr>
             <td>{{ language.data.srv8 }}</td>
             <td><input type="checkbox" class="form-control-sm" v-model="pwdSpecialChar"></td>
+        </tr>
+        <tr><td>&nbsp;</td></tr>
+        <tr>
+            <td class="text-primary">{{ language.data.srv9 }}</td>
+        </tr>
+        <tr>
+            <td>{{ language.data.srv10 }}</td>
+            <td><input type="number" class="form-control-sm" min="1" v-model="logLifeTime"></td>
         </tr>
         </tbody>
     </table>
@@ -45,7 +55,8 @@ export default {
             userTokenLifeTime: null,
             pwdMinLength: null,
             pwdComplexity: null,
-            pwdSpecialChar: null
+            pwdSpecialChar: null,
+            logLifeTime: null
         }
     },
     methods: {
@@ -65,6 +76,7 @@ export default {
                 this.pwdMinLength = data.pwdMinLength;
                 this.pwdComplexity = data.pwdComplexity;
                 this.pwdSpecialChar = data.pwdSpecialChar;
+                this.logLifeTime = data.logLifeTime;
             } catch (e) {
                 this.eventHub.emit("show-msg", this.errorParser(e));
             }
@@ -72,7 +84,7 @@ export default {
         async saveSettings() {
             if (confirm(this.language.data.as2) && this.serverKeyLifeTime > 0 && this.serverKeyLifeTime <= 366 && this.userTokenLifeTime > 0
                 && this.userTokenLifeTime <= 59 && this.pwdMinLength > 2 && this.pwdMinLength <= 20 && this.pwdComplexity !== null
-                && this.pwdSpecialChar !== null) {
+                && this.pwdSpecialChar !== null && this.logLifeTime > 0) {
                 this.eventHub.emit("show-msg", "");
                 try {
                     const token = await this.tokenProvider.getToken();
@@ -82,7 +94,8 @@ export default {
                         tokenLifeTime: this.userTokenLifeTime,
                         pwdMinLength: this.pwdMinLength,
                         pwdComplexity: this.pwdComplexity,
-                        pwdSpecialChar: this.pwdSpecialChar
+                        pwdSpecialChar: this.pwdSpecialChar,
+                        logLifeTime: this.logLifeTime
                     });
                     const answer = await $.ajax({
                         url: "/settings/saveSettings",
@@ -96,6 +109,8 @@ export default {
                 } catch (e) {
                     this.eventHub.emit("show-msg", this.errorParser(e));
                 }
+            } else {
+                this.eventHub.emit("show-msg", this.language.data.srve1);
             }
         }
     },
