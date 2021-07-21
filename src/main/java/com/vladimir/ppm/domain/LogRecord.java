@@ -56,6 +56,10 @@ public class LogRecord {
         return date;
     }
 
+    public String getDateStr() {
+        return String.format("%1$tF %1$tT", date);
+    }
+
     public String getComment() {
         return comment;
     }

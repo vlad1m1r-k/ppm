@@ -28,7 +28,7 @@
             <td>{{ logRecord.act }}</td>
             <td>{{ logRecord.object }}</td>
             <td>{{ logRecord.objName }}</td>
-            <td>{{ logRecord.date }}</td>
+            <td>{{ logRecord.dateStr }}</td>
             <td>{{ logRecord.comment }}</td>
         </tr>
         </tbody>
