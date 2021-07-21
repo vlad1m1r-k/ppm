@@ -1,7 +1,7 @@
 <template>
     <span style="display: flex">
         <button class="btn btn-sm btn-outline-secondary" :title="language.data.sf1" @click="doSearch" :disabled="!text">&#x1f50d;</button>
-        <input type="text" class="form-control-sm align-middle" :placeholder="language.data.sf1" v-model="text" @keypress.enter="doSearch">
+        <input type="text" class="form-control-sm align-middle" :placeholder="placehold" v-model="text" @keypress.enter="doSearch">
     </span>
 </template>
 
@@ -13,12 +13,21 @@ export default {
             tokenProvider: this.$root.$data.tokenProvider,
             language: this.$root.$data.language,
             text: "",
-            result: []
+            result: [],
+            isLogTabActive: false
         }
     },
     watch: {
         text() {
             this.result = [];
+        }
+    },
+    computed: {
+        placehold() {
+            if (this.isLogTabActive) {
+                return this.language.data.sf4;
+            }
+            return this.language.data.sf1;
         }
     },
     methods: {
@@ -58,7 +67,16 @@ export default {
                 type: matchArray[2],
                 itemId: Number.parseInt(matchArray[3])
             });
+        },
+        logTab(isLogTab) {
+            this.isLogTabActive = isLogTab;
         }
+    },
+    created() {
+        this.eventHub.on("logTab-active", this.logTab);
+    },
+    beforeUnmount() {
+        this.eventHub.off("logTab-active", this.logTab);
     }
 }
 </script>

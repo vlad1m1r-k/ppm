@@ -106,6 +106,12 @@ export default {
     },
     beforeMount() {
         this.getLogs();
+    },
+    activated() {
+        this.eventHub.emit("logTab-active", true);
+    },
+    deactivated() {
+        this.eventHub.emit("logTab-active", false);
     }
 }
 </script>
