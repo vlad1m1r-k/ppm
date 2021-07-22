@@ -18,8 +18,11 @@ export default {
         }
     },
     watch: {
-        text() {
+        text(newVal) {
             this.result = [];
+            if (newVal.length === 0 && this.isLogTabActive) {
+                this.eventHub.emit("log-search", "");
+            }
         }
     },
     computed: {
@@ -36,25 +39,29 @@ export default {
                 if (this.text.trim().match("^\\$id:.*")) {
                     this.localSearch(this.text.trim());
                 } else {
-                    if (this.result.length > 0) {
-                        this.eventHub.emit("search-result", {result: this.result, text: this.text});
+                    if (this.isLogTabActive) {
+                        this.eventHub.emit("log-search", this.text);
                     } else {
-                        this.eventHub.emit("show-msg", "");
-                        try {
-                            const token = await this.tokenProvider.getToken();
-                            const encryptedData = await cryptoProvider.encrypt({
-                                token: token,
-                                text: this.text
-                            });
-                            const answer = await $.ajax({
-                                url: "/container/search",
-                                method: "POST",
-                                data: encryptedData
-                            });
-                            this.result = cryptoProvider.decrypt(answer);
+                        if (this.result.length > 0) {
                             this.eventHub.emit("search-result", {result: this.result, text: this.text});
-                        } catch (e) {
-                            this.eventHub.emit("show-msg", this.errorParser(e));
+                        } else {
+                            this.eventHub.emit("show-msg", "");
+                            try {
+                                const token = await this.tokenProvider.getToken();
+                                const encryptedData = await cryptoProvider.encrypt({
+                                    token: token,
+                                    text: this.text
+                                });
+                                const answer = await $.ajax({
+                                    url: "/container/search",
+                                    method: "POST",
+                                    data: encryptedData
+                                });
+                                this.result = cryptoProvider.decrypt(answer);
+                                this.eventHub.emit("search-result", {result: this.result, text: this.text});
+                            } catch (e) {
+                                this.eventHub.emit("show-msg", this.errorParser(e));
+                            }
                         }
                     }
                 }

@@ -10,7 +10,7 @@
         </div>
         <div class="row m-0">
             <div class="col">
-                <div>{{ language.data.sf3 }}</div>
+                <div v-if="searchResult.length === 0">{{ language.data.sf3 }}</div>
                 <ul>
                     <li v-for="cn in searchResult">
                         <button class="btn btn-sm btn-link" @click="localSearch(cn.id)"><span v-html="markText(cn.name, searchText)"></span></button>
@@ -67,7 +67,8 @@ export default {
             });
         },
         markText(data, text) {
-            return data.replaceAll(text, "<mark>" + text + "</mark>");
+            const regExp = new RegExp(text, "ig");
+            return data.replaceAll(regExp, "<mark>$&</mark>");
         }
     }
 }

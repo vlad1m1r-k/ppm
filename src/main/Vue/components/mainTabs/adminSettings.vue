@@ -48,13 +48,7 @@ export default {
             language: this.$root.$data.language,
             currentTab: "users",
         }
-    },
-    //TODO
-    // watch: {
-    //     currentTab(newValue) {
-    //         this.eventHub.emit("logTab-active", newValue === "logs");
-    //     }
-    // }
+    }
 }
 </script>
 

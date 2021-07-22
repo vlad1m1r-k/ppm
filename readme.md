@@ -1,6 +1,4 @@
 TODO:
-+ logging
-  + search in logs
 + liquibase
 
 SETTINGS:

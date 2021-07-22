@@ -23,13 +23,16 @@
         </tr>
         </thead>
         <tbody>
+        <tr v-if="logData.content && logData.content.length === 0">
+            <td colspan="15">{{ language.data.sf3 }}</td>
+        </tr>
         <tr v-for="logRecord in logData.content" :key="'LD' + logRecord.id">
-            <td>{{ logRecord.user }}</td>
-            <td>{{ logRecord.act }}</td>
-            <td>{{ logRecord.object }}</td>
-            <td>{{ logRecord.objName }}</td>
-            <td>{{ logRecord.dateStr }}</td>
-            <td>{{ logRecord.comment }}</td>
+            <td><span v-html="markText(logRecord.user, searchText)"></span></td>
+            <td><span v-html="markText(logRecord.act, searchText)"></span></td>
+            <td><span v-html="markText(logRecord.object, searchText)"></span></td>
+            <td><span v-html="markText(logRecord.objName, searchText)"></span></td>
+            <td><span v-html="markText(logRecord.dateStr, searchText)"></span></td>
+            <td><span v-html="markText(logRecord.comment, searchText)"></span></td>
         </tr>
         </tbody>
     </table>
@@ -63,7 +66,8 @@ export default {
             tokenProvider: this.$root.$data.tokenProvider,
             language: this.$root.$data.language,
             pager: new Pager(50, "date", "desc"),
-            logData: {}
+            logData: {},
+            searchText: ""
         }
     },
     watch: {
@@ -71,6 +75,11 @@ export default {
             if (newSize !== oldSize) {
                 this.pager.page = 0;
             }
+        }
+    },
+    computed: {
+        isSearch() {
+            return this.searchText.length !== 0;
         }
     },
     methods: {
@@ -95,23 +104,74 @@ export default {
                 this.eventHub.emit("show-msg", this.errorParser(e));
             }
         },
+        async doSearch() {
+            this.eventHub.emit("show-msg", "");
+            try {
+                const token = await this.tokenProvider.getToken();
+                const encryptedData = await cryptoProvider.encrypt({
+                    token: token,
+                    page: Number.parseInt(this.pager.page),
+                    size: Number.parseInt(this.pager.pageSize),
+                    direction: this.pager.direction,
+                    field: this.pager.sortField,
+                    text: this.searchText
+                });
+                const answer = await $.ajax({
+                    url: "/logs/search",
+                    method: "POST",
+                    data: encryptedData
+                });
+                this.logData = cryptoProvider.decrypt(answer);
+            } catch (e) {
+                this.eventHub.emit("show-msg", this.errorParser(e));
+            }
+        },
+        markText(data, text) {
+            if (text && data) {
+                const regExp = new RegExp(text, "ig");
+                return data.replaceAll(regExp, "<mark>$&</mark>");
+            }
+            return data;
+        },
         setSort(field) {
             this.pager.setSort(field);
-            this.getLogs();
+            if (this.isSearch) {
+                this.doSearch();
+            } else {
+                this.getLogs();
+            }
         },
         setPage(page) {
             this.pager.page = page;
-            this.getLogs();
+            if (this.isSearch) {
+                this.doSearch();
+            } else {
+                this.getLogs();
+            }
+        },
+        searchEvent(text) {
+            if (text.length === 0) {
+                this.searchText = text;
+                this.getLogs();
+            } else {
+                this.searchText = text;
+                this.pager.page = 0;
+                this.doSearch();
+            }
         }
     },
     beforeMount() {
         this.getLogs();
-    },
-    activated() {
         this.eventHub.emit("logTab-active", true);
     },
-    deactivated() {
+    unmounted() {
         this.eventHub.emit("logTab-active", false);
+    },
+    created() {
+        this.eventHub.on("log-search", this.searchEvent);
+    },
+    beforeUnmount() {
+        this.eventHub.off("log-search", this.searchEvent);
     }
 }
 </script>

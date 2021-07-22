@@ -31,4 +31,15 @@ public class LoggerServiceImpl implements LoggerService {
         }
         return Page.empty();
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<LogRecord> search(Token token, int page, int size, String direction, String field, String text) {
+        if (userService.isAdmin(token) && validatorService.validateString(direction) && validatorService.validateString(field)
+                && validatorService.validateString(text)) {
+            Pageable pageable = PageRequest.of(page, size, Sort.Direction.fromString(direction), field);
+            return repository.search(text, pageable);
+        }
+        return Page.empty();
+    }
 }

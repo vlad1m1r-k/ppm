@@ -34,7 +34,7 @@
             </div>
             <div class="row">
                 <div class="col">
-                    <keep-alive>
+                    <keep-alive exclude="adminSettings">
                         <component :is="currentTab"></component>
                     </keep-alive>
                 </div>

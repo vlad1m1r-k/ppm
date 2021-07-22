@@ -1,6 +1,8 @@
 package com.vladimir.ppm.domain;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -15,8 +17,13 @@ public class LogRecord {
     private Long id;
 
     private String user;
+
+    @Enumerated(EnumType.STRING)
     private Acts act;
+
+    @Enumerated(EnumType.STRING)
     private Objects object;
+
     private String objName;
     private Date date;
     private String comment;

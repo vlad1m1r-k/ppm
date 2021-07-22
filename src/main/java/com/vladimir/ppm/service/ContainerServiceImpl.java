@@ -31,6 +31,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -482,7 +483,7 @@ public class ContainerServiceImpl implements ContainerService {
             Set<Group> groups = userService.getGroups(token);
             Container root = containerRepository.getContainerByName("root");
             List<ContainerDto> searchResult = new ArrayList<>();
-            searchInTree(root, groups, text, searchResult);
+            searchInTree(root, groups, text.toLowerCase(), searchResult);
             return searchResult;
         }
         return new ArrayList<>();
@@ -579,7 +580,8 @@ public class ContainerServiceImpl implements ContainerService {
             List<PasswordDto> passwords = new ArrayList<>();
             List<FileDto> files = new ArrayList<>();
             for (Note note : container.getNotes()) {
-                if (!note.isDeleted() && (note.getName().contains(text) || cryptoProvider.decryptDbEntry(note.getEncryptedText()).contains(text))) {
+                if (!note.isDeleted() && (note.getName().toLowerCase().contains(text)
+                        || cryptoProvider.decryptDbEntry(note.getEncryptedText()).toLowerCase().contains(text))) {
                     notes.add(NoteDto.builder()
                             .id(note.getId())
                             .name(note.getName())
@@ -587,8 +589,9 @@ public class ContainerServiceImpl implements ContainerService {
                 }
             }
             for (Password pwd : container.getPasswords()) {
-                if (!pwd.isDeleted() && (pwd.getName().contains(text) || cryptoProvider.decryptDbEntry(pwd.getEncryptedLogin()).contains(text)
-                        || cryptoProvider.decryptDbEntry(pwd.getEncryptedNote()).contains(text))) {
+                if (!pwd.isDeleted() && (pwd.getName().toLowerCase().contains(text)
+                        || cryptoProvider.decryptDbEntry(pwd.getEncryptedLogin()).toLowerCase().contains(text)
+                        || cryptoProvider.decryptDbEntry(pwd.getEncryptedNote()).toLowerCase().contains(text))) {
                     passwords.add(PasswordDto.builder()
                             .id(pwd.getId())
                             .name(pwd.getName())
@@ -596,14 +599,14 @@ public class ContainerServiceImpl implements ContainerService {
                 }
             }
             for (File file : container.getFiles()) {
-                if (!file.isDeleted() && file.getName().contains(text)) {
+                if (!file.isDeleted() && file.getName().toLowerCase().contains(text)) {
                     files.add(FileDto.builder()
                     .id(file.getId())
                     .name(file.getName())
                     .build());
                 }
             }
-            if (!notes.isEmpty() || !passwords.isEmpty() || !files.isEmpty() || container.getName().contains(text)) {
+            if (!notes.isEmpty() || !passwords.isEmpty() || !files.isEmpty() || container.getName().toLowerCase().contains(text)) {
                 searchResult.add(ContainerDto.builder()
                         .id(container.getId())
                         .name(containerPathBuilder(container))
