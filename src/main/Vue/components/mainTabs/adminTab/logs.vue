@@ -38,7 +38,7 @@
     </table>
     <div class="row justify-content-center">
         <div class="col-auto">
-            <select v-model="pager.pageSize" @change="getLogs">
+            <select v-model="pager.pageSize" @change="setPageSize">
                 <option value="10">10</option>
                 <option value="20">20</option>
                 <option value="50" selected>50</option>
@@ -143,6 +143,13 @@ export default {
         },
         setPage(page) {
             this.pager.page = page;
+            if (this.isSearch) {
+                this.doSearch();
+            } else {
+                this.getLogs();
+            }
+        },
+        setPageSize() {
             if (this.isSearch) {
                 this.doSearch();
             } else {
