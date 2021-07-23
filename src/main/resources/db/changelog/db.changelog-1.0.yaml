@@ -1,0 +1,311 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1.0
+      author: v
+      changes:
+        - createTable:
+            tableName: containers
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: parent_id
+                  type: bigint
+                  constraints:
+                    foreignKeyName: fk_container_containerParent
+                    references: containers(id)
+              - column:
+                  name: deleted
+                  type: boolean
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_by
+                  type: varchar(255)
+              - column:
+                  name: created_date
+                  type: datetime(6)
+              - column:
+                  name: edited_by
+                  type: varchar(255)
+              - column:
+                  name: edited_date
+                  type: datetime(6)
+              - column:
+                  name: deleted_by
+                  type: varchar(255)
+              - column:
+                  name: deleted_date
+                  type: datetime(6)
+        - insert:
+            tableName: containers
+            columns:
+              - column:
+                  name: id
+                  value: 1
+              - column:
+                  name: name
+                  value: root
+              - column:
+                  name: deleted
+                  valueBoolean: false
+              - column:
+                  name: created_by
+                  value: SYSTEM
+              - column:
+                  name: created_date
+                  valueComputed: now()
+        - createTable:
+            tableName: containers_children
+            columns:
+              - column:
+                  name: container_id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    foreignKeyName: children_contId_containers
+                    references: containers(id)
+              - column:
+                  name: children_id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    unique: true
+                    nullable: false
+                    foreignKeyName: children_childId_containers
+                    references: containers(id)
+        - createTable:
+            tableName: sec_groups
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: admin_settings
+                  type: boolean
+                  constraints:
+                    nullable: false
+        - insert:
+            tableName: sec_groups
+            columns:
+              - column:
+                  name: id
+                  value: 1
+              - column:
+                  name: name
+                  value: Admins
+              - column:
+                  name: admin_settings
+                  valueBoolean: true
+        - createTable:
+            tableName: containers_groupsna
+            columns:
+              - column:
+                  name: container_id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    foreignKeyName: containers_groupsna_containers
+                    references: containers(id)
+              - column:
+                  name: groupsna_id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    foreignKeyName: containers_groupsna_sec_groups
+                    references: sec_groups(id)
+        - createTable:
+            tableName: containers_groupspt
+            columns:
+              - column:
+                  name: container_id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    foreignKeyName: containers_groupspt_containers
+                    references: containers(id)
+              - column:
+                  name: groupspt_id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    foreignKeyName: containers_groupspt_sec_groups
+                    references: sec_groups(id)
+        - createTable:
+            tableName: containers_groupsro
+            columns:
+              - column:
+                  name: container_id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    foreignKeyName: containers_groupsro_containers
+                    references: containers(id)
+              - column:
+                  name: groupsro_id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    foreignKeyName: containers_groupsro_sec_groups
+                    references: sec_groups(id)
+        - createTable:
+            tableName: containers_groupsrw
+            columns:
+              - column:
+                  name: container_id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    foreignKeyName: containers_groupsrw_containers
+                    references: containers(id)
+              - column:
+                  name: groupsrw_id
+                  type: bigint
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+                    foreignKeyName: containers_groupsrw_sec_groups
+                    references: sec_groups(id)
+        - createTable:
+            tableName: lob_holders
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: data
+                  type: longblob
+        - createTable:
+            tableName: files
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: size
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: deleted
+                  type: boolean
+                  constraints:
+                    nullable: false
+              - column:
+                  name: parent_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: files_containers
+                    references: containers(id)
+              - column:
+                  name: encrypted_body_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: files_lob_holders
+                    references: lob_holders(id)
+              - column:
+                  name: created_by
+                  type: varchar(255)
+              - column:
+                  name: created_date
+                  type: datetime(6)
+              - column:
+                  name: edited_by
+                  type: varchar(255)
+              - column:
+                  name: edited_date
+                  type: datetime(6)
+              - column:
+                  name: deleted_by
+                  type: varchar(255)
+              - column:
+                  name: deleted_date
+                  type: datetime(6)
+        - createTable:
+            tableName: log_records
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: act
+                  type: varchar(25)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: object
+                  type: varchar(25)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: obj_name
+                  type: varchar(255)
+              - column:
+                  name: date
+                  type: datetime(6)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: comment
+                  type: varchar(255)
+        - createTable:
+            tableName: notes
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
