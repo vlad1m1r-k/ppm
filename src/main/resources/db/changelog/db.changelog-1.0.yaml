@@ -309,3 +309,344 @@ databaseChangeLog:
                   constraints:
                     primaryKey: true
                     nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: parent_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: notes_containers
+                    references: containers(id)
+              - column:
+                  name: deleted
+                  type: boolean
+                  constraints:
+                    nullable: false
+              - column:
+                  name: encrypted_text_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: notes_lob_holders
+                    references: lob_holders(id)
+              - column:
+                  name: created_by
+                  type: varchar(255)
+              - column:
+                  name: created_date
+                  type: datetime(6)
+              - column:
+                  name: edited_by
+                  type: varchar(255)
+              - column:
+                  name: edited_date
+                  type: datetime(6)
+              - column:
+                  name: deleted_by
+                  type: varchar(255)
+              - column:
+                  name: deleted_date
+                  type: datetime(6)
+        - createTable:
+            tableName: passwords
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: parent_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: passwords_containers
+                    references: containers(id)
+              - column:
+                  name: deleted
+                  type: boolean
+                  constraints:
+                    nullable: false
+              - column:
+                  name: encrypted_login_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: passwords_login_lob_holders
+                    references: lob_holders(id)
+              - column:
+                  name: encrypted_note_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: passwords_note_lob_holders
+                    references: lob_holders(id)
+              - column:
+                  name: encrypted_pass_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: passwords_pass_lob_holders
+                    references: lob_holders(id)
+              - column:
+                  name: created_by
+                  type: varchar(255)
+              - column:
+                  name: created_date
+                  type: datetime(6)
+              - column:
+                  name: edited_by
+                  type: varchar(255)
+              - column:
+                  name: edited_date
+                  type: datetime(6)
+              - column:
+                  name: deleted_by
+                  type: varchar(255)
+              - column:
+                  name: deleted_date
+                  type: datetime(6)
+        - createTable:
+            tableName: pwd_gen_settings
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: pwd_length
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: numbers
+                  type: boolean
+                  constraints:
+                    nullable: false
+              - column:
+                  name: symbols
+                  type: boolean
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: settings
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: encryption_key_id
+                  type: bigint
+              - column:
+                  name: server_key_life_time_days
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: token_life_time_minutes
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: pwd_min_length
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: pwd_complexity
+                  type: boolean
+                  constraints:
+                    nullable: false
+              - column:
+                  name: pwd_special_char
+                  type: boolean
+                  constraints:
+                    nullable: false
+              - column:
+                  name: incorrect_login_attempts
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: incorrect_passwd_attempts
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: ip_ban_time_days
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: log_life_time
+                  type: int
+                  constraints:
+                    nullable: false
+        - insert:
+            tableName: settings
+            columns:
+              - column:
+                  name: id
+                  value: 1
+              - column:
+                  name: server_key_life_time_days
+                  value: 365
+              - column:
+                  name: token_life_time_minutes
+                  value: 5
+              - column:
+                  name: pwd_min_length
+                  value: 8
+              - column:
+                  name: pwd_complexity
+                  valueBoolean: true
+              - column:
+                  name: pwd_special_char
+                  valueBoolean: false
+              - column:
+                  name: incorrect_login_attempts
+                  value: 3
+              - column:
+                  name: incorrect_passwd_attempts
+                  value: 3
+              - column:
+                  name: ip_ban_time_days
+                  value: 1
+              - column:
+                  name: log_life_time
+                  value: 365
+        - createTable:
+            tableName: settings_ip_black_list
+            columns:
+              - column:
+                  name: settings_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: ip_black_list_settings
+                    references: settings(id)
+              - column:
+                  name: ip_black_list
+                  type: varchar(30)
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: settings_ip_white_list
+            columns:
+              - column:
+                  name: settings_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: ip_white_list_settings
+                    references: settings(id)
+              - column:
+                  name: ip_white_list
+                  type: varchar(30)
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: login
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: password
+                  type: varchar(60)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: varchar(10)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: pwd_gen_settings_id
+                  type: bigint
+                  constraints:
+                    foreignKeyName: users_pwd_gen_settings
+                    references: pwd_gen_settings(id)
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  value: 1
+              - column:
+                  name: login
+                  value: admin
+              - column:
+                  name: password
+                  value: $2a$10$RLXOMLafX857vFKTj7mUaeeBFiIFrz0hm8dU9ZY.quBXoYYVknQ0e
+              - column:
+                  name: status
+                  value: ENABLED
+        - createTable:
+            tableName: user_allowed_ips
+            columns:
+              - column:
+                  name: user_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: user_allowed_ips_users
+                    references: users(id)
+              - column:
+                  name: allowed_ips
+                  type: varchar(30)
+                  constraints:
+                    nullable: false
+        - createTable:
+            tableName: users_groups
+            columns:
+              - column:
+                  name: users_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: users_groups_sec_groups
+                    references: sec_groups(id)
+              - column:
+                  name: groups_id
+                  type: bigint
+                  constraints:
+                    nullable: false
+                    foreignKeyName: users_groups_users
+                    references: users(id)
+        - insert:
+            tableName: users_groups
+            columns:
+              - column:
+                  name: users_id
+                  value: 1
+              - column:
+                  name: groups_id
+                  value: 1
