@@ -8,12 +8,10 @@ import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.dto.MessageDto;
 import com.vladimir.ppm.provider.CryptoProvider;
 import com.vladimir.ppm.provider.SettingsProvider;
-import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.Base64;
-import java.util.stream.StreamSupport;
 
 @Service
 public class DatabaseServiceImpl implements DatabaseService {
@@ -59,8 +57,8 @@ public class DatabaseServiceImpl implements DatabaseService {
             if (settingsProvider.getDBEncryptionKeyId() != id) {
                 return MessageDto.builder().message("db10").build();
             }
-            Byte[] dbKey = StreamSupport.stream(json.get("key").spliterator(), false).map(o -> Byte.valueOf(String.valueOf(o))).toArray(Byte[]::new);
-            cryptoProvider.installDbKey(ArrayUtils.toPrimitive(dbKey));
+            byte[] dbKey = Base64.getDecoder().decode(json.get("key").asText());
+            cryptoProvider.installDbKey(dbKey);
         }
         return MessageDto.builder().build();
     }
