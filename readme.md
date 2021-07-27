@@ -22,21 +22,21 @@ Installation:
   server.ssl.key-password=<password>
   server.port=8443
   ```
-  <key_alias> shows following command:
-  ```
-  keytool -list -v -keystore cert.pfx
-  ```
+  <key_alias> shows following command:\
+  `keytool -list -v -keystore cert.pfx`
 + edit my.ini or my.cnf and set max_allowed_packet=80M
 
-Running:
+Running:\
 `java -jar ppm-1.0xx.jar`
 
-Launch:
-Go to https://<server_name>:<port>
+Launch:\
+Go to `https://<server_name>:<port>`
+
 Login: admin
+\
 Password: admin
 
-After first run you need to generate and save database encryption key.
-Go __Admin__ -> __Database__ and click "Generate", then save key.
-You will have to input the key after the server rebooted.
+After first run you need to generate and save database encryption key.\
+Go __Admin__ -> __Database__ and click "__Generate__", then save the key.\
+You will have to input the key after the server rebooted.\
 You will lose your encrypted data if the key is lost.
