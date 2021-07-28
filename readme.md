@@ -1,9 +1,12 @@
 ## PPM Password Manager
+### Features
+
 ### - Installation
 Prerequisites:
 + JRE 1.8+
 + MySQL 8
 + MySQL database created
++ MySQL database collation utf8_general_ci
 + SSL certificate p12(pfx) format
 
 Installation:

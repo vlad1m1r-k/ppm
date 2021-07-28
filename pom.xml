@@ -12,18 +12,18 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.3.9.RELEASE</version>
+        <version>2.5.3</version>
     </parent>
 
     <properties>
-        <mysql.connector.version>8.0.22</mysql.connector.version>
+        <mysql.connector.version>8.0.26</mysql.connector.version>
         <liquibase.version>4.4.2</liquibase.version>
-        <frontend.plugin.version>1.10.0</frontend.plugin.version>
-        <node.version>v14.15.4</node.version>
-        <webjars.locator.version>0.40</webjars.locator.version>
+        <frontend.plugin.version>1.12.0</frontend.plugin.version>
+        <node.version>v14.17.3</node.version>
+        <webjars.locator.version>0.41</webjars.locator.version>
         <bootstrap.version>4.5.3</bootstrap.version>
         <jquery.version>3.5.1</jquery.version>
-        <bc.version>1.66</bc.version>
+        <bc.version>1.69</bc.version>
     </properties>
 
     <dependencies>
@@ -91,6 +91,12 @@
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcpkix-jdk15on</artifactId>
             <version>${bc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.2</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
