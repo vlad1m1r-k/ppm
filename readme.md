@@ -43,3 +43,12 @@ After first run you need to generate and save database encryption key.\
 Go __Admin__ -> __Database__ and click "__Generate__", then save the key.\
 You will have to input the key after the server rebooted.\
 You will lose your encrypted data if the key is lost.
+
+### Register as linux service
+1. create system user\
+    `sudo useradd -r ppm`
+2. if you want to use privileged ports\
+    `sudo setcap 'cap_net_bind_service=+ep' /usr/lib/jvm/default-java/bin/java`
+3. create service
+//TODO
+4. allow autostart `sudo systemctl enable ppm`
