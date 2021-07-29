@@ -1,7 +1,20 @@
 ## PPM Password Manager
 ### Features
+- tree-like structure of containers with notes, passwords and files
+- edit tree structure by drag and drop
+- notes, passwords and files are encrypted in database
+- users and groups management
+- allowed IP for users
+- access to container management
+- additional layer of transport encryption
+- password generator
+- search
+- actions logging
+- IP blacklist
+- IP whitelist
+- dynamic blocking for incorrect login attempts
 
-### - Installation
+### Installation
 Prerequisites:
 + JRE 1.8+
 + MySQL 8
@@ -49,6 +62,50 @@ You will lose your encrypted data if the key is lost.
     `sudo useradd -r ppm`
 2. if you want to use privileged ports\
     `sudo setcap 'cap_net_bind_service=+ep' /usr/lib/jvm/default-java/bin/java`
-3. create service
-//TODO
+3. create service\
+    `/etc/systemd/system/ppm.service`
+   ```
+    [Unit]
+    Description=PPM service
+    After=mysql.service
+    StartLimitBurst=2
+    StartLimitIntervalSec=1
+
+    [Service]
+    Type=simple
+    Restart=no
+    RestartSec=1
+    User=ppm
+    ExecStart=/usr/bin/env java -jar /usr/local/ppm/ppm-1.001.jar
+    WorkingDirectory=/usr/local/ppm
+    SyslogIdentifier=ppm
+
+    [Install]
+    WantedBy=multi-user.target
+   ```
 4. allow autostart `sudo systemctl enable ppm`
+5. configure syslog
+    + create file `/var/log/ppm.log`
+    + `sudo chown syslog:adm /var/log/ppm.log`
+    + create file `/etc/rsyslog.d/ppm.conf`
+        ```
+        :programname, isequal, "ppm" /var/log/ppm.log
+        & stop
+        ```
+    + `sudo service rsyslog restart`
+6. start service `sudo service ppm start`
+
+### Prepare
+- create users
+- create groups
+- add users to groups
+- create containers
+- grant access for groups to containers
+
+### Access
+Group with __Admin__ flag have full access to all containers and included objects regardless of access settings.
+
+__NA__ - No Access. Do not have any access to container, subcontainers and included objects and cannot see it.\
+__PT__ - Path Through. Can see only container name and navigate to subcontainers with granted access.\
+__RO__ - Read Only. Can read all data from container.\
+__RW__ - Read Write. Full access.
