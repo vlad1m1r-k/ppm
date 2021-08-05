@@ -138,7 +138,7 @@ public class ContainerServiceImpl implements ContainerService {
             container.setDeletedBy(token.getLogin());
             container.setDeletedDate(new Date());
             container.setDeleted(true);
-            logger.log(token.getLogin(), Acts.DELETE, Objects.CONTAINER, containerPathBuilder(container), new Date(), "Permanently");
+            logger.log(token.getLogin(), Acts.DELETE, Objects.CONTAINER, containerPathBuilder(container), new Date(), "");
         }
         return MessageDto.builder().build();
     }
