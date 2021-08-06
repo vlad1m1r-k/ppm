@@ -570,50 +570,52 @@ public class ContainerServiceImpl implements ContainerService {
 
     private void searchInTree(Container container, Set<Group> groups, String text, List<ContainerDto> searchResult) {
         Access access = getAccess(container, groups);
-        if (access != Access.NA && access != Access.PT && !container.isDeleted()) {
+        if (access != Access.NA && !container.isDeleted()) {
             if (!container.getChildren().isEmpty()) {
                 for (Container childContainer : container.getChildren()) {
                     searchInTree(childContainer, groups, text, searchResult);
                 }
             }
-            List<NoteDto> notes = new ArrayList<>();
-            List<PasswordDto> passwords = new ArrayList<>();
-            List<FileDto> files = new ArrayList<>();
-            for (Note note : container.getNotes()) {
-                if (!note.isDeleted() && (note.getName().toLowerCase().contains(text)
-                        || cryptoProvider.decryptDbEntry(note.getEncryptedText()).toLowerCase().contains(text))) {
-                    notes.add(NoteDto.builder()
-                            .id(note.getId())
-                            .name(note.getName())
+            if (access != Access.PT) {
+                List<NoteDto> notes = new ArrayList<>();
+                List<PasswordDto> passwords = new ArrayList<>();
+                List<FileDto> files = new ArrayList<>();
+                for (Note note : container.getNotes()) {
+                    if (!note.isDeleted() && (note.getName().toLowerCase().contains(text)
+                            || cryptoProvider.decryptDbEntry(note.getEncryptedText()).toLowerCase().contains(text))) {
+                        notes.add(NoteDto.builder()
+                                .id(note.getId())
+                                .name(note.getName())
+                                .build());
+                    }
+                }
+                for (Password pwd : container.getPasswords()) {
+                    if (!pwd.isDeleted() && (pwd.getName().toLowerCase().contains(text)
+                            || cryptoProvider.decryptDbEntry(pwd.getEncryptedLogin()).toLowerCase().contains(text)
+                            || cryptoProvider.decryptDbEntry(pwd.getEncryptedNote()).toLowerCase().contains(text))) {
+                        passwords.add(PasswordDto.builder()
+                                .id(pwd.getId())
+                                .name(pwd.getName())
+                                .build());
+                    }
+                }
+                for (File file : container.getFiles()) {
+                    if (!file.isDeleted() && file.getName().toLowerCase().contains(text)) {
+                        files.add(FileDto.builder()
+                                .id(file.getId())
+                                .name(file.getName())
+                                .build());
+                    }
+                }
+                if (!notes.isEmpty() || !passwords.isEmpty() || !files.isEmpty() || container.getName().toLowerCase().contains(text)) {
+                    searchResult.add(ContainerDto.builder()
+                            .id(container.getId())
+                            .name(containerPathBuilder(container))
+                            .notes(notes)
+                            .passwords(passwords)
+                            .files(files)
                             .build());
                 }
-            }
-            for (Password pwd : container.getPasswords()) {
-                if (!pwd.isDeleted() && (pwd.getName().toLowerCase().contains(text)
-                        || cryptoProvider.decryptDbEntry(pwd.getEncryptedLogin()).toLowerCase().contains(text)
-                        || cryptoProvider.decryptDbEntry(pwd.getEncryptedNote()).toLowerCase().contains(text))) {
-                    passwords.add(PasswordDto.builder()
-                            .id(pwd.getId())
-                            .name(pwd.getName())
-                            .build());
-                }
-            }
-            for (File file : container.getFiles()) {
-                if (!file.isDeleted() && file.getName().toLowerCase().contains(text)) {
-                    files.add(FileDto.builder()
-                    .id(file.getId())
-                    .name(file.getName())
-                    .build());
-                }
-            }
-            if (!notes.isEmpty() || !passwords.isEmpty() || !files.isEmpty() || container.getName().toLowerCase().contains(text)) {
-                searchResult.add(ContainerDto.builder()
-                        .id(container.getId())
-                        .name(containerPathBuilder(container))
-                        .notes(notes)
-                        .passwords(passwords)
-                        .files(files)
-                        .build());
             }
         }
     }
