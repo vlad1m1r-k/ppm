@@ -1,5 +1,5 @@
 <template>
-    <div class="form-bg pl-3 pr-3 pt-1">
+    <div class="us-form-bg pl-3 pr-3 pt-1">
         <div class="row">
             <div class="col">
                 <button class="btn btn-sm btn-outline-primary" @click="currentTab = 'users'" :class="{selected: currentTab === 'users'}">
@@ -53,11 +53,5 @@ export default {
 </script>
 
 <style scoped>
-.form-bg {
-    background-color: #f1f1f1 !important;
-    border-radius: 3px;
-}
-.selected {
-    border-bottom: 4px solid darkblue;
-}
+
 </style>

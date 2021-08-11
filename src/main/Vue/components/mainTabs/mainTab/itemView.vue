@@ -172,14 +172,5 @@ export default {
 </script>
 
 <style scoped>
-.decor-iv {
-    background-color: #eaeaea;
-    border-radius: 3px;
-}
-.cursor-stop {
-    cursor: not-allowed;
-}
-.cursor-pointer {
-    cursor: pointer;
-}
+
 </style>

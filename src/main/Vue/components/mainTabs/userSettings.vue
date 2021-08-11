@@ -1,5 +1,5 @@
 <template>
-    <div class="form-bg pl-3 pr-3 pt-1">
+    <div class="us-form-bg pl-3 pr-3 pt-1">
         <div class="text-primary">{{ language.data.uss1 }}</div>
         <table>
             <thead></thead>
@@ -76,8 +76,5 @@ export default {
 </script>
 
 <style scoped>
-.form-bg {
-    background-color: #f1f1f1 !important;
-    border-radius: 3px;
-}
+
 </style>
