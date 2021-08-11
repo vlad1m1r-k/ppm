@@ -97,10 +97,4 @@ export default {
 </script>
 
 <style scoped>
-    .blur {
-        filter: blur(5px);
-    }
-    .form-bg {
-        background-color: lightgrey;
-    }
 </style>

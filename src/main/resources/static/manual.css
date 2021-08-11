@@ -37,6 +37,36 @@
     background: #f2f2f2;
 }
 
+.l-modal {
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    position: fixed;
+    background: rgba(0, 0, 0, 0.69);
+    z-index: 1050;
+    transition: all 0.4s ease-in-out;
+    -moz-transition: all 0.4s ease-in-out;
+    -webkit-transition: all 0.4s ease-in-out;
+    margin: 0;
+    padding: 0;
+    pointer-events: auto;
+}
+
+.l-modal-body {
+    padding: 15px;
+    width: 400px;
+    margin: 30px auto;
+    border-radius: 5px;
+    background: #fff;
+    box-shadow: 0 3px 7px rgba(0, 0, 0, .25);
+    -moz-box-shadow: 0 3px 7px rgba(0, 0, 0, .25);
+    -webkit-box-shadow: 0 3px 7px rgba(0, 0, 0, .25);
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+
 .searchTarget {
     background-color: #b7f696 !important;
 }
@@ -61,7 +91,64 @@
     background-color: darkgray;
     border-radius: 4px;
 }
+
 .fit-cell {
     width: 1%;
     white-space: nowrap;
+}
+
+.blur {
+    filter: blur(5px);
+}
+
+.form-bg {
+    background-color: lightgrey;
+}
+
+.us-form-bg {
+    background-color: #f1f1f1 !important;
+    border-radius: 3px;
+}
+
+.selected {
+    border-bottom: 4px solid darkblue;
+}
+
+.tr-ul {
+    list-style-type: none;
+    padding-left: 20px;
+}
+
+.caret::before {
+    content: "\25B7";
+    color: black;
+}
+
+.caret-down::before {
+    content: "\25BD";
+}
+
+.branch {
+    cursor: pointer;
+    /*background-color:#dadada;*/
+    padding-right: 5px;
+    padding-left: 5px;
+    border-radius: .2rem;
+}
+
+.tr-selected {
+    border: 1px solid blue;
+}
+
+.decor-iv {
+    background-color: #eaeaea;
+    border-radius: 3px;
+}
+
+.cursor-stop {
+    cursor: not-allowed;
+}
+
+.cursor-pointer {
+    cursor: pointer;
 }

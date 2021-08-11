@@ -36,11 +36,5 @@ export default {
 </script>
 
 <style scoped>
-.decor-iv {
-    background-color: #eaeaea;
-    border-radius: 3px;
-}
-.selected {
-    border-bottom: 4px solid darkblue;
-}
+
 </style>
