@@ -142,10 +142,5 @@ export default {
 </script>
 
 <style scoped>
-.decor {
-    white-space: nowrap;
-    border: 2px solid black;
-    border-radius: 10px;
-    padding-left: 5px;
-}
+
 </style>

@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.dto.CryptoDto;
-import com.vladimir.ppm.dto.DynamicListEntryDto;
 import com.vladimir.ppm.dto.MessageDto;
 import com.vladimir.ppm.dto.SettingsDto;
 import com.vladimir.ppm.provider.CryptoProvider;

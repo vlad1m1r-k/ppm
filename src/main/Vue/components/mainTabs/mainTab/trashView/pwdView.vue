@@ -202,27 +202,4 @@ export default {
 
 <style scoped>
 
-.btn-st {
-    cursor: pointer;
-    user-select: none;
-    display: flex;
-    align-items: center;
-    background-color: #e0e0e0;
-    padding-left: 3px;
-    padding-right: 3px;
-}
-
-.btn-st:hover {
-    background-color: darkgray;
-}
-
-.fs {
-    border-top-left-radius: 5px;
-    border-bottom-left-radius: 5px;
-}
-
-.er {
-    border-top-left-radius: 0 !important;
-    border-bottom-left-radius: 0 !important;
-}
 </style>

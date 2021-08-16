@@ -1,9 +1,9 @@
 package com.vladimir.ppm.provider;
 
+import com.vladimir.ppm.domain.DynamicListItem;
 import com.vladimir.ppm.domain.User;
 import com.vladimir.ppm.domain.UserStatus;
 import com.vladimir.ppm.repository.UserRepository;
-import com.vladimir.ppm.domain.DynamicListItem;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -94,7 +94,7 @@ public class SecurityProviderImpl implements SecurityProvider {
             userItem.setLastLoginAttemptTime(System.currentTimeMillis());
             userItem.setTotalLoginAttempts(userItem.getTotalLoginAttempts() + 1);
             if (userItem.getTotalLoginAttempts() >= settingsProvider.getIncorrectPasswdAttempts()) {
-                User user = userRepository.getOne(userId);
+                User user = userRepository.getById(userId);
                 user.setStatus(UserStatus.DISABLED);
             }
         }

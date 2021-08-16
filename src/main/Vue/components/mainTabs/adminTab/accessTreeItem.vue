@@ -1,5 +1,5 @@
 <template>
-    <dl>
+    <dl class="acce-dl">
         <dt class="border-bottom">
             <div class="row ml-0 mr-0">
                 <div class="col">{{ item.name }}</div>
@@ -21,7 +21,7 @@
                 </div>
             </div>
         </dt>
-        <dd v-for="child in item.children" :key="'ati' + child.id">
+        <dd class="acce-dd" v-for="child in item.children" :key="'ati' + child.id">
             <access-tree-item :item="child" :group="group" @update-tree="updateTree"></access-tree-item>
         </dd>
     </dl>
@@ -95,11 +95,5 @@ export default {
 </script>
 
 <style scoped>
-dd {
-    margin-left: 22px;
-    margin-bottom: auto;
-}
-dl {
-    margin-bottom: auto;
-}
+
 </style>

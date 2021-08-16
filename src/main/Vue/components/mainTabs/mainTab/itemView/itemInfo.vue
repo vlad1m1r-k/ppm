@@ -24,18 +24,5 @@ export default {
 </script>
 
 <style scoped>
-.info-box {
-    margin-left: 15px;
-    padding: 10px;
-    display: inline;
-    position: absolute;
-    z-index: 1000000;
-    background-color: #c0c4c4;
-    border-bottom-width: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
-    border-radius: 4px;
-    user-select: none;
-}
+
 </style>

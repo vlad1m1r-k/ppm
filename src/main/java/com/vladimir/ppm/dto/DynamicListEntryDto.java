@@ -1,8 +1,5 @@
 package com.vladimir.ppm.dto;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.util.Date;
 
 public class DynamicListEntryDto {

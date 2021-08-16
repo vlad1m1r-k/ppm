@@ -92,6 +92,27 @@
     border-radius: 4px;
 }
 
+.btn-st {
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    background-color: #e0e0e0;
+    padding-left: 3px;
+    padding-right: 3px;
+}
+.btn-st:hover {
+    background-color: darkgray;
+}
+.fs {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+.er {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+}
+
 .fit-cell {
     width: 1%;
     white-space: nowrap;
@@ -119,6 +140,10 @@
     padding-left: 20px;
 }
 
+.caret {
+    cursor: pointer;
+}
+
 .caret::before {
     content: "\25B7";
     color: black;
@@ -130,7 +155,6 @@
 
 .branch {
     cursor: pointer;
-    /*background-color:#dadada;*/
     padding-right: 5px;
     padding-left: 5px;
     border-radius: .2rem;
@@ -138,11 +162,28 @@
 
 .tr-selected {
     border: 1px solid blue;
+    background-color: white;
 }
 
 .decor-iv {
     background-color: #eaeaea;
     border-radius: 3px;
+}
+
+.decor {
+    white-space: nowrap;
+    border: 1px solid black;
+    border-radius: 10px;
+    padding-left: 5px;
+    margin-top: 1px;
+}
+
+.decor-tr {
+    white-space: nowrap;
+    border: 2px solid #ffab03;
+    border-radius: 10px;
+    padding-left: 5px;
+    cursor: pointer;
 }
 
 .cursor-stop {
@@ -151,4 +192,27 @@
 
 .cursor-pointer {
     cursor: pointer;
+}
+.acce-dd {
+    margin-left: 22px;
+    margin-bottom: auto;
+}
+
+.acce-dl {
+    margin-bottom: auto;
+}
+
+.info-box {
+    margin-left: 15px;
+    padding: 10px;
+    display: inline;
+    position: absolute;
+    z-index: 1000000;
+    background-color: #c0c4c4;
+    border-bottom-width: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+    border-radius: 4px;
+    user-select: none;
 }

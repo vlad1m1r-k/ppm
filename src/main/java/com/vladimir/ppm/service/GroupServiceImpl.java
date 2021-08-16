@@ -5,7 +5,6 @@ import com.vladimir.ppm.domain.Group;
 import com.vladimir.ppm.domain.Objects;
 import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.domain.User;
-import com.vladimir.ppm.dto.AccessTreeDto;
 import com.vladimir.ppm.dto.GroupDto;
 import com.vladimir.ppm.dto.MessageDto;
 import com.vladimir.ppm.dto.UserDto;
@@ -82,7 +81,7 @@ public class GroupServiceImpl implements GroupService {
             if (!validatorService.validateString(name)) {
                 return MessageDto.builder().message("gpe1").build();
             }
-            Group group = groupRepository.getOne(groupId);
+            Group group = groupRepository.getById(groupId);
             if (!group.getName().equals(name) && groupRepository.findGroupByName(name) != null) {
                 return MessageDto.builder().message("gpe2").build();
             }
@@ -97,7 +96,7 @@ public class GroupServiceImpl implements GroupService {
     @Transactional
     public MessageDto deleteGroup(Token token, long groupId) {
         if (userService.isAdmin(token)) {
-            Group group = groupRepository.getOne(groupId);
+            Group group = groupRepository.getById(groupId);
             group.getUsers().forEach(u -> u.getGroups().remove(group));
             groupRepository.delete(group);
             logger.log(token.getLogin(), Acts.DELETE, Objects.GROUP, group.getName(), new Date(), "");
@@ -109,7 +108,7 @@ public class GroupServiceImpl implements GroupService {
     @Transactional
     public MessageDto editGroupMembers(Token token, long groupId, long userId, boolean member) {
         if (userService.isAdmin(token)) {
-            Group group = groupRepository.getOne(groupId);
+            Group group = groupRepository.getById(groupId);
             User user = userService.getUserById(userId);
             if (member) {
                 group.getUsers().add(user);
@@ -125,6 +124,6 @@ public class GroupServiceImpl implements GroupService {
     @Override
     @Transactional(readOnly = true)
     public Group getGroupById(long groupId) {
-        return groupRepository.getOne(groupId);
+        return groupRepository.getById(groupId);
     }
 }

@@ -2,7 +2,6 @@ const path = require('path');
 const webpack = require('webpack');
 const CopyPlugin = require('copy-webpack-plugin');
 const { VueLoaderPlugin } = require('vue-loader');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
     mode: 'production',
@@ -14,12 +13,6 @@ module.exports = {
     },
     module: {
         rules: [
-            {
-                test: /\.css$/,
-                use: [{
-                    loader: MiniCssExtractPlugin.loader
-                }, 'css-loader' ]
-            },
             {
                 test: /\.vue$/,
                 loader: 'vue-loader'
@@ -36,9 +29,6 @@ module.exports = {
                     toType: 'file',
                 }
             ]
-        }),
-        new MiniCssExtractPlugin({
-            filename: "[name].css"
         }),
         new webpack.DefinePlugin({
             __VUE_OPTIONS_API__: true,

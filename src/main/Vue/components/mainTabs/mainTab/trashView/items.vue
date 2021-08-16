@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="decor" @click="showNotes = !showNotes">
+        <div class="decor-tr" @click="showNotes = !showNotes">
             {{ items.notes.length }} {{ language.data.iv7 }}
             <span class="btn-dc text-success" :title="language.data.cm7" @click.stop="restoreNotes">&#x21ba;</span>
             <span class="btn-dc" :title="language.data.cm5" @click.stop="removeNotes">&#x1f5d1;</span>
@@ -30,7 +30,7 @@
                 </tbody>
             </table>
         </div>
-        <div class="decor" @click="showPass = !showPass">
+        <div class="decor-tr" @click="showPass = !showPass">
             {{ items.passwords.length }} {{ language.data.iv8 }}
             <span class="btn-dc text-success" :title="language.data.cm7" @click.stop="restorePass">&#x21ba;</span>
             <span class="btn-dc" :title="language.data.cm5" @click.stop="removePass">&#x1f5d1;</span>
@@ -60,7 +60,7 @@
                 </tbody>
             </table>
         </div>
-        <div class="decor" @click="showFls = !showFls">
+        <div class="decor-tr" @click="showFls = !showFls">
             {{ items.files.length }} {{ language.data.fl1 }}
             <span class="btn-dc text-success" :title="language.data.cm7" @click.stop="restoreFiles">&#x21ba;</span>
             <span class="btn-dc" :title="language.data.cm5" @click.stop="removeFiles">&#x1f5d1;</span>
@@ -225,11 +225,5 @@ export default {
 </script>
 
 <style scoped>
-.decor {
-    white-space: nowrap;
-    border: 2px solid #ffab03;
-    border-radius: 10px;
-    padding-left: 5px;
-    cursor: pointer;
-}
+
 </style>
