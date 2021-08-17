@@ -154,6 +154,7 @@
 }
 
 .branch {
+    user-select: none;
     cursor: pointer;
     padding-right: 5px;
     padding-left: 5px;

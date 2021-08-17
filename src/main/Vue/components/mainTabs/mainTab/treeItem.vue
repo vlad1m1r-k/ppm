@@ -3,7 +3,7 @@
         <li style="white-space: nowrap" :draggable="item.access === 'RW' && item.name !== 'root'" @dragover="dragover"
             @dragstart="startDrag($event, item)" @drop="dropHandler($event, item)">
             <span class="caret" :class="{'caret-down': isOpen}" @click="isOpen = !isOpen" v-if="item.children && item.children.length > 0"></span>
-            <span class="branch" :class="{'tr-selected': item.id === selectedItem.id}" @click="$emit('item-select', item)">
+            <span class="branch" :class="{'tr-selected': item.id === selectedItem.id}" @click="$emit('item-select', item)" @dblclick="isOpen = !isOpen">
                 {{ item.name }}
             </span>
         </li>
