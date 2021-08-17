@@ -109,3 +109,8 @@ __NA__ - No Access. Do not have any access to container, subcontainers and inclu
 __PT__ - Path Through. Can see only container name and navigate to subcontainers with granted access.\
 __RO__ - Read Only. Can read all data from container.\
 __RW__ - Read Write. Full access.
+
+###Changelog
+1.002
+  + Generated password can be deleted
+  + Container can be opened by double click
