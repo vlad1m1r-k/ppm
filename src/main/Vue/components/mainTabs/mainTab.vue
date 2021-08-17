@@ -23,9 +23,9 @@ import searchView from "./mainTab/searchView.vue";
 export default {
     name: "mainTab",
     components: {
-        'tree-item': treeItem,
-        'item-view': itemView,
-        'trash-view': trashView,
+        treeItem,
+        itemView,
+        trashView,
         searchView
     },
     data() {
