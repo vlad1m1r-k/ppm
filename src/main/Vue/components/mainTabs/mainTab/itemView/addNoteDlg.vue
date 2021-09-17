@@ -9,7 +9,7 @@
         </div>
         <div class="row">
             <div class="col">
-                <input class="form-control" v-model="name" :placeholder="language.data.iv6">
+                <input class="form-control" v-model="name" :placeholder="language.data.iv6" ref="ivAddNote" @keydown.esc="$emit('close-dlg')">
             </div>
         </div>
         <div class="row">
@@ -61,6 +61,9 @@ export default {
                 this.eventHub.emit("show-msg", this.errorParser(e));
             }
         }
+    },
+    mounted() {
+        this.$refs.ivAddNote.focus();
     }
 }
 </script>

@@ -3,10 +3,7 @@
         <td>
             <input type="checkbox" :value="pwd.id" v-model="$parent.$data.checkedPass">
         </td>
-        <td>
-            <span class="btn-dc" @click="toggle" :title="language.data.cm1">&#x1f441;</span>
-        </td>
-        <td>{{ pwd.name }}</td>
+        <td><span class="btn-link cursor-pointer" @click="toggle" :title="language.data.cm1">{{ pwd.name }}</span></td>
         <td>{{ pwd.createdDate }}</td>
         <td>{{ pwd.createdBy }}</td>
         <td>{{ pwd.editedDate }}</td>

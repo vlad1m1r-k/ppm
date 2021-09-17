@@ -6,7 +6,7 @@
 
     <groupId>com.vladimir</groupId>
     <artifactId>ppm</artifactId>
-    <version>1.002</version>
+    <version>1.003</version>
     <packaging>jar</packaging>
 
     <parent>

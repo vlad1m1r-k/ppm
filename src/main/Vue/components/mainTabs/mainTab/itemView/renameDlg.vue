@@ -1,6 +1,6 @@
 <template>
     <div>
-        <input class="form-control-sm" v-model="name">
+        <input class="form-control-sm" v-model="name" ref="ivRenCnt" @keypress.enter="renameContainer" @keydown.esc="$emit('close-dlg')">
         <button class="btn btn-sm btn-outline-success" :disabled="name.length === 0" @click="renameContainer">&check;
         </button>
         <button class="btn btn-sm btn-outline-danger" @click="$emit('close-dlg')">&Chi;</button>
@@ -51,6 +51,7 @@ export default {
         }
     },
     mounted() {
+        this.$refs.ivRenCnt.focus();
         this.name = this.item.name;
     }
 }

@@ -5,10 +5,10 @@
                 {{ message }}
             </div>
             <div class="form-group">
-                <input type="text" class="form-control" :placeholder="language.data.lf1" v-model="login" autofocus>
+                <input type="text" class="form-control" :placeholder="language.data.lf1" v-model="login" ref="lfLogin">
             </div>
             <div class="form-group">
-                <input type="password" class="form-control" :placeholder="language.data.lf2" v-model="password" @keypress.enter="doLogin">
+                <input type="password" class="form-control" :placeholder="language.data.lf2" v-model="password" @keypress.enter="doLogin" ref="lfPwd">
             </div>
             <div class="container">
                 <div class="row justify-content-md-center">
@@ -31,6 +31,19 @@ export default {
             password: ""
         }
     },
+    watch: {
+        'tokenProvider.token'(token) {
+            if (!token) {
+                this.$nextTick(() => {
+                    if (this.login) {
+                        this.$refs.lfPwd.focus();
+                    } else {
+                        this.$refs.lfLogin.focus();
+                    }
+                })
+            }
+        }
+    },
     methods: {
         async doLogin() {
             if (this.login.length > 1) {
@@ -51,6 +64,9 @@ export default {
                 }
             }
         }
+    },
+    mounted() {
+        this.$refs.lfLogin.focus();
     }
 }
 </script>
