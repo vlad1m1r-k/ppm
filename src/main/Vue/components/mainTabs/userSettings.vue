@@ -11,11 +11,11 @@
             </tr>
             <tr>
                 <td>{{ language.data.uss2 }}</td>
-                <td><input type="password" class="form-control-sm" v-model="pwd"></td>
+                <td><input type="password" class="form-control-sm" v-model="pwd" ref="usPwd1" @keypress.enter="send"></td>
             </tr>
             <tr>
                 <td>{{ language.data.uss3 }}</td>
-                <td><input type="password" class="form-control-sm" v-model="pwd2"></td>
+                <td><input type="password" class="form-control-sm" v-model="pwd2" @keypress.enter="send"></td>
             </tr>
             </tbody>
         </table>
@@ -71,6 +71,9 @@ export default {
                 this.msg = this.language.data.usse2;
             }
         }
+    },
+    mounted() {
+        this.$refs.usPwd1.focus();
     }
 }
 </script>

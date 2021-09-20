@@ -2,10 +2,9 @@
     <div :class="{'searchTarget': isSearchTarget}">
         <div class="decor">
             &#x1f512;
-            <span class="btn-dc" @click="toggle" :title="language.data.cm1">&#x1f441;</span>
             <item-info :item="note" v-if="access === 'RW'"></item-info>
-            &nbsp; {{ note.name }} &nbsp;
-            <span class="btn-dc" v-show="show && access === 'RW'" :title="language.data.cm2" @click="edit = true">&#x1f589;</span>
+            &nbsp; <span class="btn-link cursor-pointer" @click="toggle" :title="language.data.cm1">{{ note.name }}</span> &nbsp;
+            <span class="btn-dc" v-show="show && access === 'RW' && !edit" :title="language.data.cm2" @click="edit = true">&#x1f589;</span>
             <span class="btn-dc" v-show="show && access === 'RW' && edit" :title="language.data.cm3" @click="save">&#x2705;</span>
             <span class="btn-dc" v-show="show && access === 'RW' && edit" :title="language.data.cm4" @click="cancel">&#x274c;</span>
             <span class="btn-dc float-right" v-show="access === 'RW'" :title="language.data.cm5" @click="remove">&#x1f5d1;</span>

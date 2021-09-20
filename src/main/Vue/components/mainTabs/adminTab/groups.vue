@@ -13,7 +13,8 @@
         <tbody>
         <tr v-show="showAddDlg">
             <td colspan="10">
-                <input type="text" class="form-control-sm align-middle" min="1" :placeholder="language.data.gp2" v-model="name">
+                <input type="text" class="form-control-sm align-middle" min="1" :placeholder="language.data.gp2" v-model="name"
+                    ref="admAddGrp" @keypress.enter="addGroup" @keydown.esc="cancel">
                 &nbsp;{{ language.data.gp3 }}:
                 <select class="form-control-sm align-middle" :class="{'bg-danger': adminSettings}" v-model="adminSettings"
                         :title="language.data.gp3">
@@ -48,6 +49,13 @@ export default {
             adminSettings: false
         }
     },
+    watch: {
+        showAddDlg(value) {
+            if (value) {
+                this.$nextTick(() => this.$refs.admAddGrp.focus());
+            }
+        }
+    },
     methods: {
         setSort(field) {
             this.sort.setField(field);
@@ -78,28 +86,30 @@ export default {
         },
         async addGroup() {
             this.eventHub.emit("show-msg", "");
-            try {
-                const token = await this.tokenProvider.getToken();
-                const encryptedData = await cryptoProvider.encrypt({
-                    token: token,
-                    name: this.name,
-                    admin: this.adminSettings
-                });
-                const answer = await $.ajax({
-                    url: "/group/addGroup",
-                    method: "POST",
-                    data: encryptedData
-                });
-                const data = cryptoProvider.decrypt(answer);
-                if (data.message) {
-                    this.eventHub.emit("show-msg", this.language.data[data.message]);
-                } else {
-                    this.name = "";
-                    this.adminSettings = false;
-                    this.getGroups();
+            if (this.name) {
+                try {
+                    const token = await this.tokenProvider.getToken();
+                    const encryptedData = await cryptoProvider.encrypt({
+                        token: token,
+                        name: this.name,
+                        admin: this.adminSettings
+                    });
+                    const answer = await $.ajax({
+                        url: "/group/addGroup",
+                        method: "POST",
+                        data: encryptedData
+                    });
+                    const data = cryptoProvider.decrypt(answer);
+                    if (data.message) {
+                        this.eventHub.emit("show-msg", this.language.data[data.message]);
+                    } else {
+                        this.name = "";
+                        this.adminSettings = false;
+                        this.getGroups();
+                    }
+                } catch (e) {
+                    this.eventHub.emit("show-msg", this.errorParser(e));
                 }
-            } catch (e) {
-                this.eventHub.emit("show-msg", this.errorParser(e));
             }
         }
     },

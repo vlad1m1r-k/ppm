@@ -13,7 +13,7 @@
         <tbody>
         <tr v-show="showAddDlg">
             <td colspan="10">
-                <input type="text" class="form-control-sm align-middle" min="1" :placeholder="language.data.lf1" v-model="login">
+                <input type="text" class="form-control-sm align-middle" min="1" :placeholder="language.data.lf1" v-model="login" ref="admAddUsr">
                 <input type="password" class="form-control-sm align-middle" min="1" :placeholder="language.data.lf2" v-model="pwd">
                 <select class="form-control-sm align-middle" v-model="status" :class="{'bg-danger': status === 'DISABLED'}">
                     <option class="bg-light" v-for="status in statuses" :value="status">{{ status }}</option>
@@ -48,6 +48,13 @@ export default {
             pwd: "",
             status: "ENABLED",
             statuses: null
+        }
+    },
+    watch: {
+        showAddDlg(value) {
+            if (value) {
+                this.$nextTick(() => this.$refs.admAddUsr.focus());
+            }
         }
     },
     methods: {

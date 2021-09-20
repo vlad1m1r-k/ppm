@@ -10,7 +10,6 @@
                 <thead class="tab-header-area">
                 <tr>
                     <th><input type="checkbox" @change="checkToggle($event.target.checked, 'notes')"></th>
-                    <th></th>
                     <th>
                         <button class="btn btn-sm btn-link" @click="setNotesSort('name')">{{ language.data.div1 }}</button>
                     </th>
@@ -40,7 +39,6 @@
                 <thead class="tab-header-area">
                 <tr>
                     <th><input type="checkbox" @change="checkToggle($event.target.checked, 'pass')"></th>
-                    <th></th>
                     <th>
                         <button class="btn btn-sm btn-link" @click="setPwdSort('name')">{{ language.data.div1 }}</button>
                     </th>

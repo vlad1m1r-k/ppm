@@ -3,10 +3,7 @@
         <td>
             <input type="checkbox" :value="note.id" v-model="$parent.$data.checkedNotes">
         </td>
-        <td>
-            <span class="btn-dc" @click="toggle" :title="language.data.cm1">&#x1f441;</span>
-        </td>
-        <td>{{ note.name }}</td>
+        <td><span class="btn-link cursor-pointer" @click="toggle" :title="language.data.cm1">{{ note.name }}</span></td>
         <td>{{ note.createdDate }}</td>
         <td>{{ note.createdBy }}</td>
         <td>{{ note.editedDate }}</td>

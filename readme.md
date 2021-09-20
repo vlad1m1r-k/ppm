@@ -111,6 +111,9 @@ __RO__ - Read Only. Can read all data from container.\
 __RW__ - Read Write. Full access.
 
 ### Changelog
-1.002
+- __1.002__
   + Generated password can be deleted
   + Container can be opened by double click
+- __1.003__
+  + convenience improvements
+  + //TODO change password at next logon
