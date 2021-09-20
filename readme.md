@@ -110,7 +110,7 @@ __PT__ - Path Through. Can see only container name and navigate to subcontainers
 __RO__ - Read Only. Can read all data from container.\
 __RW__ - Read Write. Full access.
 
-###Changelog
+### Changelog
 - __1.002__
   + Generated password can be deleted
   + Container can be opened by double click
