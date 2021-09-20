@@ -19,7 +19,7 @@
                     <div class="col p-0">
                         <input type="text" class="form-control-sm align-middle" v-model="ip" placeholder="x.x.x.x/xx" ref="admUsrAddIp"
                             @keypress.enter="addIp" @keydown.esc="ip = ''; addDlg = false">
-                        <button class="btn btn-sm btn-outline-success" :disabled="isIpValid" @click="addIp">&check;
+                        <button class="btn btn-sm btn-outline-success" :disabled="!isIpValid" @click="addIp">&check;
                         </button>
                         <button class="btn btn-sm btn-danger" @click="ip = ''; addDlg = false">X</button>
                     </div>
@@ -64,7 +64,7 @@ export default {
     },
     computed: {
         isIpValid() {
-            return !this.ip.match("^(?:(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])(\\.(?!$)|$|(\\/([1-2][0-9]|3[0-2]|[0-9])))){4}$");
+            return this.ip.match("^(?:(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])(\\.(?!$)|$|(\\/([1-2][0-9]|3[0-2]|[0-9])))){4}$");
         }
     },
     watch: {
@@ -95,7 +95,7 @@ export default {
         },
         async addIp() {
             this.eventHub.emit("show-msg", "");
-            if (!this.isIpValid) {
+            if (this.isIpValid) {
                 try {
                     const token = await this.tokenProvider.getToken();
                     const encryptedData = await cryptoProvider.encrypt({

@@ -115,6 +115,5 @@ __RW__ - Read Write. Full access.
   + Generated password can be deleted
   + Container can be opened by double click
 - __1.003__
-  + visual improvements
-  + //TODO rework opening item
+  + convenience improvements
   + //TODO change password at next logon
