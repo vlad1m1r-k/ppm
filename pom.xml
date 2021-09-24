@@ -21,7 +21,6 @@
         <frontend.plugin.version>1.12.0</frontend.plugin.version>
         <node.version>v14.17.3</node.version>
         <webjars.locator.version>0.41</webjars.locator.version>
-        <bootstrap.version>4.5.3</bootstrap.version>
         <jquery.version>3.5.1</jquery.version>
         <bc.version>1.69</bc.version>
     </properties>
@@ -71,11 +70,6 @@
             <groupId>org.webjars</groupId>
             <artifactId>webjars-locator</artifactId>
             <version>${webjars.locator.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>bootstrap</artifactId>
-            <version>${bootstrap.version}</version>
         </dependency>
         <dependency>
             <groupId>org.webjars</groupId>
