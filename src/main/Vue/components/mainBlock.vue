@@ -1,5 +1,5 @@
 <template>
-    <div :class="{'blur': tokenProvider.token === null}">
+    <div class="h-100" :class="{'blur': tokenProvider.token === null}" @click="clickEvent">
         <div class="container-fluid">
             <div class="row justify-content-between form-bg">
                 <div class="col-sm mr-auto">
@@ -85,6 +85,9 @@ export default {
         showMain() {
             this.setTab("mainTab");
             this.eventHub.emit("show-main");
+        },
+        clickEvent() {
+            this.eventHub.emit("close-menu");
         }
     },
     created() {
