@@ -786,6 +786,9 @@ a.text-dark:hover, a.text-dark:focus {
 
 .dropdown-menu.show {
     display: block;
+    right: auto;
+    bottom: auto;
+
 }
 
 table {
