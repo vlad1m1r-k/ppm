@@ -5,11 +5,10 @@
         <div class="row m-0">
             <div class="col-sm-auto">
                 <div class="dropdown" v-if="item.access === 'RW'">
-                    <button class="btn-sm btn-outline-primary dropdown-toggle" type="button" id="dropdownMenuButton"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" @click.stop="showMenu = !showMenu">
+                    <button class="btn-sm btn-outline-primary dropdown-toggle" type="button" @click.stop="showMenu = !showMenu">
                         {{ item.name }}
                     </button>
-                    <div class="dropdown-menu dropdown-menu-right" :class="{show: showMenu}" aria-labelledby="dropdownMenuButton">
+                    <div class="dropdown-menu dropdown-menu-right" :class="{show: showMenu}">
                         <a class="dropdown-item cursor-pointer" @click="showAddDlg = true">{{ language.data.iv1 }}</a>
                         <a class="dropdown-item cursor-pointer" @click="showRenameDlg = true" v-if="item.name !== 'root'">
                             {{ language.data.iv4 }}

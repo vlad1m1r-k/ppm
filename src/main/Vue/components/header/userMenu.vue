@@ -1,10 +1,9 @@
 <template>
     <div class="dropdown">
-        <button class="btn-sm btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
-                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" @click.stop="showMenu = !showMenu">
+        <button class="btn-sm btn-outline-secondary dropdown-toggle" type="button" @click.stop="showMenu = !showMenu">
             {{ tokenProvider.userName }}
         </button>
-        <div class="dropdown-menu dropdown-menu-right" :class="{show: showMenu}" aria-labelledby="dropdownMenuButton">
+        <div class="dropdown-menu dropdown-menu-right" :class="{show: showMenu}">
             <a class="dropdown-item" @click="$emit('change-tab', 'userSettings')">{{ language.data.um1 }}</a>
             <a class="dropdown-item" @click="logout">{{ language.data.um2 }}</a>
         </div>
