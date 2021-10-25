@@ -499,6 +499,10 @@ textarea {
     margin-right: 0 !important;
 }
 
+.mr-2 {
+    margin-right: 0.5rem !important;
+}
+
 .ml-0 {
     margin-left: 0 !important;
 }
@@ -746,6 +750,11 @@ a.text-dark:hover, a.text-dark:focus {
     left: auto;
 }
 
+.dropdown-menu-left {
+    right: auto;
+    left: 0;
+}
+
 .dropdown-divider {
     height: 0;
     margin: 0.5rem 0;
@@ -786,7 +795,6 @@ a.text-dark:hover, a.text-dark:focus {
 
 .dropdown-menu.show {
     display: block;
-    right: auto;
     bottom: auto;
 
 }

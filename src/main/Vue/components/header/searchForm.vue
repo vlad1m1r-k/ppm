@@ -1,7 +1,7 @@
 <template>
     <span style="display: flex">
-        <button class="btn btn-sm btn-outline-secondary" :title="language.data.sf1" @click="doSearch" :disabled="!text">&#x1f50d;</button>
         <input type="text" class="form-control-sm align-middle" :placeholder="placehold" v-model="text" @keypress.enter="doSearch">
+        <button class="btn btn-sm btn-outline-secondary mr-2" :title="language.data.sf1" @click="doSearch" :disabled="!text">&#x1f50d;</button>
     </span>
 </template>
 

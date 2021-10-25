@@ -8,7 +8,7 @@
                     <button class="btn-sm btn-outline-primary dropdown-toggle" type="button" @click.stop="showMenu = !showMenu">
                         {{ item.name }}
                     </button>
-                    <div class="dropdown-menu dropdown-menu-right" :class="{show: showMenu}">
+                    <div class="dropdown-menu dropdown-menu-left" :class="{show: showMenu}">
                         <a class="dropdown-item cursor-pointer" @click="showAddDlg = true">{{ language.data.iv1 }}</a>
                         <a class="dropdown-item cursor-pointer" @click="showRenameDlg = true" v-if="item.name !== 'root'">
                             {{ language.data.iv4 }}
