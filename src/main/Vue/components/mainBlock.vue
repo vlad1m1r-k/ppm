@@ -1,4 +1,5 @@
 <template>
+    <user-settings v-if="showUserSettings" @close-dlg="showUserSettings = false"></user-settings>
     <div class="h-100" :class="{'blur': tokenProvider.token === null}" @click="clickEvent">
         <div class="container-fluid">
             <div class="row justify-content-between form-bg">
@@ -14,7 +15,7 @@
                             <search-form></search-form>
                         </div>
                         <div class="col-sm p-0">
-                            <user-menu @change-tab="setTab"></user-menu>
+                            <user-menu @show-user-settings="showUserSettings = true"></user-menu>
                         </div>
                         <div class="col-sm pl-0">
                             <language-selector></language-selector>
@@ -68,7 +69,8 @@ export default {
             tokenProvider: this.$root.$data.tokenProvider,
             language: this.$root.$data.language,
             currentTab: "mainTab",
-            message: ""
+            message: "",
+            showUserSettings: false
         }
     },
     methods: {
