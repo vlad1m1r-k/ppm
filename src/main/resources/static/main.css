@@ -1,6 +1,7 @@
 @import url("/css/modal.css");
 @import url("/css/common.css");
 @import url("/css/buttons.css");
+@import url("/css/header.css");
 
 :root {
     --breakpoint-xs: 0;

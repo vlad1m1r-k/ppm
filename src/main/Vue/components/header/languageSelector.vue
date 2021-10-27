@@ -1,10 +1,8 @@
 <template>
-    <div>
-        <select class="form-control-sm" v-model="selectedLang" @change="setLang">
-            <option value="en-US">En</option>
-            <option value="uk-UA">Ua</option>
-        </select>
-    </div>
+    <select class="form-control-sm" v-model="selectedLang" @change="setLang">
+        <option value="en-US">En</option>
+        <option value="uk-UA">Ua</option>
+    </select>
 </template>
 
 <script>

@@ -2,15 +2,15 @@
     <user-settings v-if="showUserSettings" @close-dlg="showUserSettings = false"></user-settings>
     <div class="h-100" :class="{'blur': tokenProvider.token === null}" @click="clickEvent">
         <div class="container-fluid">
-            <div class="form-bg">
-                <span>
+            <div class="header form-bg">
+                <span class="h-b1">
                     <button class="btn btn-sm btn-outline-secondary" @click="showMain">{{ language.data.mp1 }}</button>
                     <button class="btn btn-sm btn-outline-danger" @click="currentTab = 'adminSettings'" v-if="tokenProvider.adminSettings">{{ language.data.as1 }}</button>
                     <button class="btn btn-sm btn-outline-danger" @click="showTrash" v-if="tokenProvider.adminSettings" :title="language.data.di1">&#x1f5d1;</button>
                 </span>
                 <pwd-gen></pwd-gen>
-                <search-form></search-form>
-                <span>
+                <search-form class="h-b3"></search-form>
+                <span class="h-b4">
                     <user-menu @show-user-settings="showUserSettings = true"></user-menu>
                     <language-selector></language-selector>
                 </span>

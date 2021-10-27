@@ -1,5 +1,5 @@
 <template>
-    <div class="dropdown">
+    <span class="dropdown">
         <button class="btn-sm btn-outline-secondary dropdown-toggle" type="button" @click.stop="showMenu = !showMenu">
             {{ tokenProvider.userName }}
         </button>
@@ -7,7 +7,7 @@
             <a class="dropdown-item" @click="$emit('show-user-settings')">{{ language.data.um1 }}</a>
             <a class="dropdown-item" @click="logout">{{ language.data.um2 }}</a>
         </div>
-    </div>
+    </span>
 </template>
 
 <script>
