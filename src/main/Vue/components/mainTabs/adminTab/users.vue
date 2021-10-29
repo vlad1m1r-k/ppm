@@ -1,6 +1,6 @@
 <template>
     <table class="table table-bordered table-striped table-sm">
-        <thead class="tab-header-area">
+        <thead>
         <tr>
             <th><button class="btn btn-sm btn-link" @click="setSort('login')">{{ language.data.lf1 }}</button></th>
             <th><button class="btn btn-sm btn-link" @click="setSort('status')">{{ language.data.us2 }}</button></th>

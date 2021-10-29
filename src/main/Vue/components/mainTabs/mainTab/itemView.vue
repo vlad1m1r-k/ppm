@@ -5,11 +5,10 @@
         <div class="row m-0">
             <div class="col-sm-auto">
                 <div class="dropdown" v-if="item.access === 'RW'">
-                    <button class="btn-sm btn-outline-primary dropdown-toggle" type="button" id="dropdownMenuButton"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button class="btn-sm btn-outline-primary dropdown-toggle" type="button" @click.stop="showMenu = !showMenu">
                         {{ item.name }}
                     </button>
-                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                    <div class="dropdown-menu dropdown-menu-left" :class="{show: showMenu}">
                         <a class="dropdown-item cursor-pointer" @click="showAddDlg = true">{{ language.data.iv1 }}</a>
                         <a class="dropdown-item cursor-pointer" @click="showRenameDlg = true" v-if="item.name !== 'root'">
                             {{ language.data.iv4 }}
@@ -92,7 +91,8 @@ export default {
             showRenameDlg: false,
             showAddNoteDlg: false,
             showAddPwdDlg: false,
-            showAccessMgmtDlg: false
+            showAccessMgmtDlg: false,
+            showMenu: false
         }
     },
     watch: {
@@ -166,7 +166,16 @@ export default {
             } catch (e) {
                 this.eventHub.emit("show-msg", this.errorParser(e));
             }
+        },
+        closeMenu() {
+            this.showMenu = false;
         }
+    },
+    created() {
+        this.eventHub.on("close-menu", this.closeMenu);
+    },
+    beforeUnmount() {
+        this.eventHub.off("close-menu", this.closeMenu);
     }
 }
 </script>

@@ -1,28 +1,39 @@
 <template>
-    <div class="dropdown">
-        <button class="btn-sm btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <span class="dropdown">
+        <button class="btn-sm btn-outline-secondary dropdown-toggle" type="button" @click.stop="showMenu = !showMenu">
             {{ tokenProvider.userName }}
         </button>
-        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-            <a class="dropdown-item" @click="$emit('change-tab', 'userSettings')">{{ language.data.um1 }}</a>
+        <div class="dropdown-menu dropdown-menu-right" :class="{show: showMenu}">
+            <a class="dropdown-item" @click="$emit('show-user-settings')">{{ language.data.um1 }}</a>
             <a class="dropdown-item" @click="logout">{{ language.data.um2 }}</a>
         </div>
-    </div>
+    </span>
 </template>
 
 <script>
 export default {
     name: "userMenu",
+    emits: ["show-user-settings"],
     data() {
         return {
             language: this.$root.$data.language,
-            tokenProvider: this.$root.$data.tokenProvider
+            tokenProvider: this.$root.$data.tokenProvider,
+            showMenu: false
         }
     },
     methods: {
         logout() {
             this.tokenProvider.logout();
+        },
+        closeMenu() {
+            this.showMenu = false;
         }
+    },
+    created() {
+        this.eventHub.on("close-menu", this.closeMenu);
+    },
+    beforeUnmount() {
+        this.eventHub.off("close-menu", this.closeMenu);
     }
 }
 </script>

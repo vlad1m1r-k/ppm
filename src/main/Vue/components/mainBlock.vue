@@ -1,26 +1,19 @@
 <template>
-    <div :class="{'blur': tokenProvider.token === null}">
+    <user-settings v-if="showUserSettings" @close-dlg="showUserSettings = false"></user-settings>
+    <div class="h-100" :class="{'blur': tokenProvider.token === null}" @click="clickEvent">
         <div class="container-fluid">
-            <div class="row justify-content-between form-bg">
-                <div class="col-sm mr-auto">
+            <div class="header form-bg">
+                <span class="h-b1">
                     <button class="btn btn-sm btn-outline-secondary" @click="showMain">{{ language.data.mp1 }}</button>
                     <button class="btn btn-sm btn-outline-danger" @click="currentTab = 'adminSettings'" v-if="tokenProvider.adminSettings">{{ language.data.as1 }}</button>
                     <button class="btn btn-sm btn-outline-danger" @click="showTrash" v-if="tokenProvider.adminSettings" :title="language.data.di1">&#x1f5d1;</button>
-                    <pwd-gen></pwd-gen>
-                </div>
-                <div class="col-sm-auto">
-                    <div class="row">
-                        <div class="col-sm p-0">
-                            <search-form></search-form>
-                        </div>
-                        <div class="col-sm p-0">
-                            <user-menu @change-tab="setTab"></user-menu>
-                        </div>
-                        <div class="col-sm pl-0">
-                            <language-selector></language-selector>
-                        </div>
-                    </div>
-                </div>
+                </span>
+                <pwd-gen></pwd-gen>
+                <search-form class="h-b3"></search-form>
+                <span class="h-b4">
+                    <user-menu @show-user-settings="showUserSettings = true"></user-menu>
+                    <language-selector></language-selector>
+                </span>
             </div>
             <div class="row">
                 <div class="col">
@@ -68,7 +61,8 @@ export default {
             tokenProvider: this.$root.$data.tokenProvider,
             language: this.$root.$data.language,
             currentTab: "mainTab",
-            message: ""
+            message: "",
+            showUserSettings: false
         }
     },
     methods: {
@@ -85,6 +79,9 @@ export default {
         showMain() {
             this.setTab("mainTab");
             this.eventHub.emit("show-main");
+        },
+        clickEvent() {
+            this.eventHub.emit("close-menu");
         }
     },
     created() {
