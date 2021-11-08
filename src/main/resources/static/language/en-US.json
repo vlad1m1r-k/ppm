@@ -143,6 +143,7 @@
     "pg2": "Password length",
     "pg3": "Include digits",
     "pg4": "Include symbols",
+	"pg5": "Password generator",
     "pge1": "Error saving settings.",
     "sf1": "Search",
     "sf2": "Search results",

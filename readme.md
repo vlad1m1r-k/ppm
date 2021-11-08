@@ -16,7 +16,7 @@
 
 ### Installation
 Prerequisites:
-+ JRE 1.8+
++ JRE 11+
 + MySQL 8
 + MySQL database created
 + MySQL database collation utf8_general_ci
