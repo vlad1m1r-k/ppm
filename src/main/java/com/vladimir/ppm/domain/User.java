@@ -22,6 +22,7 @@ public class User {
     private Long id;
     private String login;
     private String password;
+    private Boolean changePwdOnNextLogon = false;
 
     @Enumerated(EnumType.STRING)
     private UserStatus status;
@@ -54,8 +55,12 @@ public class User {
     public String getPassword() {
         return password;
     }
+    
+    public Boolean isHaveToChangePwd() {
+		return changePwdOnNextLogon;
+	}
 
-    public Set<Group> getGroups() {
+	public Set<Group> getGroups() {
         return groups;
     }
 
@@ -78,8 +83,12 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
+    
+    public void setChangePwdOnNextLogon(Boolean changePwdOnNextLogon) {
+		this.changePwdOnNextLogon = changePwdOnNextLogon;
+	}
 
-    public void setStatus(UserStatus status) {
+	public void setStatus(UserStatus status) {
         this.status = status;
     }
 
