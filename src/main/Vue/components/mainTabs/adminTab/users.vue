@@ -110,7 +110,8 @@ export default {
                     token: token,
                     login: this.login,
                     pwd: this.pwd,
-                    status: this.status
+                    status: this.status,
+                    changePwd: this.changePwdAtNextLogon
                 });
                 const answer = await $.ajax({
                     url: "/user/addUser",

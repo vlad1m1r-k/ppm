@@ -9,12 +9,14 @@ public class UserDto {
     private final String login;
     private final List<GroupDto> groups;
     private final UserStatus status;
+    private final Boolean changePwd;
 
     private UserDto(Builder builder) {
         this.id = builder.id;
         this.login = builder.login;
         this.groups = builder.groups;
         this.status = builder.status;
+        this.changePwd = builder.changePwd;
     }
 
     public Long getId() {
@@ -33,7 +35,11 @@ public class UserDto {
         return status;
     }
 
-    public static Builder builder() {
+    public Boolean getChangePwd() {
+		return changePwd;
+	}
+
+	public static Builder builder() {
         return new Builder();
     }
 
@@ -42,6 +48,7 @@ public class UserDto {
         private String login;
         private List<GroupDto> groups;
         private UserStatus status;
+        private Boolean changePwd;
 
         public Builder id(Long id) {
             this.id = id;
@@ -61,6 +68,11 @@ public class UserDto {
         public Builder status(UserStatus status) {
             this.status = status;
             return this;
+        }
+        
+        public Builder changePwd(Boolean changePwd) {
+        	this.changePwd = changePwd;
+        	return this;
         }
 
         public UserDto build() {

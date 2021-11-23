@@ -21,8 +21,8 @@ public interface UserService {
     MessageDto changePassword(Token token, String newPwd);
     List<UserDto> getUsers(Token token, String sort);
     boolean isUserEnabled(Token token);
-    MessageDto addUser(Token token, String login, String pwd, UserStatus status);
-    MessageDto editUser(Token token, long userId, String login, String pwd, UserStatus status);
+    MessageDto addUser(Token token, String login, String pwd, UserStatus status, boolean changePwd);
+    MessageDto editUser(Token token, long userId, String login, String pwd, UserStatus status, boolean changePwd);
     MessageDto deleteUser(Token token, long userId);
     MessageDto addAllowedIp(Token token, long userId, String ip);
     List<String> getAllowedIp(Token token, long userId);

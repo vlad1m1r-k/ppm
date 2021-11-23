@@ -38,10 +38,11 @@ public class User {
 
     public User() {}
 
-    public User(String login, String password, UserStatus status) {
+    public User(String login, String password, UserStatus status, Boolean changePwdOnNextLogon) {
         this.login = login;
         this.password = password;
         this.status = status;
+        this.changePwdOnNextLogon = changePwdOnNextLogon;
     }
 
     public Long getId() {

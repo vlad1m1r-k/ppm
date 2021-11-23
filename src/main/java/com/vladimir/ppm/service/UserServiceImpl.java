@@ -164,6 +164,7 @@ public class UserServiceImpl implements UserService {
                     .id(u.getId())
                     .login(u.getLogin())
                     .status(u.getStatus())
+                    .changePwd(u.isHaveToChangePwd())
                     .groups(u.getGroups().stream().map(g -> GroupDto.builder()
                             .id(g.getId())
                             .name(g.getName())
@@ -185,7 +186,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public MessageDto addUser(Token token, String login, String pwd, UserStatus status) {
+    public MessageDto addUser(Token token, String login, String pwd, UserStatus status, boolean changePwd) {
         if (isAdmin(token)) {
             if (!validatorService.validateString(login)) {
                 return MessageDto.builder().message("use1").build();
@@ -197,7 +198,7 @@ public class UserServiceImpl implements UserService {
             if (user != null) {
                 return MessageDto.builder().message("use3").build();
             }
-            user = new User(login, encoder.encode(pwd), status);
+            user = new User(login, encoder.encode(pwd), status, changePwd);
             userRepository.save(user);
             logger.log(token.getLogin(), Acts.CREATE, Objects.USER, login, new Date(), "");
         }
@@ -206,7 +207,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public MessageDto editUser(Token token, long userId, String login, String pwd, UserStatus status) {
+    public MessageDto editUser(Token token, long userId, String login, String pwd, UserStatus status, boolean changePwd) {
         if (isAdmin(token)) {
             if (!validatorService.validateString(login)) {
                 return MessageDto.builder().message("use1").build();
@@ -221,6 +222,7 @@ public class UserServiceImpl implements UserService {
             }
             user.setLogin(login);
             user.setStatus(status);
+            user.setChangePwdOnNextLogon(changePwd);
             logger.log(token.getLogin(), Acts.UPDATE, Objects.USER, login, new Date(), "");
         }
         return MessageDto.builder().build();
