@@ -185,20 +185,19 @@ public class CryptoProviderImpl implements CryptoProvider {
     }
 
     @Override
-    public Token decryptToken(String token) throws JsonProcessingException {
-        String tokenStr = "";
-        Map<String, byte[]> tokenMap = extractIv(Base64.getDecoder().decode(token));
+    public Token decryptToken(String tokenStr) throws JsonProcessingException {
+    	Token token = null;
+        Map<String, byte[]> tokenMap = extractIv(Base64.getDecoder().decode(tokenStr));
         IvParameterSpec aesIv = new IvParameterSpec(tokenMap.get("iv"));
         try {
             Cipher aesCipher = Cipher.getInstance(AESCIPHER, PROVIDER);
             aesCipher.init(Cipher.DECRYPT_MODE, tokenAESKey, aesIv);
-            tokenStr = new String(aesCipher.doFinal(tokenMap.get("data")), StandardCharsets.UTF_8);
+            token = mapper.readValue(aesCipher.doFinal(tokenMap.get("data")), Token.class);
         } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException |
-                NoSuchAlgorithmException | NoSuchProviderException | NoSuchPaddingException e) {
+                NoSuchAlgorithmException | NoSuchProviderException | NoSuchPaddingException | IOException e) {
             e.printStackTrace();
         }
-        JsonNode json = mapper.readTree(tokenStr);
-        return new Token(json.get("login").textValue(), json.get("lifeTime").longValue(), json.get("remoteAddr").textValue(), json.get("userAgent").textValue());
+        return token;
     }
 
     @Override

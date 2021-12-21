@@ -1,5 +1,6 @@
 package com.vladimir.ppm.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.vladimir.ppm.domain.Acts;
 import com.vladimir.ppm.domain.Group;
 import com.vladimir.ppm.domain.Objects;
@@ -78,7 +79,7 @@ public class UserServiceImpl implements UserService {
         if (cryptoProvider.isSystemClosed() && !isAdmin(user.getGroups())) {
             return TokenDto.builder().message("lfe2").build();
         }
-        Token token = tokenService.getToken(user, remoteAddr, userAgent);
+        Token token = tokenService.getToken(user, remoteAddr, userAgent, user.isHaveToChangePwd());
         long tokenLifeTime = token.getLifeTime();
         String encryptedToken = tokenService.encrypt(token);
         securityProvider.registerLoginAttempt(remoteAddr, true);
@@ -89,6 +90,7 @@ public class UserServiceImpl implements UserService {
                 .token(encryptedToken)
                 .adminSettings(isAdmin(user.getGroups()))
                 .systemClosed(cryptoProvider.isSystemClosed())
+                .changePwd(user.isHaveToChangePwd())
                 .build();
     }
 
@@ -96,13 +98,14 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public TokenDto renewToken(Token token) {
         User user = userRepository.findUserByLogin(token.getLogin());
-        Token newToken = tokenService.getToken(user, token.getRemoteAddr(), token.getUserAgent());
+        Token newToken = tokenService.getToken(user, token.getRemoteAddr(), token.getUserAgent(), false);
         long tokenLifeTime = newToken.getLifeTime();
         String encryptedToken = tokenService.encrypt(newToken);
         return TokenDto.builder()
                 .lifeTime(tokenLifeTime)
                 .token(encryptedToken)
                 .adminSettings(isAdmin(user.getGroups()))
+                .changePwd(user.isHaveToChangePwd())
                 .build();
     }
 
@@ -118,7 +121,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findUserByLogin(token.getLogin());
         return user.getGroups();
     }
-
+    
     @Override
     @Transactional(readOnly = true)
     public boolean isAdmin(Token token) {
@@ -128,7 +131,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public MessageDto changePassword(Token token, String newPwd) {
+    public MessageDto changePassword(Token token, String newPwd) throws JsonProcessingException {
         User user = userRepository.findUserByLogin(token.getLogin());
         if (!validatorService.validatePwdLength(newPwd, settingsProvider.getPwdMinLength())) {
             return MessageDto.builder().message("usse2").build();
@@ -149,8 +152,11 @@ public class UserServiceImpl implements UserService {
             return MessageDto.builder().message("usse7").build();
         }
         user.setPassword(encoder.encode(newPwd));
+        user.setChangePwdOnNextLogon(false);
         logger.log(token.getLogin(), Acts.CHANGE_PASSWORD, Objects.USER, token.getLogin(), new Date(), "");
-        return MessageDto.builder().build();
+        return MessageDto.builder()
+        		.data(renewToken(token).toJson())
+        		.build();
     }
 
     @Override

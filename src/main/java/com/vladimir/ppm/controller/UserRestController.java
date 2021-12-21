@@ -74,7 +74,7 @@ public class UserRestController {
             String token = json.get("token").textValue();
             String publicKeyPEM = json.get("publicKey").textValue();
             String newPwd = json.get("pwd").asText();
-            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"), true);
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 MessageDto message = userService.changePassword(decryptedToken, newPwd);
                 return cryptoProvider.encrypt(publicKeyPEM, message.toJson());

@@ -4,6 +4,7 @@ export default {
     token: null,
     userName: null,
     adminSettings: false,
+    changePwd: false,
     async login(login, password) {
         let data = {login: "", password: ""};
         data.login = login;
@@ -18,23 +19,25 @@ export default {
         if (decryptedAnswer.message) {
             throw new Error(decryptedAnswer.message);
         }
-        this.lifeTime = decryptedAnswer.lifeTime;
-        this.token = decryptedAnswer.token;
-        this.adminSettings = decryptedAnswer.adminSettings;
         this.userName = login;
-        this.renewTime = Date.now() + (decryptedAnswer.lifeTime - Date.now()) / 2;
+        this.setToken(decryptedAnswer);
         return decryptedAnswer.systemClosed;
     },
     logout() {
         this.token = null;
     },
-    async getToken() {
+    async getToken(any) {
         if (this.token !== null && Date.now() > this.renewTime && Date.now() < this.lifeTime) {
             await this.renewToken(this.token);
         }
         if (this.token === null || Date.now() > this.lifeTime) {
             this.token = null;
             while (this.token === null) {
+                await (() => new Promise((resolve) => setTimeout(resolve, 1000)))();
+            }
+        }
+        if (this.changePwd && !any) {
+            while (this.changePwd) {
                 await (() => new Promise((resolve) => setTimeout(resolve, 1000)))();
             }
         }
@@ -52,9 +55,13 @@ export default {
             }
         });
         const decryptedAnswer = cryptoProvider.decrypt(answer);
-        this.lifeTime = decryptedAnswer.lifeTime;
-        this.token = decryptedAnswer.token;
-        this.adminSettings = decryptedAnswer.adminSettings;
-        this.renewTime = Date.now() + (decryptedAnswer.lifeTime - Date.now()) / 2;
+        this.setToken(decryptedAnswer);
+    },
+    setToken(token) {
+        this.lifeTime = token.lifeTime;
+        this.token = token.token;
+        this.adminSettings = token.adminSettings;
+        this.renewTime = Date.now() + (token.lifeTime - Date.now()) / 2;
+        this.changePwd = token.changePwd;
     }
 }

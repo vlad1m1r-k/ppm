@@ -116,4 +116,4 @@ __RW__ - Read Write. Full access.
   + Container can be opened by double click
 - __1.003__
   + convenience improvements
-  + //TODO change password at next logon
+  + change password at next login feature added

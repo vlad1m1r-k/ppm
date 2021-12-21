@@ -1,12 +1,13 @@
 package com.vladimir.ppm.service;
 
+import org.springframework.stereotype.Service;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.vladimir.ppm.domain.Token;
 import com.vladimir.ppm.domain.User;
 import com.vladimir.ppm.provider.CryptoProvider;
 import com.vladimir.ppm.provider.SecurityProvider;
 import com.vladimir.ppm.provider.SettingsProvider;
-import org.springframework.stereotype.Service;
 
 @Service
 public class TokenServiceImpl implements TokenService {
@@ -21,9 +22,9 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public Token getToken(User user, String remoteAddr, String userAgent) {
+    public Token getToken(User user, String remoteAddr, String userAgent, boolean changePwd) {
         long tokenLifeTime = System.currentTimeMillis() + (long) settingsProvider.getTokenLifeTimeMinutes() * 60 * 1000;
-        return new Token(user.getLogin(), tokenLifeTime, remoteAddr, userAgent);
+        return new Token(user.getLogin(), tokenLifeTime, remoteAddr, userAgent, changePwd);
     }
 
     @Override
@@ -33,12 +34,24 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public Token validateToken(String token, String remoteAddr, String userAgent) throws JsonProcessingException {
-        Token decryptedToken = cryptoProvider.decryptToken(token);
-        if (decryptedToken.getLifeTime() > System.currentTimeMillis() && decryptedToken.getRemoteAddr().equals(remoteAddr) &&
+        return validate(token, remoteAddr, userAgent, false);
+    }
+    
+    @Override
+	public Token validateToken(String token, String remoteAddr, String userAgent, boolean changePwd) throws JsonProcessingException {
+    	return validate(token, remoteAddr, userAgent, changePwd);
+	}
+
+	private Token validate(String token, String remoteAddr, String userAgent, boolean changePwd) throws JsonProcessingException {
+    	Token decryptedToken = cryptoProvider.decryptToken(token);
+        if ((changePwd || !decryptedToken.isChangePwd()) && decryptedToken.getLifeTime() > System.currentTimeMillis() && decryptedToken.getRemoteAddr().equals(remoteAddr) &&
                 decryptedToken.getUserAgent().equals(userAgent)) {
             return decryptedToken;
         }
-        securityProvider.registerLoginAttempt(remoteAddr, false);
+        if (!decryptedToken.isChangePwd()) {
+        	securityProvider.registerLoginAttempt(remoteAddr, false);
+        }
         return null;
     }
+
 }
