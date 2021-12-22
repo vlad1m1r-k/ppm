@@ -18,6 +18,7 @@
                 <select class="form-control-sm align-middle" v-model="status" :class="{'bg-danger': status === 'DISABLED'}">
                     <option class="bg-light" v-for="status in statuses" :value="status">{{ status }}</option>
                 </select>
+				<input type="checkbox" class="form-control-sm align-middle" v-model="changePwdAtNextLogon"> {{ language.data.us5 }}
                 <button class="btn btn-sm btn-outline-success" :disabled="login.length === 0 || pwd.length === 0" @click="addUser">&check;
                 </button>
                 <button class="btn btn-sm btn-danger" @click="cancel">X</button>
@@ -47,6 +48,7 @@ export default {
             login: "",
             pwd: "",
             status: "ENABLED",
+			changePwdAtNextLogon: false,
             statuses: null
         }
     },
@@ -108,7 +110,8 @@ export default {
                     token: token,
                     login: this.login,
                     pwd: this.pwd,
-                    status: this.status
+                    status: this.status,
+                    changePwd: this.changePwdAtNextLogon
                 });
                 const answer = await $.ajax({
                     url: "/user/addUser",

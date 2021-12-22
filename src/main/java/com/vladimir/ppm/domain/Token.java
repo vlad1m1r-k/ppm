@@ -8,12 +8,14 @@ public class Token {
     private final long lifeTime;
     private final String remoteAddr;
     private final String userAgent;
+    private final boolean changePwd;
 
-    public Token(String login, long lifeTime, String remoteAddr, String userAgent) {
+    public Token(String login, long lifeTime, String remoteAddr, String userAgent, boolean changePwd) {
         this.login = login;
         this.lifeTime = lifeTime;
         this.remoteAddr = remoteAddr;
         this.userAgent = userAgent;
+		this.changePwd = changePwd;
     }
 
     public String getLogin() {
@@ -30,6 +32,10 @@ public class Token {
 
     public String getUserAgent() {
         return userAgent;
+    }
+    
+    public boolean isChangePwd() {
+    	return changePwd;
     }
 
     public String toJson() throws JsonProcessingException {

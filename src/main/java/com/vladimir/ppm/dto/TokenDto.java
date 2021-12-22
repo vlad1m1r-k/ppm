@@ -9,6 +9,7 @@ public class TokenDto {
     private final String token;
     private final Boolean adminSettings;
     private final Boolean systemClosed;
+    private final Boolean changePwd;
 
     private TokenDto(Builder builder) {
         this.lifeTime = builder.lifeTime;
@@ -16,6 +17,7 @@ public class TokenDto {
         this.token = builder.token;
         this.adminSettings = builder.adminSettings;
         this.systemClosed = builder.systemClosed;
+        this.changePwd = builder.changePwd;
     }
 
     public Long getLifeTime() {
@@ -34,16 +36,20 @@ public class TokenDto {
         return adminSettings;
     }
 
-    public String toJson() throws JsonProcessingException {
-        return new ObjectMapper().writeValueAsString(this);
-    }
-
     public static Builder builder() {
         return new Builder();
     }
 
     public Boolean getSystemClosed() {
         return systemClosed;
+    }
+    
+    public Boolean getChangePwd() {
+		return changePwd;
+	}
+
+	public String toJson() throws JsonProcessingException {
+        return new ObjectMapper().writeValueAsString(this);
     }
 
     public static class Builder {
@@ -52,6 +58,7 @@ public class TokenDto {
         private String token;
         private Boolean adminSettings;
         private Boolean systemClosed;
+        private Boolean changePwd;
 
         public Builder lifeTime(Long lifeTime) {
             this.lifeTime = lifeTime;
@@ -76,6 +83,11 @@ public class TokenDto {
         public Builder systemClosed(boolean systemClosed) {
             this.systemClosed = systemClosed;
             return this;
+        }
+        
+        public Builder changePwd(boolean changePwd) {
+        	this.changePwd = changePwd;
+        	return this;
         }
 
         public TokenDto build() {

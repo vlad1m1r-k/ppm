@@ -1,5 +1,5 @@
 <template>
-    <user-settings v-if="showUserSettings" @close-dlg="showUserSettings = false"></user-settings>
+    <user-settings v-if="showUserSettings || tokenProvider.changePwd" @close-dlg="showUserSettings = false"></user-settings>
     <div class="h-100" :class="{'blur': tokenProvider.token === null}" @click="clickEvent">
         <div class="container-fluid">
             <div class="header form-bg">

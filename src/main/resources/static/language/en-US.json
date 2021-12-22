@@ -63,6 +63,7 @@
     "us2": "Status",
     "us3": "Allow login only from those IP",
     "us4": "Allowed IP",
+	"us5": "Change pasword at next logon",
     "use1": "Incorrect login",
     "use2": "Incorrect password",
     "use3": "The login is already taken",

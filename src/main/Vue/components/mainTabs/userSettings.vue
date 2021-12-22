@@ -54,7 +54,7 @@ export default {
                 if (this.pwd === this.pwd2) {
                     this.eventHub.emit("show-msg", "");
                     try {
-                        const token = await this.tokenProvider.getToken();
+                        const token = await this.tokenProvider.getToken(true);
                         const encryptedData = await cryptoProvider.encrypt({
                             token: token,
                             pwd: this.pwd
@@ -68,6 +68,7 @@ export default {
                         if (data.message) {
                             this.msg = this.language.data[data.message];
                         } else {
+                            this.tokenProvider.setToken(JSON.parse(data.data));
                             this.pwd = "";
                             this.pwd2 = "";
                             this.$emit('close-dlg');

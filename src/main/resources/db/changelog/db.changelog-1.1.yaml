@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1.1
+      author: v
+      changes:
+        - addColumn:
+            tableName: users 
+            columns:
+            - column:
+                name: change_pwd_on_next_logon
+                type: boolean
+                valueBoolean: false 
+                afterColumn: password
+                constraints:
+                  nullable: false
