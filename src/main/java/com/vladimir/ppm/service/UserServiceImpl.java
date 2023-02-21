@@ -18,6 +18,7 @@ import com.vladimir.ppm.provider.SecurityProvider;
 import com.vladimir.ppm.provider.SettingsProvider;
 import com.vladimir.ppm.repository.PwdGenSettingsRepository;
 import com.vladimir.ppm.repository.UserRepository;
+
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.util.matcher.IpAddressMatcher;
@@ -228,6 +229,9 @@ public class UserServiceImpl implements UserService {
             }
             user.setLogin(login);
             user.setStatus(status);
+            if (status.equals(UserStatus.ENABLED)) {
+            	securityProvider.registerPasswordAttempt(userId, true);
+            }
             user.setChangePwdOnNextLogon(changePwd);
             logger.log(token.getLogin(), Acts.UPDATE, Objects.USER, login, new Date(), "");
         }

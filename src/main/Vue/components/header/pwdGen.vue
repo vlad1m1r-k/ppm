@@ -1,7 +1,7 @@
 <template>
     <pwd-gen-settings v-if="showSettings" @close-dlg="showSettings = false" :settings="settings"></pwd-gen-settings>
     <span class="h-b2">
-        <button class="btn btn-sm btn-outline-secondary" :title="language.data.um1" @click="showSettings = true">&#x2699;</button>
+        <button class="btn btn-sm btn-outline-secondary" :title="language.data.pg1" @click="showSettings = true">&#x2699;</button>
         <input type="text" class="form-control-sm align-middle" size="20" v-model="passwd" :placeholder="language.data.pg5">
         <button class="btn btn-sm btn-outline-secondary" :title="language.data.db6" @click="generate">G</button>
     </span>
