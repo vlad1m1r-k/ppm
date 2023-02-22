@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: 1.0
+      id: "1.0"
       author: v
       changes:
         - createTable:
@@ -52,7 +52,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  value: 1
+                  value: "1"
               - column:
                   name: name
                   value: root
@@ -110,7 +110,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  value: 1
+                  value: "1"
               - column:
                   name: name
                   value: Admins
@@ -505,16 +505,16 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  value: 1
+                  value: "1"
               - column:
                   name: server_key_life_time_days
-                  value: 365
+                  value: "365"
               - column:
                   name: token_life_time_minutes
-                  value: 5
+                  value: "5"
               - column:
                   name: pwd_min_length
-                  value: 8
+                  value: "8"
               - column:
                   name: pwd_complexity
                   valueBoolean: true
@@ -523,16 +523,16 @@ databaseChangeLog:
                   valueBoolean: false
               - column:
                   name: incorrect_login_attempts
-                  value: 3
+                  value: "3"
               - column:
                   name: incorrect_passwd_attempts
-                  value: 3
+                  value: "3"
               - column:
                   name: ip_ban_time_days
-                  value: 1
+                  value: "1"
               - column:
                   name: log_life_time
-                  value: 365
+                  value: "365"
         - createTable:
             tableName: settings_ip_black_list
             columns:
@@ -599,7 +599,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  value: 1
+                  value: "1"
               - column:
                   name: login
                   value: admin
@@ -646,7 +646,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: users_id
-                  value: 1
+                  value: "1"
               - column:
                   name: groups_id
-                  value: 1
+                  value: "1"

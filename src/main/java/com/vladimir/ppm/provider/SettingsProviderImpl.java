@@ -9,8 +9,8 @@ import org.springframework.security.web.util.matcher.IpAddressMatcher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.PostConstruct;
-import javax.persistence.EntityManagerFactory;
+import jakarta.annotation.PostConstruct;
+import jakarta.persistence.EntityManagerFactory;
 import java.util.Set;
 
 @Service
@@ -96,7 +96,7 @@ public class SettingsProviderImpl implements SettingsProvider {
     @Transactional
     public void setServerKeyLifeTimeDays(int lifeTime) {
         this.settings.setServerKeyLifeTimeDays(lifeTime);
-        Settings settings = settingsRepository.getById(1L);
+        Settings settings = settingsRepository.getReferenceById(1L);
         settings.setServerKeyLifeTimeDays(lifeTime);
     }
 
@@ -104,14 +104,14 @@ public class SettingsProviderImpl implements SettingsProvider {
     @Transactional
     public void setTokenLifeTimeMinutes(int lifeTime) {
         this.settings.setTokenLifeTimeMinutes(lifeTime);
-        Settings settings = settingsRepository.getById(1L);
+        Settings settings = settingsRepository.getReferenceById(1L);
         settings.setTokenLifeTimeMinutes(lifeTime);
     }
 
     @Override
     @Transactional
     public void setDBEncryptionKeyId(long id) {
-        Settings settings = settingsRepository.getById(1L);
+        Settings settings = settingsRepository.getReferenceById(1L);
         this.settings.setEncryptionKeyId(id);
         settings.setEncryptionKeyId(id);
     }
@@ -119,7 +119,7 @@ public class SettingsProviderImpl implements SettingsProvider {
     @Override
     @Transactional
     public void setPwdMinLength(int minLength) {
-        Settings settings = settingsRepository.getById(1L);
+        Settings settings = settingsRepository.getReferenceById(1L);
         this.settings.setPwdMinLength(minLength);
         settings.setPwdMinLength(minLength);
     }
@@ -127,7 +127,7 @@ public class SettingsProviderImpl implements SettingsProvider {
     @Override
     @Transactional
     public void setPwdComplexity(boolean complexity) {
-        Settings settings = settingsRepository.getById(1L);
+        Settings settings = settingsRepository.getReferenceById(1L);
         this.settings.setPwdComplexity(complexity);
         settings.setPwdComplexity(complexity);
     }
@@ -135,7 +135,7 @@ public class SettingsProviderImpl implements SettingsProvider {
     @Override
     @Transactional
     public void setPwdSpecialChar(boolean specialChar) {
-        Settings settings = settingsRepository.getById(1L);
+        Settings settings = settingsRepository.getReferenceById(1L);
         this.settings.setPwdSpecialChar(specialChar);
         settings.setPwdSpecialChar(specialChar);
     }
@@ -143,7 +143,7 @@ public class SettingsProviderImpl implements SettingsProvider {
     @Override
     @Transactional
     public void setIncorrectLoginAttempts(int attempts) {
-        Settings settings = settingsRepository.getById(1L);
+        Settings settings = settingsRepository.getReferenceById(1L);
         this.settings.setIncorrectLoginAttempts(attempts);
         settings.setIncorrectLoginAttempts(attempts);
     }
@@ -151,7 +151,7 @@ public class SettingsProviderImpl implements SettingsProvider {
     @Override
     @Transactional
     public void setIpBanTimeDays(int days) {
-        Settings settings = settingsRepository.getById(1L);
+        Settings settings = settingsRepository.getReferenceById(1L);
         this.settings.setIpBanTimeDays(days);
         settings.setIpBanTimeDays(days);
     }
@@ -159,7 +159,7 @@ public class SettingsProviderImpl implements SettingsProvider {
     @Override
     @Transactional
     public void setIncorrectPasswdAttempts(int attempts) {
-        Settings settings = settingsRepository.getById(1L);
+        Settings settings = settingsRepository.getReferenceById(1L);
         this.settings.setIncorrectPasswdAttempts(attempts);
         settings.setIncorrectPasswdAttempts(attempts);
     }
@@ -167,7 +167,7 @@ public class SettingsProviderImpl implements SettingsProvider {
     @Override
     @Transactional
     public void setLogLifeTime(int lifeTime) {
-        Settings settings = settingsRepository.getById(1L);
+        Settings settings = settingsRepository.getReferenceById(1L);
         this.settings.setLogLifeTime(lifeTime);
         settings.setLogLifeTime(lifeTime);
     }
@@ -175,7 +175,7 @@ public class SettingsProviderImpl implements SettingsProvider {
     @Override
     @Transactional
     public void addIpToBlackList(String ip) {
-        Settings settings = settingsRepository.getById(1L);
+        Settings settings = settingsRepository.getReferenceById(1L);
         this.settings.getIpBlackList().add(ip);
         settings.getIpBlackList().add(ip);
     }
@@ -183,7 +183,7 @@ public class SettingsProviderImpl implements SettingsProvider {
     @Override
     @Transactional
     public void addIpToWhiteList(String ip) {
-        Settings settings = settingsRepository.getById(1L);
+        Settings settings = settingsRepository.getReferenceById(1L);
         this.settings.getIpWhiteList().add(ip);
         settings.getIpWhiteList().add(ip);
     }
@@ -213,7 +213,7 @@ public class SettingsProviderImpl implements SettingsProvider {
     @Override
     @Transactional
     public void removeIpFromBlackList(String ip) {
-        Settings settings = settingsRepository.getById(1L);
+        Settings settings = settingsRepository.getReferenceById(1L);
         this.settings.getIpBlackList().remove(ip);
         settings.getIpBlackList().remove(ip);
     }
@@ -221,7 +221,7 @@ public class SettingsProviderImpl implements SettingsProvider {
     @Override
     @Transactional
     public void removeIpFromWhiteList(String ip) {
-        Settings settings = settingsRepository.getById(1L);
+        Settings settings = settingsRepository.getReferenceById(1L);
         this.settings.getIpWhiteList().remove(ip);
         settings.getIpWhiteList().remove(ip);
     }

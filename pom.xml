@@ -6,21 +6,21 @@
 
     <groupId>com.vladimir</groupId>
     <artifactId>ppm</artifactId>
-    <version>1.3.1</version>
+    <version>1.3.2</version>
     <packaging>jar</packaging>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.5.7</version>
+        <version>3.0.2</version>
     </parent>
 
     <properties>
-        <frontend.plugin.version>1.12.0</frontend.plugin.version>
-        <node.version>v14.17.3</node.version>
-        <webjars.locator.version>0.41</webjars.locator.version>
-        <jquery.version>3.5.1</jquery.version>
-        <bc.version>1.69</bc.version>
+        <frontend.plugin.version>1.12.1</frontend.plugin.version>
+        <node.version>v18.14.1</node.version>
+        <webjars.locator.version>0.46</webjars.locator.version>
+        <jquery.version>3.6.3</jquery.version>
+        <bc.version>1.70</bc.version>
     </properties>
 
     <dependencies>
@@ -54,8 +54,8 @@
             <artifactId>spring-security-web</artifactId>
         </dependency>
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
             </dependency>
         <dependency>
             <groupId>org.liquibase</groupId>
