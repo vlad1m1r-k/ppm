@@ -81,7 +81,7 @@ public class GroupServiceImpl implements GroupService {
             if (!validatorService.validateString(name)) {
                 return MessageDto.builder().message("gpe1").build();
             }
-            Group group = groupRepository.getById(groupId);
+            Group group = groupRepository.getReferenceById(groupId);
             if (!group.getName().equals(name) && groupRepository.findGroupByName(name) != null) {
                 return MessageDto.builder().message("gpe2").build();
             }
@@ -96,7 +96,7 @@ public class GroupServiceImpl implements GroupService {
     @Transactional
     public MessageDto deleteGroup(Token token, long groupId) {
         if (userService.isAdmin(token)) {
-            Group group = groupRepository.getById(groupId);
+            Group group = groupRepository.getReferenceById(groupId);
             group.getUsers().forEach(u -> u.getGroups().remove(group));
             groupRepository.delete(group);
             logger.log(token.getLogin(), Acts.DELETE, Objects.GROUP, group.getName(), new Date(), "");
@@ -108,7 +108,7 @@ public class GroupServiceImpl implements GroupService {
     @Transactional
     public MessageDto editGroupMembers(Token token, long groupId, long userId, boolean member) {
         if (userService.isAdmin(token)) {
-            Group group = groupRepository.getById(groupId);
+            Group group = groupRepository.getReferenceById(groupId);
             User user = userService.getUserById(userId);
             if (member) {
                 group.getUsers().add(user);
@@ -124,6 +124,6 @@ public class GroupServiceImpl implements GroupService {
     @Override
     @Transactional(readOnly = true)
     public Group getGroupById(long groupId) {
-        return groupRepository.getById(groupId);
+        return groupRepository.getReferenceById(groupId);
     }
 }

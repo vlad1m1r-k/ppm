@@ -113,7 +113,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public User getUserById(long userId) {
-        return userRepository.getById(userId);
+        return userRepository.getReferenceById(userId);
     }
 
     @Override
@@ -219,7 +219,7 @@ public class UserServiceImpl implements UserService {
             if (!validatorService.validateString(login)) {
                 return MessageDto.builder().message("use1").build();
             }
-            User user = userRepository.getById(userId);
+            User user = userRepository.getReferenceById(userId);
             if (pwd != null && pwd.length() > 0) {
                 user.setPassword(encoder.encode(pwd));
                 logger.log(token.getLogin(), Acts.CHANGE_PASSWORD, Objects.USER, login, new Date(), "");
@@ -242,7 +242,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public MessageDto deleteUser(Token token, long userId) {
         if (isAdmin(token)) {
-            User user = userRepository.getById(userId);
+            User user = userRepository.getReferenceById(userId);
             user.getGroups().forEach(g -> g.getUsers().remove(user));
             userRepository.delete(user);
             logger.log(token.getLogin(), Acts.DELETE, Objects.USER, user.getLogin(), new Date(), "Permanently.");
@@ -254,7 +254,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public MessageDto addAllowedIp(Token token, long userId, String ip) {
         if (isAdmin(token) && validatorService.validateIpOrSubnet(ip)) {
-            User user = userRepository.getById(userId);
+            User user = userRepository.getReferenceById(userId);
             user.getAllowedIps().add(ip);
             logger.log(token.getLogin(), Acts.UPDATE, Objects.USER, user.getLogin(), new Date(), "Added allowed Ip: " + ip);
         }
@@ -265,7 +265,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public List<String> getAllowedIp(Token token, long userId) {
         if (isAdmin(token)) {
-            User user = userRepository.getById(userId);
+            User user = userRepository.getReferenceById(userId);
             return user.getAllowedIps().stream().sorted().collect(Collectors.toList());
         }
         return new ArrayList<>();
@@ -275,7 +275,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void removeAllowedIp(Token token, long userId, String ip) {
         if (isAdmin(token) && validatorService.validateIpOrSubnet(ip)) {
-            User user = userRepository.getById(userId);
+            User user = userRepository.getReferenceById(userId);
             user.getAllowedIps().remove(ip);
             logger.log(token.getLogin(), Acts.UPDATE, Objects.USER, user.getLogin(), new Date(), "Removed allowed Ip: " + ip);
         }

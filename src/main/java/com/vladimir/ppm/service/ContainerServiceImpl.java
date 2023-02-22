@@ -71,8 +71,8 @@ public class ContainerServiceImpl implements ContainerService {
     @Override
     @Transactional
     public MessageDto moveContainer(Token token, long itemId, long moveToId) {
-        Container container = containerRepository.getById(itemId);
-        Container cntMoveTo = containerRepository.getById(moveToId);
+        Container container = containerRepository.getReferenceById(itemId);
+        Container cntMoveTo = containerRepository.getReferenceById(moveToId);
         if (getAccess(container, userService.getGroups(token)) != Access.RW || getAccess(cntMoveTo, userService.getGroups(token)) != Access.RW
                 || container.getName().equals("root") || container.equals(cntMoveTo) || container.isDeleted() || cntMoveTo.isDeleted()) {
             return MessageDto.builder().message("cfe1").build();
@@ -89,7 +89,7 @@ public class ContainerServiceImpl implements ContainerService {
     @Override
     @Transactional
     public MessageDto add(Token token, long parentId, String name) {
-        Container parent = containerRepository.getById(parentId);
+        Container parent = containerRepository.getReferenceById(parentId);
         if (getAccess(parent, userService.getGroups(token)) == Access.RW && name.length() > 0 && !parent.isDeleted()) {
             Container container = new Container(name, parent, token.getLogin());
             container.setGroupsNA(new HashSet<>(parent.getGroupsNA()));
@@ -107,8 +107,8 @@ public class ContainerServiceImpl implements ContainerService {
     @Override
     @Transactional
     public MessageDto restore(Token decryptedToken, long contId, long restoreToId) {
-        Container container = containerRepository.getById(contId);
-        Container cntRestoreTo = containerRepository.getById(restoreToId);
+        Container container = containerRepository.getReferenceById(contId);
+        Container cntRestoreTo = containerRepository.getReferenceById(restoreToId);
         if (!userService.isAdmin(decryptedToken) || !container.isDeleted() || cntRestoreTo.isDeleted() || container.equals(cntRestoreTo)) {
             return MessageDto.builder().message("die3").build();
         }
@@ -123,7 +123,7 @@ public class ContainerServiceImpl implements ContainerService {
     @Override
     @Transactional
     public MessageDto delete(Token token, long itemId, boolean permanent) {
-        Container container = containerRepository.getById(itemId);
+        Container container = containerRepository.getReferenceById(itemId);
         if (container.getName().equals("root") || container.getChildren().size() != 0
                 || getAccess(container, userService.getGroups(token)) != Access.RW) {
             return MessageDto.builder().message("ive2").build();
@@ -145,7 +145,7 @@ public class ContainerServiceImpl implements ContainerService {
     @Override
     @Transactional
     public MessageDto rename(Token token, long itemId, String name) {
-        Container container = containerRepository.getById(itemId);
+        Container container = containerRepository.getReferenceById(itemId);
         if (container.isDeleted() || container.getName().equals("root") || name == null || name.length() == 0
                 || getAccess(container, userService.getGroups(token)) != Access.RW) {
             return MessageDto.builder().message("ive3").build();
@@ -160,7 +160,7 @@ public class ContainerServiceImpl implements ContainerService {
     @Override
     @Transactional
     public MessageDto addNote(Token token, long parentId, String name, String text) {
-        Container container = containerRepository.getById(parentId);
+        Container container = containerRepository.getReferenceById(parentId);
         if (cryptoProvider.isSystemClosed() || container.isDeleted() || name == null || name.length() == 0 || getAccess(container, userService.getGroups(token)) != Access.RW) {
             return MessageDto.builder().message("ive4").build();
         }
@@ -174,7 +174,7 @@ public class ContainerServiceImpl implements ContainerService {
     @Override
     @Transactional(readOnly = true)
     public MessageDto getNote(Token token, long noteId) {
-        Note note = noteRepository.getById(noteId);
+        Note note = noteRepository.getReferenceById(noteId);
         Container parent = note.getParent();
         if (cryptoProvider.isSystemClosed() || getAccess(parent, userService.getGroups(token)) != Access.RW && getAccess(parent, userService.getGroups(token)) != Access.RO) {
             return MessageDto.builder().build();
@@ -186,7 +186,7 @@ public class ContainerServiceImpl implements ContainerService {
     @Override
     @Transactional
     public MessageDto editNote(Token token, long noteId, String name, String text) {
-        Note note = noteRepository.getById(noteId);
+        Note note = noteRepository.getReferenceById(noteId);
         Container parent = note.getParent();
         if (cryptoProvider.isSystemClosed() || getAccess(parent, userService.getGroups(token)) != Access.RW || name == null || name.length() == 0 ||
                 parent.isDeleted() || note.isDeleted()) {
@@ -203,7 +203,7 @@ public class ContainerServiceImpl implements ContainerService {
     @Override
     @Transactional
     public MessageDto removeNote(Token token, long noteId, boolean permanent) {
-        Note note = noteRepository.getById(noteId);
+        Note note = noteRepository.getReferenceById(noteId);
         Container parent = note.getParent();
         if (getAccess(parent, userService.getGroups(token)) != Access.RW) {
             return MessageDto.builder().message("ive6").build();
@@ -225,7 +225,7 @@ public class ContainerServiceImpl implements ContainerService {
     @Override
     @Transactional
     public MessageDto addPasswd(Token token, long parentId, String name, String login, String passwd, String note) {
-        Container parent = containerRepository.getById(parentId);
+        Container parent = containerRepository.getReferenceById(parentId);
         if (cryptoProvider.isSystemClosed() || parent.isDeleted() || name == null || name.length() == 0 || getAccess(parent, userService.getGroups(token)) != Access.RW) {
             return MessageDto.builder().message("ive4").build();
         }
@@ -241,7 +241,7 @@ public class ContainerServiceImpl implements ContainerService {
     @Override
     @Transactional(readOnly = true)
     public PasswordDto getPwdEnv(Token token, long pwdId) {
-        Password password = passwordRepository.getById(pwdId);
+        Password password = passwordRepository.getReferenceById(pwdId);
         Container parent = password.getParent();
         if (cryptoProvider.isSystemClosed() || getAccess(parent, userService.getGroups(token)) != Access.RW && getAccess(parent, userService.getGroups(token)) != Access.RO) {
             return PasswordDto.builder().build();
@@ -255,7 +255,7 @@ public class ContainerServiceImpl implements ContainerService {
     @Override
     @Transactional(readOnly = true)
     public PasswordDto getPwdBody(Token token, long pwdId) {
-        Password password = passwordRepository.getById(pwdId);
+        Password password = passwordRepository.getReferenceById(pwdId);
         Container parent = password.getParent();
         if (cryptoProvider.isSystemClosed() || getAccess(parent, userService.getGroups(token)) != Access.RW && getAccess(parent, userService.getGroups(token)) != Access.RO) {
             return PasswordDto.builder().build();
@@ -268,7 +268,7 @@ public class ContainerServiceImpl implements ContainerService {
     @Override
     @Transactional
     public MessageDto editPassword(Token token, long pwdId, String name, String login, String pass, String note) {
-        Password password = passwordRepository.getById(pwdId);
+        Password password = passwordRepository.getReferenceById(pwdId);
         Container parent = password.getParent();
         if (cryptoProvider.isSystemClosed() || parent.isDeleted() || getAccess(parent, userService.getGroups(token)) != Access.RW || name == null || name.length() == 0) {
             return MessageDto.builder().message("ive8").build();
@@ -288,7 +288,7 @@ public class ContainerServiceImpl implements ContainerService {
     @Override
     @Transactional
     public MessageDto removePassword(Token token, long pwdId, boolean permanent) {
-        Password password = passwordRepository.getById(pwdId);
+        Password password = passwordRepository.getReferenceById(pwdId);
         Container parent = password.getParent();
         if (getAccess(parent, userService.getGroups(token)) != Access.RW) {
             return MessageDto.builder().message("ive9").build();
@@ -310,7 +310,7 @@ public class ContainerServiceImpl implements ContainerService {
     @Override
     @Transactional(readOnly = true)
     public ContainerDto getDeletedItems(Token token, long containerId, String sortNotes, String sortPwd, String sortFls) {
-        Container container = containerRepository.getById(containerId);
+        Container container = containerRepository.getReferenceById(containerId);
         if (cryptoProvider.isSystemClosed() || container.isDeleted() || !userService.isAdmin(token)) {
             return ContainerDto.builder().build();
         }
@@ -368,7 +368,7 @@ public class ContainerServiceImpl implements ContainerService {
         if (!userService.isAdmin(token)) {
             return MessageDto.builder().message("die1").build();
         }
-        Note note = noteRepository.getById(noteId);
+        Note note = noteRepository.getReferenceById(noteId);
         note.setDeleted(false);
         logger.log(token.getLogin(), Acts.RESTORE, Objects.NOTE, note.getName(), new Date(),
                 "Container: " + containerPathBuilder(note.getParent()));
@@ -381,7 +381,7 @@ public class ContainerServiceImpl implements ContainerService {
         if (!userService.isAdmin(token)) {
             return MessageDto.builder().message("die2").build();
         }
-        Password password = passwordRepository.getById(pwdId);
+        Password password = passwordRepository.getReferenceById(pwdId);
         password.setDeleted(false);
         logger.log(token.getLogin(), Acts.RESTORE, Objects.PASSWORD, password.getName(), new Date(),
                 "Container: " + containerPathBuilder(password.getParent()));
@@ -417,7 +417,7 @@ public class ContainerServiceImpl implements ContainerService {
     @Transactional
     public MessageDto setAccess(Token token, long containerId, long groupId, Access access, boolean ptAbove, boolean sameBelow) {
         if (userService.isAdmin(token)) {
-            Container container = containerRepository.getById(containerId);
+            Container container = containerRepository.getReferenceById(containerId);
             Group group = groupService.getGroupById(groupId);
             setAccessSwitch(container, group, access);
             if (ptAbove) {
@@ -441,7 +441,7 @@ public class ContainerServiceImpl implements ContainerService {
     @Transactional
     public void removeAccess(Token token, long containerId, long groupId, Access access) {
         if (userService.isAdmin(token)) {
-            Container container = containerRepository.getById(containerId);
+            Container container = containerRepository.getReferenceById(containerId);
             Group group = groupService.getGroupById(groupId);
             removeAccessRecursively(container, group, access);
             logger.log(token.getLogin(), Acts.DELETE, Objects.ACCESS, access.toString(), new Date(),
@@ -453,7 +453,7 @@ public class ContainerServiceImpl implements ContainerService {
     @Transactional(readOnly = true)
     public List<AccessDto> getAssignedGroups(Token token, long containerId) {
         if (userService.isAdmin(token)) {
-            Container container = containerRepository.getById(containerId);
+            Container container = containerRepository.getReferenceById(containerId);
             List<AccessDto> accessList = new ArrayList<>();
             accessList.addAll(mapGroupToAccessDto(container.getGroupsNA(), Access.NA));
             accessList.addAll(mapGroupToAccessDto(container.getGroupsPT(), Access.PT));
@@ -491,7 +491,7 @@ public class ContainerServiceImpl implements ContainerService {
     @Override
     @Transactional
     public MessageDto addFile(Token token, long containerId, String name, int size, String body) {
-        Container container = containerRepository.getById(containerId);
+        Container container = containerRepository.getReferenceById(containerId);
         if (cryptoProvider.isSystemClosed() || container.isDeleted() || !validatorService.validateString(name)
                 || !validatorService.validateString(body) || getAccess(container, userService.getGroups(token)) != Access.RW) {
             return MessageDto.builder().message("fle1").build();
@@ -506,7 +506,7 @@ public class ContainerServiceImpl implements ContainerService {
     @Override
     @Transactional(readOnly = true)
     public MessageDto getFile(Token token, long fileId) {
-        File file = fileRepository.getById(fileId);
+        File file = fileRepository.getReferenceById(fileId);
         Container parent = file.getParent();
         if (cryptoProvider.isSystemClosed() || getAccess(parent, userService.getGroups(token)) != Access.RW
                 && getAccess(parent, userService.getGroups(token)) != Access.RO) {
@@ -519,7 +519,7 @@ public class ContainerServiceImpl implements ContainerService {
     @Override
     @Transactional
     public MessageDto editFile(Token token, long fileId, String name) {
-        File file = fileRepository.getById(fileId);
+        File file = fileRepository.getReferenceById(fileId);
         Container parent = file.getParent();
         if (cryptoProvider.isSystemClosed() || getAccess(parent, userService.getGroups(token)) != Access.RW || name == null || name.length() == 0 ||
                 parent.isDeleted() || file.isDeleted()) {
@@ -535,7 +535,7 @@ public class ContainerServiceImpl implements ContainerService {
     @Override
     @Transactional
     public MessageDto removeFile(Token token, long fileId, boolean permanent) {
-        File file = fileRepository.getById(fileId);
+        File file = fileRepository.getReferenceById(fileId);
         Container parent = file.getParent();
         if (getAccess(parent, userService.getGroups(token)) != Access.RW) {
             return MessageDto.builder().message("fle5").build();
@@ -560,7 +560,7 @@ public class ContainerServiceImpl implements ContainerService {
         if (!userService.isAdmin(token)) {
             return MessageDto.builder().message("die4").build();
         }
-        File file = fileRepository.getById(fileId);
+        File file = fileRepository.getReferenceById(fileId);
         file.setDeleted(false);
         logger.log(token.getLogin(), Acts.RESTORE, Objects.FILE, file.getName(), new Date(),
                 "Container: " + containerPathBuilder(file.getParent()));

@@ -94,7 +94,7 @@ public class SecurityProviderImpl implements SecurityProvider {
             userItem.setLastLoginAttemptTime(System.currentTimeMillis());
             userItem.setTotalLoginAttempts(userItem.getTotalLoginAttempts() + 1);
             if (userItem.getTotalLoginAttempts() >= settingsProvider.getIncorrectPasswdAttempts()) {
-                User user = userRepository.getById(userId);
+                User user = userRepository.getReferenceById(userId);
                 user.setStatus(UserStatus.DISABLED);
             }
         }
