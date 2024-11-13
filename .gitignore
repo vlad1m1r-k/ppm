@@ -9,3 +9,5 @@
 .classpath
 .project
 .settings
+.vscode
+package-lock.json

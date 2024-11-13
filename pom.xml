@@ -6,21 +6,21 @@
 
     <groupId>com.vladimir</groupId>
     <artifactId>ppm</artifactId>
-    <version>1.3.2</version>
+    <version>1.4.0</version>
     <packaging>jar</packaging>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.0.2</version>
+        <version>3.3.5</version>
     </parent>
 
     <properties>
-        <frontend.plugin.version>1.12.1</frontend.plugin.version>
-        <node.version>v18.14.1</node.version>
-        <webjars.locator.version>0.46</webjars.locator.version>
-        <jquery.version>3.6.3</jquery.version>
-        <bc.version>1.70</bc.version>
+        <frontend.plugin.version>1.15.1</frontend.plugin.version>
+        <node.version>v22.11.0</node.version>
+        <webjars.locator.version>0.52</webjars.locator.version>
+        <jquery.version>3.7.1</jquery.version>
+        <bc.version>1.79</bc.version>
     </properties>
 
     <dependencies>
@@ -74,12 +74,12 @@
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk15on</artifactId>
+            <artifactId>bcprov-jdk18on</artifactId>
             <version>${bc.version}</version>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
-            <artifactId>bcpkix-jdk15on</artifactId>
+            <artifactId>bcpkix-jdk18on</artifactId>
             <version>${bc.version}</version>
         </dependency>
         <dependency>

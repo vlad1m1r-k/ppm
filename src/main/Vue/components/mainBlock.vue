@@ -37,12 +37,11 @@
 </template>
 
 <script>
+import { defineAsyncComponent } from "vue";
 import languageSelector from "./header/languageSelector.vue";
 import userMenu from "./header/userMenu.vue";
 import mainTab from "./mainTabs/mainTab.vue";
 import userSettings from "./mainTabs/userSettings.vue";
-import adminSettings from "./mainTabs/adminSettings.vue";
-import pwdGen from "./header/pwdGen.vue";
 import searchForm from "./header/searchForm.vue";
 
 export default {
@@ -52,8 +51,8 @@ export default {
         userMenu,
         mainTab,
         userSettings,
-        adminSettings,
-        pwdGen,
+        adminSettings: defineAsyncComponent(() => import("./mainTabs/adminSettings.vue")),
+        pwdGen: defineAsyncComponent(() => import("./header/pwdGen.vue")),
         searchForm
     },
     data() {
