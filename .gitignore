@@ -11,3 +11,4 @@
 .settings
 .vscode
 package-lock.json
+*controller.js

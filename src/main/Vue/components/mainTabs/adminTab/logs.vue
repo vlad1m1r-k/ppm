@@ -45,9 +45,9 @@
                 <option value="100">100</option>
             </select>
         </div>
-        <div class="col-auto">
+        <div class="col-auto" v-if="Object.hasOwn(logData, 'page')">
             <ul class="pagination pagination-sm">
-                <li class="page-item text-dark" v-for="n in logData.totalPages" :class="{active: n - 1 === logData.number}"
+                <li class="page-item text-dark" v-for="n in logData.page.totalPages" :class="{active: n - 1 === logData.page.number}"
                     :key="'LGPager' + n" style="cursor: pointer">
                     <a class="page-link" @click="setPage(n - 1)">{{ n }}</a>
                 </li>
