@@ -21,6 +21,7 @@
         <webjars.locator.version>0.52</webjars.locator.version>
         <jquery.version>3.7.1</jquery.version>
         <bc.version>1.79</bc.version>
+        <clean.plugin.version>3.4.0</clean.plugin.version>
     </properties>
 
     <dependencies>
@@ -125,6 +126,21 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+            	<groupId>org.apache.maven.plugins</groupId>
+            	<artifactId>maven-clean-plugin</artifactId>
+            	<version>${clean.plugin.version}</version>
+            	<configuration>
+            		<filesets>
+            			<fileset>
+            				<directory>src/main/resources/static</directory>
+            				<includes>
+            					<include>**/*controller.js*</include>
+            				</includes>
+            			</fileset>
+            		</filesets>
+            	</configuration>
             </plugin>
         </plugins>
     </build>

@@ -1,20 +1,12 @@
 <template>
-    <div class="l-modal" v-if="tokenProvider.token === null">
-        <div class="l-modal-body">
-            <div class="alert alert-danger" v-if="message" @click="message = ''">
+    <div class="modal" v-if="tokenProvider.token === null">
+        <div class="modal-body login">
+            <div class="alert" v-if="message" @click="message = ''">
                 {{ message }}
             </div>
-            <div class="form-group">
-                <input type="text" class="form-control" :placeholder="language.data.lf1" v-model="login" ref="lfLogin">
-            </div>
-            <div class="form-group">
-                <input type="password" class="form-control" :placeholder="language.data.lf2" v-model="password" @keypress.enter="doLogin" ref="lfPwd">
-            </div>
-            <div class="container">
-                <div class="row justify-content-md-center">
-                    <button class="btn btn-primary" @click=doLogin>{{ language.data.lf3 }}</button>
-                </div>
-            </div>
+            <input type="text" class="input" :placeholder="language.data.lf1" v-model="login" ref="lfLogin">
+            <input type="password" class="input" :placeholder="language.data.lf2" v-model="password" @keypress.enter="doLogin" ref="lfPwd">
+            <button class="btn blue" @click=doLogin>{{ language.data.lf3 }}</button>
         </div>
     </div>
 </template>

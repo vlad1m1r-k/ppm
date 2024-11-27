@@ -1,38 +1,36 @@
 <template>
     <user-settings v-if="showUserSettings || tokenProvider.changePwd" @close-dlg="showUserSettings = false"></user-settings>
-    <div class="h-100" :class="{'blur': tokenProvider.token === null}" @click="clickEvent">
-        <div class="container-fluid">
-            <div class="header form-bg">
-                <span class="h-b1">
-                    <button class="btn btn-sm btn-outline-secondary" @click="showMain">{{ language.data.mp1 }}</button>
-                    <button class="btn btn-sm btn-outline-danger" @click="currentTab = 'adminSettings'" v-if="tokenProvider.adminSettings">{{ language.data.as1 }}</button>
-                    <button class="btn btn-sm btn-outline-danger" @click="showTrash" v-if="tokenProvider.adminSettings" :title="language.data.di1">&#x1f5d1;</button>
-                </span>
-                <pwd-gen></pwd-gen>
-                <search-form class="h-b3"></search-form>
-                <span class="h-b4">
-                    <user-menu @show-user-settings="showUserSettings = true"></user-menu>
-                    <language-selector></language-selector>
-                </span>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <div class="alert alert-danger" v-if="message">
-                        {{ message }}
-                        <button class="close" @click="message = ''">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <keep-alive exclude="adminSettings">
-                        <component :is="currentTab"></component>
-                    </keep-alive>
-                </div>
-            </div>
+    <div class="main-blck" :class="{'blur': tokenProvider.token === null}" @click="clickEvent">
+        <div class="m-row1">
+            <span class="h-col1">
+                <button class="btn blue" @click="showMain">{{ language.data.mp1 }}</button>
+                <button class="btn red" @click="currentTab = 'adminSettings'" v-if="tokenProvider.adminSettings">{{ language.data.as1 }}</button>
+                <button class="btn red icon" @click="showTrash" v-if="tokenProvider.adminSettings" :title="language.data.di1">
+                    <svg class="s-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5 7.5H19L18 21H6L5 7.5Z" stroke="#000000" stroke-linejoin="round"/>
+                        <path d="M15.5 9.5L15 19" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M12 9.5V19" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M8.5 9.5L9 19" stroke="#000000" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M16 5H19C20.1046 5 21 5.89543 21 7V7.5H3V7C3 5.89543 3.89543 5 5 5H8M16 5L15 3H9L8 5M16 5H8" stroke="#000000" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </span>
+            <pwd-gen></pwd-gen>
+            <search-form class="h-col3"></search-form>
+            <span class="h-col4">
+                <user-menu @show-user-settings="showUserSettings = true"></user-menu>
+                <language-selector></language-selector>
+            </span>
         </div>
+        <div class="m-row2" v-if="message">
+            {{ message }}
+            <button class="close" @click="message = ''">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <keep-alive exclude="adminSettings">
+            <component class="m-row3" :is="currentTab"></component>
+        </keep-alive>
     </div>
 </template>
 
