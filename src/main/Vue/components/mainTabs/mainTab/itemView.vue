@@ -1,60 +1,49 @@
 <template>
     <access-mgmt-dlg v-if="showAccessMgmtDlg" :item="item" @close-dlg="showAccessMgmtDlg = false"></access-mgmt-dlg>
     <input type="file" v-if="item.access === 'RW'" style="display: none" ref="cnt_file" @change="addFile">
-    <div class="decor-iv">
-        <div class="row m-0">
-            <div class="col-sm-auto">
-                <div class="dropdown" v-if="item.access === 'RW'">
-                    <button class="btn-sm btn-outline-primary dropdown-toggle" type="button" @click.stop="showMenu = !showMenu">
-                        {{ item.name }}
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-left" :class="{show: showMenu}">
-                        <a class="dropdown-item cursor-pointer" @click="showAddDlg = true">{{ language.data.iv1 }}</a>
-                        <a class="dropdown-item cursor-pointer" @click="showRenameDlg = true" v-if="item.name !== 'root'">
-                            {{ language.data.iv4 }}
-                        </a>
-                        <a class="dropdown-item cursor-pointer" @click="showAddNoteDlg = true">{{ language.data.iv5 }}</a>
-                        <a class="dropdown-item cursor-pointer" @click="showAddPwdDlg = true">{{ language.data.iv11 }}</a>
-                        <a class="dropdown-item cursor-pointer" @click="$refs.cnt_file.click()">{{ language.data.iv13 }}</a>
-                        <a class="dropdown-item cursor-pointer" v-if="tokenProvider.adminSettings"
-                           @click="showAccessMgmtDlg = true">
-                            {{ language.data.iv12 }}
-                        </a>
-                        <div class="dropdown-divider" v-if="item.name !== 'root'"></div>
-                        <span :title="item.children.length > 0 ? language.data.iv3 : false"
-                              :class="{'cursor-stop': item.children.length > 0}" v-if="item.name !== 'root'">
-                        <a class="dropdown-item text-danger cursor-pointer"
-                           :class="{disabled: item.children.length > 0 || item.name === 'root'}"
-                           @click="deleteContainer">
-                            {{ language.data.iv2 }}
-                        </a>
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <div class="col">
-                <span style="user-select: none">{{ language.data.cm10 }} &nbsp;</span>$id:{{ item.id }}
-            </div>
+    <span v-if="item.access === 'RW'">
+        <button class="btn blue" @click.stop="showMenu = !showMenu">{{ item.name }}</button>
+        <div class="dropdown" :class="{ show: showMenu }">
+            <a class="dropdown-item" @click="showAddDlg = true">{{ language.data.iv1 }}</a>
+            <a class="dropdown-item" @click="showRenameDlg = true" v-if="item.name !== 'root'">
+                {{ language.data.iv4 }}
+            </a>
+            <a class="dropdown-item" @click="showAddNoteDlg = true">{{ language.data.iv5 }}</a>
+            <a class="dropdown-item" @click="showAddPwdDlg = true">{{ language.data.iv11 }}</a>
+            <a class="dropdown-item" @click="$refs.cnt_file.click()">{{ language.data.iv13 }}</a>
+            <a class="dropdown-item" v-if="tokenProvider.adminSettings" @click="showAccessMgmtDlg = true">
+                {{ language.data.iv12 }}
+            </a>
+            <div class="dropdown-divider" v-if="item.name !== 'root'"></div>
+            <span :title="item.children.length > 0 ? language.data.iv3 : false"
+                :class="{ 'cursor-stop': item.children.length > 0 }" v-if="item.name !== 'root'">
+                <a class="dropdown-item" :class="{ disabled: item.children.length > 0 || item.name === 'root' }"
+                    @click="deleteContainer">
+                    {{ language.data.iv2 }}
+                </a>
+            </span>
         </div>
-        <div class="row m-0">
-            <div class="col m-2">
-                <add-dlg :item="item" v-if="showAddDlg" @close-dlg="showAddDlg = false"></add-dlg>
-                <rename-dlg :item="item" v-if="showRenameDlg" @close-dlg="showRenameDlg = false"></rename-dlg>
-                <add-note :item="item" v-if="showAddNoteDlg" @close-dlg="showAddNoteDlg = false"></add-note>
-                <add-pwd :item="item" v-if="showAddPwdDlg" @close-dlg="showAddPwdDlg = false"></add-pwd>
-                {{ language.data.iv7 }} <br>
-                <note-view v-for="note in item.notes" :note="note" :access="item.access" :key="'N' + note.id" :search-data="searchData"></note-view>
-                {{ language.data.iv8 }} <br>
-                <pwd-view v-for="pwd in item.passwords" :pwd="pwd" :access="item.access" :key="'P' + pwd.id" :search-data="searchData"></pwd-view>
-                {{ language.data.fl1 }} <br>
-                <table class="table table-bordered table-striped table-sm">
-                    <thead></thead>
-                    <tbody>
-                        <fls-view v-for="file in item.files" :file="file" :access="item.access" :key="'F' + file.id" :search-data="searchData"></fls-view>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+    </span>
+    <span style="user-select: none; margin-left: 2rem;">{{ language.data.cm10 }} &nbsp;</span>$id:{{ item.id }}
+    <div>
+        <add-dlg :item="item" v-if="showAddDlg" @close-dlg="showAddDlg = false"></add-dlg>
+        <rename-dlg :item="item" v-if="showRenameDlg" @close-dlg="showRenameDlg = false"></rename-dlg>
+        <add-note :item="item" v-if="showAddNoteDlg" @close-dlg="showAddNoteDlg = false"></add-note>
+        <add-pwd :item="item" v-if="showAddPwdDlg" @close-dlg="showAddPwdDlg = false"></add-pwd>
+        {{ language.data.iv7 }} <br>
+        <note-view v-for="note in item.notes" :note="note" :access="item.access" :key="'N' + note.id"
+            :search-data="searchData"></note-view>
+        {{ language.data.iv8 }} <br>
+        <pwd-view v-for="pwd in item.passwords" :pwd="pwd" :access="item.access" :key="'P' + pwd.id"
+            :search-data="searchData"></pwd-view>
+        {{ language.data.fl1 }} <br>
+        <table class="table table-bordered table-striped table-sm">
+            <thead></thead>
+            <tbody>
+                <fls-view v-for="file in item.files" :file="file" :access="item.access" :key="'F' + file.id"
+                    :search-data="searchData"></fls-view>
+            </tbody>
+        </table>
     </div>
 </template>
 

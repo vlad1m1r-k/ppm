@@ -1,5 +1,5 @@
 <template>
-    <select class="form-control-sm" v-model="selectedLang" @change="setLang">
+    <select v-model="selectedLang" @change="setLang">
         <option value="en-US">En</option>
         <option value="uk-UA">Ua</option>
     </select>
@@ -24,6 +24,9 @@ export default {
         'language.name'(value) {
             this.selectedLang = value;
         }
+    },
+    mounted() {
+        this.selectedLang = this.language.name;
     }
 }
 </script>

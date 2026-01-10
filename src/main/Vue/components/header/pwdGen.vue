@@ -70,8 +70,8 @@ export default {
                     symbols = symbols.concat("0", "1", "2", "3", "4", "5", "6", "7", "8", "9");
                 }
                 if (this.settings.symbols) {
-                    symbols = symbols.concat("~", "`", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "_", "-", "+", "=", "\\", "|",
-                        "[", "]", "{", "}", ":", ";", "'", "\"", "<", ">", ",", ".", "/", "?");
+                    symbols = symbols.concat("!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "_", "-", "+", "=", "\\", "|",
+                        "[", "]", "{", "}", ":", ";", "<", ">", ",", ".", "/", "?");
                 }   
                 this.shuffle(symbols, 3);
                 for (let i = 0; i < this.settings.pwdLength; i++) {
@@ -84,7 +84,7 @@ export default {
             let upperCase = pwd.match("[A-Z]");
             let digits = !this.settings.numbers || pwd.match("[0-9]");
             let repeaters = !pwd.match("(.)\\1{2,}");
-            let symbols = !this.settings.symbols || pwd.match("[`~!@#$%^&*()_\\-+=|\\\\/{}\\[\\]:;\"',.]");
+            let symbols = !this.settings.symbols || pwd.match("[!@#$%^&*()_\\-+=|\\\\/{}\\[\\]:;,.]");
             return lowerCase && upperCase && digits && repeaters && symbols;
         },
         shuffle(arr, count) {

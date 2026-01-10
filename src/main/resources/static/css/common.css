@@ -14,3 +14,41 @@
 .s-icon {
     height: 2rem;
 }
+
+.item-tree {
+    list-style-type: none;
+    li {
+        margin-top: 0.2rem;
+    }
+}
+
+.caret {
+    cursor: pointer;
+    margin-right: 0.3rem;
+
+    &::before {
+        content: "\25B7";
+        color: black;
+    }
+}
+
+.caret-down::before {
+    content: "\25BD";
+}
+
+.branch {
+    user-select: none;
+    cursor: pointer;
+    padding: 0.05rem 0.4rem;
+    border-radius: .25rem;
+}
+
+.tr-selected {
+    font-size: 1.2rem;
+    border: 2px solid blue;
+    background-color: white;
+}
+
+.cursor-stop {
+    cursor: not-allowed;
+}

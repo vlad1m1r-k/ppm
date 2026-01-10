@@ -1,22 +1,30 @@
+.h-col1,.h-col2,.h-col3,.h-col4 {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem; 
+    padding-top: 0.5rem;
+    align-items: center;
+    display: flex;
+}
+
 .h-col1 {
     grid-area: b1;
-    display: flex;
-    align-items: center;
     gap: 0.4rem;
 }
 
 .h-col2 {
     grid-area: b2;
-    display: flex;
-    align-items: center;
-    padding-left: 1rem;
 }
 
 .h-col3 {
     grid-area: b3;
-    justify-self: end;
+    justify-content: end;
 }
 
 .h-col4 {
     grid-area: b4;
+    gap: 0.4rem;
+
+    @media (max-width: 966px) {
+        justify-content: end;
+    }
 }

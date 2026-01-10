@@ -29,3 +29,18 @@
         width: 100%;
     }
 }
+
+.dialog {
+    display: grid;
+    height: fit-content;
+    margin-top: 20vh;
+    gap: 1rem;
+
+    & .btn {
+        justify-self: center;
+    }
+
+    & .input {
+        margin-left: 1rem;
+    }
+}

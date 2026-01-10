@@ -1,13 +1,11 @@
 <template>
-    <span class="dropdown">
-        <button class="btn-sm btn-outline-secondary dropdown-toggle" type="button" @click.stop="showMenu = !showMenu">
-            {{ tokenProvider.userName }}
-        </button>
-        <div class="dropdown-menu dropdown-menu-right" :class="{show: showMenu}">
-            <a class="dropdown-item" @click="$emit('show-user-settings')">{{ language.data.um1 }}</a>
-            <a class="dropdown-item" @click="logout">{{ language.data.um2 }}</a>
-        </div>
-    </span>
+    <button class="btn blue" type="button" @click.stop="showMenu = !showMenu">
+        {{ tokenProvider.userName }}
+    </button>
+    <div class="dropdown" :class="{ show: showMenu }">
+        <a class="dropdown-item" @click="$emit('show-user-settings')">{{ language.data.um1 }}</a>
+        <a class="dropdown-item" @click="logout">{{ language.data.um2 }}</a>
+    </div>
 </template>
 
 <script>

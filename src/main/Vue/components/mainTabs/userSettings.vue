@@ -1,35 +1,30 @@
 <template>
-    <div class="modal-dlg">
-        <div class="modal-dlg-body">
-            <div class="row">
-                <div class="col">
-                    {{ language.data.uss1 }}
-                    <button class="close" @click="$emit('close-dlg')">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
+    <div class="modal">
+        <div class="modal-body dialog">
+            <div>
+                {{ language.data.uss1 }}
+                <button class="close" @click="$emit('close-dlg')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-            <div class="modal-dlg-scroll">
-                <div class="alert alert-danger" v-if="msg">
-                    {{ msg }}
-                </div>
-                <table>
-                    <thead></thead>
-                    <tbody>
+            <div class="alert" v-if="msg">
+                {{ msg }}
+            </div>
+            <table>
+                <thead></thead>
+                <tbody>
                     <tr>
                         <td>{{ language.data.uss2 }}</td>
-                        <td><input type="password" class="form-control-sm" v-model="pwd" ref="usPwd1" @keypress.enter="send"></td>
+                        <td><input type="password" class="input" v-model="pwd" ref="usPwd1" @keypress.enter="send"></td>
                     </tr>
                     <tr>
                         <td>{{ language.data.uss3 }}</td>
-                        <td><input type="password" class="form-control-sm" v-model="pwd2" @keypress.enter="send"></td>
+                        <td><input type="password" class="input" v-model="pwd2" @keypress.enter="send">
+                        </td>
                     </tr>
-                    </tbody>
-                </table>
-                <div class="row justify-content-md-center m-0 p-1">
-                    <button class="btn btn-sm btn-success" @click="send">{{ language.data.cm3 }}</button>
-                </div>
-            </div>
+                </tbody>
+            </table>
+            <button class="btn blue" @click="send">{{ language.data.cm3 }}</button>
         </div>
     </div>
 </template>
