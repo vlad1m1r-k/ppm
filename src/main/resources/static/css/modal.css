@@ -11,7 +11,14 @@
     justify-items: center;
 }
 
+.modal-header {
+    display: grid;
+    grid-template-columns: auto min-content;
+    align-items: center;
+}
+
 .modal-body {
+    min-width: 260px;
     background: #fff;
     border-radius: 10px;
     padding: 20px;
@@ -43,4 +50,15 @@
     & .input {
         margin-left: 1rem;
     }
+}
+
+.info-box {
+    margin-left: 2px;
+    padding: 10px;
+    display: inline;
+    position: absolute;
+    z-index: 1000000;
+    background-color: #d6f0ff;
+    border-radius: 0.25rem;
+    user-select: none;
 }

@@ -1,17 +1,19 @@
 <template>
     <div :class="{'searchTarget': isSearchTarget}">
-        <div class="decor">
-            &#x1f512;
-            <item-info :item="note" v-if="access === 'RW'"></item-info>
-            &nbsp; <span class="btn-link cursor-pointer" @click="toggle" :title="language.data.cm1">{{ note.name }}</span> &nbsp;
-            <span class="btn-dc" v-show="show && access === 'RW' && !edit" :title="language.data.cm2" @click="edit = true">&#x1f589;</span>
-            <span class="btn-dc" v-show="show && access === 'RW' && edit" :title="language.data.cm3" @click="save">&#x2705;</span>
-            <span class="btn-dc" v-show="show && access === 'RW' && edit" :title="language.data.cm4" @click="cancel">&#x274c;</span>
-            <span class="btn-dc float-right" v-show="access === 'RW'" :title="language.data.cm5" @click="remove">&#x1f5d1;</span>
-            <span class="float-right"><span style="user-select: none">{{ language.data.cm10 }} &nbsp;</span>$id:{{ $parent.$props.item.id }}n{{ note.id }}&nbsp;</span>
+        <div class="iv-item">
+            <img class="iv-icon" src="/svg/lock.svg">
+            <item-info :item="note" v-if="access === 'RW'"></item-info><span v-else>&nbsp;</span>
+            <span class="iv-item-name-box">
+                <span class="iv-item-name" @click="toggle" :title="language.data.cm1">{{ note.name }}</span>
+                <button class="btn-img edit" :title="language.data.cm2" v-show="show && access === 'RW' && !edit" @click="edit = true"></button>
+                <button class="btn-img acpt" :title="language.data.cm3" v-show="show && access === 'RW' && edit" @click="save"></button>
+                <button class="btn-img cncl" :title="language.data.cm4" v-show="show && access === 'RW' && edit" @click="cancel"></button>
+            </span>
+            <button class="btn-img rmv" :title="language.data.cm5" v-show="access === 'RW'" @click="remove"></button>
+            <span class="iv-item-link"><span style="user-select: none">{{ language.data.cm10 }} &nbsp;</span>$id:{{ $parent.$props.item.id }}n{{ note.id }}&nbsp;</span>
         </div>
-        <input type="text" class="form-control" v-show="show && edit" v-model="name">
-        <textarea class="form-control" rows="4" :readonly="!edit" v-show="show" v-model="text"></textarea>
+        <input type="text" class="iv-input" v-show="show && edit" v-model="name">
+        <textarea class="text-box" rows="4" :readonly="!edit" v-show="show" v-model="text"></textarea>
     </div>
 </template>
 

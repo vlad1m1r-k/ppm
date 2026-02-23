@@ -102,7 +102,7 @@ public class FileDto {
         }
 
         public Builder editedDate(Date editedDate) {
-            this.editedDate = String.format("%1$tF %1$tT", editedDate);
+            this.editedDate = editedDate == null ? "" : String.format("%1$tF %1$tT", editedDate);
             return this;
         }
 

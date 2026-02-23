@@ -1,11 +1,9 @@
 <template>
     <div class="modal">
         <div class="modal-body dialog">
-            <div>
+            <div class="modal-header">
                 {{ language.data.uss1 }}
-                <button class="close" @click="$emit('close-dlg')">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button class="btn-img cncl" @click="$emit('close-dlg')"></button>
             </div>
             <div class="alert" v-if="msg">
                 {{ msg }}

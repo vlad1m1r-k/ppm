@@ -24,20 +24,21 @@
             </span>
         </div>
     </span>
-    <span style="user-select: none; margin-left: 2rem;">{{ language.data.cm10 }} &nbsp;</span>$id:{{ item.id }}
-    <div>
+    <span class="iv-d">{{ language.data.cm10 }} &nbsp;</span>
+    $id:{{ item.id }}
+    <div class="iv-d2">
         <add-dlg :item="item" v-if="showAddDlg" @close-dlg="showAddDlg = false"></add-dlg>
         <rename-dlg :item="item" v-if="showRenameDlg" @close-dlg="showRenameDlg = false"></rename-dlg>
         <add-note :item="item" v-if="showAddNoteDlg" @close-dlg="showAddNoteDlg = false"></add-note>
         <add-pwd :item="item" v-if="showAddPwdDlg" @close-dlg="showAddPwdDlg = false"></add-pwd>
-        {{ language.data.iv7 }} <br>
+        {{ language.data.iv7 }} <br><br>
         <note-view v-for="note in item.notes" :note="note" :access="item.access" :key="'N' + note.id"
             :search-data="searchData"></note-view>
-        {{ language.data.iv8 }} <br>
+        <br> {{ language.data.iv8 }} <br><br>
         <pwd-view v-for="pwd in item.passwords" :pwd="pwd" :access="item.access" :key="'P' + pwd.id"
             :search-data="searchData"></pwd-view>
-        {{ language.data.fl1 }} <br>
-        <table class="table table-bordered table-striped table-sm">
+        <br>{{ language.data.fl1 }} <br><br>
+        <table class="table" v-if="item.files && item.files.length">
             <thead></thead>
             <tbody>
                 <fls-view v-for="file in item.files" :file="file" :access="item.access" :key="'F' + file.id"
