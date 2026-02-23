@@ -15,10 +15,8 @@
                 {{ language.data.iv12 }}
             </a>
             <div class="dropdown-divider" v-if="item.name !== 'root'"></div>
-            <span :title="item.children.length > 0 ? language.data.iv3 : false"
-                :class="{ 'cursor-stop': item.children.length > 0 }" v-if="item.name !== 'root'">
-                <a class="dropdown-item" :class="{ disabled: item.children.length > 0 || item.name === 'root' }"
-                    @click="deleteContainer">
+            <span :title="item.children.length > 0 ? language.data.iv3 : ''" :class="{ 'cursor-stop': item.children.length > 0 }" v-if="item.name !== 'root'">
+                <a style="width: 100%;" class="dropdown-item" :class="{ disabled: item.children.length > 0 || item.name === 'root' }" @click="deleteContainer">
                     {{ language.data.iv2 }}
                 </a>
             </span>

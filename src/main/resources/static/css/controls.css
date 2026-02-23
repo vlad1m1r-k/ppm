@@ -118,6 +118,7 @@ select {
 }
 
 .dropdown-item {
+    display: block;
     cursor: default;
     padding: 0.25rem;
 
