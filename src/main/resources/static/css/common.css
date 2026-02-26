@@ -125,3 +125,22 @@
         white-space: nowrap;
     }
 }
+
+.selected {
+    border: 1px solid blue;
+    border-bottom: 4px solid blue;
+    margin: 4px;
+}
+
+.decor-tr {
+    display: flex;
+    align-items: center;
+    user-select: none;
+    cursor: pointer;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    border-radius: 0.25rem;
+    border: 1px solid #b9cbf7;
+}

@@ -256,4 +256,8 @@ select {
     &.copy {
         background-image: url(/svg/copy.svg);
     }
+
+    &.redo {
+        background-image: url(/svg/redo.svg);
+    }
 }
