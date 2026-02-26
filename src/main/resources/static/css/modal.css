@@ -15,6 +15,11 @@
     display: grid;
     grid-template-columns: auto min-content;
     align-items: center;
+    margin-bottom: 5px;
+    box-shadow: 0px 1px 0px rgba(0,0,0,0.13), 0px 2px 0px rgba(0,0,0,0.08);
+    border-radius: 0.25rem;
+    padding-left: 1rem;
+    padding-right: 0.5rem;
 }
 
 .modal-body {
