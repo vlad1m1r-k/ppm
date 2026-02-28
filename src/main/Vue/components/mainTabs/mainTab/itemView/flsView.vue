@@ -4,7 +4,7 @@
             <span style="display: flex;">
                 <button class="btn-img acpt" :title="language.data.cm3" :disabled="name.length === 0" @click="save"></button>
                 <button class="btn-img cncl" :title="language.data.cm4" @click="cancel"></button>
-                <input type="text" class="iv-input" v-model="name">
+                <input type="text" class="input" v-model="name">
             </span>
         </td>
     </tr>

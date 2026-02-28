@@ -19,11 +19,11 @@
     </tr>
     <tr v-show="show">
         <td colspan="15">
-            <input class="iv-input" v-model="login" readonly>
+            <input class="input" v-model="login" readonly>
             <div style="display: flex">
                 <button class="btn-img show" @click="loadPwdBody" :title="language.data.cm1"></button>
                 <button class="btn-img copy" :title="language.data.cm6" @click="pwdToClipboard"></button>
-                <input class="iv-input" v-model="pass" readonly placeholder="******">
+                <input class="input" v-model="pass" readonly placeholder="******">
             </div>
             <textarea class="text-box" rows="4" readonly v-model="note"></textarea>
         </td>

@@ -3,7 +3,7 @@
         <div class="iv-item">
             <img class="iv-icon" src="/svg/lock.svg">
             <item-info :item="note" v-if="access === 'RW'"></item-info><span v-else>&nbsp;</span>
-            <span class="iv-item-name-box">
+            <span class="flex-view">
                 <span class="iv-item-name" @click="toggle" :title="language.data.cm1">{{ note.name }}</span>
                 <button class="btn-img edit" :title="language.data.cm2" v-show="show && access === 'RW' && !edit" @click="edit = true"></button>
                 <button class="btn-img acpt" :title="language.data.cm3" v-show="show && access === 'RW' && edit" @click="save"></button>
@@ -12,7 +12,7 @@
             <button class="btn-img rmv" :title="language.data.cm5" v-show="access === 'RW'" @click="remove"></button>
             <span class="iv-item-link"><span style="user-select: none">{{ language.data.cm10 }} &nbsp;</span>$id:{{ $parent.$props.item.id }}n{{ note.id }}&nbsp;</span>
         </div>
-        <input type="text" class="iv-input" v-show="show && edit" v-model="name">
+        <input type="text" class="input" v-show="show && edit" v-model="name">
         <textarea class="text-box" rows="4" :readonly="!edit" v-show="show" v-model="text"></textarea>
     </div>
 </template>

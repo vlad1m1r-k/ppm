@@ -1,9 +1,9 @@
 <template>
     <button class="btn-img acpt" :disabled="name.length === 0" @click="addPasswd"></button>
     <button class="btn-img cncl" @click="$emit('close-dlg')"></button>
-    <input class="iv-input" v-model="name" :placeholder="language.data.iv6" ref="ivAddPwd" @keydown.esc="$emit('close-dlg')">
-    <input class="iv-input" v-model="login" :placeholder="language.data.lf1">
-    <input class="iv-input" v-model="pass" :placeholder="language.data.lf2">
+    <input class="input" v-model="name" :placeholder="language.data.iv6" ref="ivAddPwd" @keydown.esc="$emit('close-dlg')">
+    <input class="input" v-model="login" :placeholder="language.data.lf1">
+    <input class="input" v-model="pass" :placeholder="language.data.lf2">
     <textarea class="text-box" rows="4" v-model="note"></textarea>
 </template>
 

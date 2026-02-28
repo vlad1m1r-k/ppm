@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.volodymyr.ppm.service.ValidatorService;
+import com.volodymyr.ppm.service.ValidatorServiceImpl;
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 

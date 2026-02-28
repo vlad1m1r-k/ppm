@@ -2,30 +2,28 @@
     <group-selector v-if="showGroupSelector" @close-dlg="showGroupSelector = false; $emit('user-changed')" :user="user"></group-selector>
     <user-ip-view v-if="showIpEditor" @close-dlg="showIpEditor = false" :user="user"></user-ip-view>
     <tr v-if="showEditDlg">
-        <td colspan="10">
-            <input type="text" class="form-control-sm align-middle" :placeholder="language.data.lf1" v-model="login">
-            <input type="password" class="form-control-sm align-middle" min="1" :placeholder="language.data.lf2" v-model="pwd">
-            <select class="form-control-sm align-middle" v-model="status" :class="{'bg-danger': status === 'DISABLED'}">
-                <option class="bg-light" v-for="status in statuses" :value="status">{{ status }}</option>
+        <td colspan="10" class="flex-view">
+            <input type="text" class="input-sm" :placeholder="language.data.lf1" v-model="login">
+            <input type="password" class="input-sm" min="1" :placeholder="language.data.lf2" v-model="pwd">
+            <select v-model="status">
+                <option v-for="status in statuses" :value="status">{{ status }}</option>
             </select>
-            <input type="checkbox" class="form-control-sm align-middle" v-model="changePwdAtNextLogon"> {{ language.data.us5 }}
-            <button class="btn btn-sm btn-outline-success" :disabled="login.length === 0" :title="language.data.cm3"
-                    @click="save">&check;
-            </button>
-            <button class="btn btn-sm btn-danger" :title="language.data.cm4" @click="cancel">X</button>
+            <input type="checkbox" v-model="changePwdAtNextLogon"> {{ language.data.us5 }}
+            <button class="btn-img acpt" :disabled="login.length === 0" :title="language.data.cm3" @click="save"></button>
+            <button class="btn-img cncl" :title="language.data.cm4" @click="cancel"></button>
         </td>
     </tr>
     <tr v-else>
         <td>{{ user.login }}</td>
         <td :class="{'text-danger': user.status === 'DISABLED'}">{{ user.status }}</td>
         <td>
-            <button class="btn btn-sm btn-outline-success" @click="showGroupSelector = true">{{ language.data.gp1 }} ({{ user.groups.length }})</button>
+            <button class="btn blue" @click="showGroupSelector = true">{{ language.data.gp1 }} ({{ user.groups.length }})</button>
         </td>
         <td>
-            <button class="btn btn-sm btn-outline-success" @click="showIpEditor = true">{{ language.data.us4 }}</button>
+            <button class="btn blue" @click="showIpEditor = true">{{ language.data.us4 }}</button>
         </td>
-        <td><button class="btn btn-sm btn-outline-success" :title="language.data.cm2" @click="showEditDlg = true">&#x1f589;</button></td>
-        <td><button class="btn btn-sm btn-outline-danger" :title="language.data.cm5" @click="deleteUser">&#x1f5d1;</button></td>
+        <td class="fit"><button class="btn-img edit" :title="language.data.cm2" @click="showEditDlg = true"></button></td>
+        <td class="fit"><button class="btn-img rmv" :title="language.data.cm5" @click="deleteUser"></button></td>
     </tr>
 </template>
 

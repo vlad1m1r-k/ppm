@@ -1,27 +1,26 @@
 <template>
-    <table class="table table-bordered table-striped table-sm">
+    <table class="table">
         <thead>
         <tr>
-            <th><button class="btn btn-sm btn-link" @click="setSort('login')">{{ language.data.lf1 }}</button></th>
-            <th><button class="btn btn-sm btn-link" @click="setSort('status')">{{ language.data.us2 }}</button></th>
+            <th><button class="btn link" @click="setSort('login')">{{ language.data.lf1 }}</button></th>
+            <th><button class="btn link" @click="setSort('status')">{{ language.data.us2 }}</button></th>
             <th>{{ language.data.gp1 }}</th>
             <th>{{ language.data.us4 }}</th>
-            <th><span class="btn-dc text-success" @click="showAddDlg = !showAddDlg">&#x2795;</span></th>
+            <th><button class="btn blue" @click="showAddDlg = !showAddDlg">&#x2795;</button></th>
             <th></th>
         </tr>
         </thead>
         <tbody>
         <tr v-show="showAddDlg">
-            <td colspan="10">
-                <input type="text" class="form-control-sm align-middle" min="1" :placeholder="language.data.lf1" v-model="login" ref="admAddUsr">
-                <input type="password" class="form-control-sm align-middle" min="1" :placeholder="language.data.lf2" v-model="pwd">
-                <select class="form-control-sm align-middle" v-model="status" :class="{'bg-danger': status === 'DISABLED'}">
-                    <option class="bg-light" v-for="status in statuses" :value="status">{{ status }}</option>
+            <td colspan="10" class="flex-view">
+                <input type="text" class="input-sm" min="1" :placeholder="language.data.lf1" v-model="login" ref="admAddUsr">
+                <input type="password" class="input-sm" min="1" :placeholder="language.data.lf2" v-model="pwd">
+                <select v-model="status">
+                    <option v-for="status in statuses" :value="status">{{ status }}</option>
                 </select>
-				<input type="checkbox" class="form-control-sm align-middle" v-model="changePwdAtNextLogon"> {{ language.data.us5 }}
-                <button class="btn btn-sm btn-outline-success" :disabled="login.length === 0 || pwd.length === 0" @click="addUser">&check;
-                </button>
-                <button class="btn btn-sm btn-danger" @click="cancel">X</button>
+				<input type="checkbox" v-model="changePwdAtNextLogon"> {{ language.data.us5 }}
+                <button class="btn-img acpt" :disabled="login.length === 0 || pwd.length === 0" @click="addUser"></button>
+                <button class="btn-img cncl" @click="cancel"></button>
             </td>
         </tr>
         <user-view v-for="user in users" :user="user" :statuses="statuses" :key="'usv' + user.id" @user-changed="getUsers"></user-view>

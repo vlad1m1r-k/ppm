@@ -1,6 +1,6 @@
 <template>
     <div style="display: flex;">
-        <input class="iv-input-sm" v-model="name" ref="ivRenCnt" @keypress.enter="renameContainer" @keydown.esc="$emit('close-dlg')">
+        <input class="input-sm" v-model="name" ref="ivRenCnt" @keypress.enter="renameContainer" @keydown.esc="$emit('close-dlg')">
         <button class="btn-img acpt" :disabled="name.length === 0" @click="renameContainer"></button>
         <button class="btn-img cncl" @click="$emit('close-dlg')"></button>
     </div>

@@ -3,7 +3,7 @@
         <div class="iv-item">
             <img class="iv-icon" src="/svg/lock.svg">
             <item-info :item="pwd" v-if="access === 'RW'"></item-info><span v-else>&nbsp;</span>
-            <span class="iv-item-name-box">
+            <span class="flex-view">
                 <span class="iv-item-name" @click="toggle" :title="language.data.cm1">{{ pwd.name }}</span>
                 <button class="btn-img edit" :title="language.data.cm2" v-show="show && access === 'RW' && !edit" @click="edit = true"></button>
                 <button class="btn-img acpt" :title="language.data.cm3" v-show="show && access === 'RW' && edit" @click="save"></button>
@@ -12,12 +12,12 @@
             <button class="btn-img rmv" :title="language.data.cm5" v-show="access === 'RW'" @click="remove"></button>
             <span class="iv-item-link"><span style="user-select: none">{{ language.data.cm10 }} &nbsp;</span>$id:{{ $parent.$props.item.id }}p{{ pwd.id }}&nbsp;</span>
         </div>
-        <input class="iv-input" v-show="show && edit" v-model="name">
-        <input class="iv-input" v-show="show" v-model="login" :readonly="!edit">
+        <input class="input" v-show="show && edit" v-model="name">
+        <input class="input" v-show="show" v-model="login" :readonly="!edit">
         <div v-show="show" style="display: flex">
             <button class="btn-img show" :title="language.data.cm1" v-show="!edit" @click="loadPwdBody"></button>
             <button class="btn-img copy" :title="language.data.cm6" v-show="!edit" @click="pwdToClipboard"></button>
-            <input class="iv-input" v-model="pass" :readonly="!edit" placeholder="******">
+            <input class="input" v-model="pass" :readonly="!edit" placeholder="******">
         </div>
         <textarea class="text-box" rows="4" :readonly="!edit" v-show="show" v-model="note"></textarea>
     </div>

@@ -87,9 +87,12 @@
     }
 }
 
-.iv-item-name-box {
+.flex-view {
     display: flex;
     align-items: center;
+    & * {
+        margin-left: 0.2rem;
+    }
 }
 
 .iv-item-name {
@@ -130,6 +133,7 @@
     border: 1px solid blue;
     border-bottom: 4px solid blue;
     margin: 4px;
+    text-decoration: underline;
 }
 
 .decor-tr {
@@ -144,3 +148,8 @@
     border-radius: 0.25rem;
     border: 1px solid #b9cbf7;
 }
+
+.text-danger {
+    color: #dc3545;
+}
+

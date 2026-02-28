@@ -186,7 +186,7 @@ select {
     border-radius: 0.25rem;
 }
 
-.iv-input {
+.input {
     display: block;
     width: 100%;
     font-size: inherit;
@@ -197,7 +197,7 @@ select {
     margin-bottom: 2px;
 }
 
-.iv-input-sm {
+.input-sm {
     display: block;
     font-size: inherit;
     padding: 0.4rem 0.8rem;

@@ -1,7 +1,7 @@
 <template>
     <button class="btn-img acpt" :disabled="name.length === 0" @click="addNote" :title="language.data.cm3"></button>
     <button class="btn-img cncl" @click="$emit('close-dlg')" :title="language.data.cm4"></button>
-    <input class="iv-input" v-model="name" :placeholder="language.data.iv6" ref="ivAddNote" @keydown.esc="$emit('close-dlg')">
+    <input class="input" v-model="name" :placeholder="language.data.iv6" ref="ivAddNote" @keydown.esc="$emit('close-dlg')">
     <textarea class="text-box" rows="4" v-model="text"></textarea>
 </template>
 
