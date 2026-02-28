@@ -2,31 +2,28 @@
     <user-selector v-if="showUserSelector" :group="group" @close-dlg="showUserSelector = false; $emit('group-changed')"></user-selector>
     <access-tree v-if="showAccessTree" :group="group" @close-dlg="showAccessTree = false"></access-tree>
     <tr v-if="showEditDlg">
-        <td colspan="10">
-            <input type="text" class="form-control-sm align-middle" :placeholder="language.data.gp2" v-model="name">
+        <td class="flex-view" colspan="10">
+            <input type="text" class="input-sm" :placeholder="language.data.gp2" v-model="name">
             &nbsp;{{ language.data.gp3 }}:
-            <select class="form-control-sm align-middle" :class="{'bg-danger': adminSettings}" v-model="adminSettings"
-                    :title="language.data.gp3">
-                <option class="bg-light" :value=false>FALSE</option>
-                <option class="bg-danger" :value=true>TRUE</option>
+            <select v-model="adminSettings" :title="language.data.gp3">
+                <option :value=false>FALSE</option>
+                <option :value=true>TRUE</option>
             </select>
-            <button class="btn btn-sm btn-outline-success" :disabled="name.length === 0" :title="language.data.cm3"
-                    @click="save">&check;
-            </button>
-            <button class="btn btn-sm btn-danger" :title="language.data.cm4" @click="cancel">X</button>
+            <button class="btn-img acpt" :disabled="name.length === 0" :title="language.data.cm3" @click="save"></button>
+            <button class="btn-img cncl" :title="language.data.cm4" @click="cancel"></button>
         </td>
     </tr>
     <tr v-else>
         <td>{{ group.name }}</td>
         <td :class="{'text-danger': group.adminSettings}">{{ group.adminSettings }}</td>
         <td>
-            <button class="btn btn-sm btn-outline-success" @click="showUserSelector = true">{{ language.data.us1 }} ({{ group.users.length }})</button>
+            <button class="btn blue" @click="showUserSelector = true">{{ language.data.us1 }} ({{ group.users.length }})</button>
         </td>
         <td>
-            <button class="btn btn-sm btn-outline-success" @click="showAccessTree = true">{{ language.data.gp4 }}</button>
+            <button class="btn blue" @click="showAccessTree = true">{{ language.data.gp4 }}</button>
         </td>
-        <td><button class="btn btn-sm btn-outline-success" :title="language.data.cm2" @click="showEditDlg = true">&#x1f589;</button></td>
-        <td><button class="btn btn-sm btn-outline-danger" :title="language.data.cm5" @click="deleteGroup">&#x1f5d1;</button></td>
+        <td class="fit"><button class="btn-img edit" :title="language.data.cm2" @click="showEditDlg = true"></button></td>
+        <td class="fit"><button class="btn-img rmv" :title="language.data.cm5" @click="deleteGroup"></button></td>
     </tr>
 </template>
 
