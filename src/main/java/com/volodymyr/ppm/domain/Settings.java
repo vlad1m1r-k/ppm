@@ -1,5 +1,6 @@
 package com.volodymyr.ppm.domain;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -20,8 +21,13 @@ public class Settings {
     private volatile Integer serverKeyLifeTimeDays;
     private volatile Integer tokenLifeTimeMinutes;
     private volatile Integer pwdMinLength;
+    
+    @Column(columnDefinition = "TINYINT(1)")
     private volatile Boolean pwdComplexity;
+    
+    @Column(columnDefinition = "TINYINT(1)")
     private volatile Boolean pwdSpecialChar;
+    
     private volatile Integer incorrectLoginAttempts;
     private volatile Integer ipBanTimeDays;
     private volatile Integer incorrectPasswdAttempts;

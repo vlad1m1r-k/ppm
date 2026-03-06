@@ -1,5 +1,6 @@
 package com.volodymyr.ppm.domain;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,7 +12,11 @@ public class PwdGenSettings {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Integer pwdLength = 8;
+    
+    @Column(columnDefinition = "TINYINT(1)")
     private Boolean numbers = true;
+    
+    @Column(columnDefinition = "TINYINT(1)")
     private Boolean symbols = false;
 
     public Integer getPwdLength() {

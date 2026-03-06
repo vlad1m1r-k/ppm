@@ -1,6 +1,7 @@
 package com.volodymyr.ppm.domain;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -20,6 +21,8 @@ public class Password {
     private Long id;
 
     private String name;
+    
+    @Column(columnDefinition = "TINYINT(1)")
     private boolean deleted = false;
     private Date createdDate;
     private String createdBy;

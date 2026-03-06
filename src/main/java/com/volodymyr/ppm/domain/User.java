@@ -1,5 +1,6 @@
 package com.volodymyr.ppm.domain;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -22,6 +23,8 @@ public class User {
     private Long id;
     private String login;
     private String password;
+    
+    @Column(columnDefinition = "TINYINT(1)")
     private Boolean changePwdOnNextLogon = false;
 
     @Enumerated(EnumType.STRING)

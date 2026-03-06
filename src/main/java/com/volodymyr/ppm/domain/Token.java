@@ -3,11 +3,15 @@ package com.volodymyr.ppm.domain;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jakarta.persistence.Column;
+
 public class Token {
     private final String login;
     private final long lifeTime;
     private final String remoteAddr;
     private final String userAgent;
+    
+    @Column(columnDefinition = "TINYINT(1)")
     private final boolean changePwd;
 
     public Token(String login, long lifeTime, String remoteAddr, String userAgent, boolean changePwd) {

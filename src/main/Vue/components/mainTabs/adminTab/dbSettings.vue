@@ -1,18 +1,18 @@
 <template>
-    <div>
+    <div style="padding: 30px;">
         <div>
             {{ language.data.db2 }} {{ statusTxt }}
         </div>
         <div v-if="status === 'NEW_DB'">
-            <button class="btn btn-sm btn-warning" @click="generate" :disabled="key">{{ language.data.db6 }}</button>
+            <button class="btn blue" @click="generate" :disabled="key">{{ language.data.db6 }}</button>
             <br> &#x26A0; {{ language.data.db7 }}
-            <textarea class="form-control" readonly rows="3" v-model="key"></textarea>
+            <textarea class="text-box" readonly rows="3" v-model="key"></textarea>
             <span v-html="language.data.db8"></span>
         </div>
         <div v-if="status === 'NEED_KEY'">
-            <textarea class="form-control" rows="3" v-model="key"></textarea>
-            <button class="btn btn-sm btn-warning" @click="sendKey" :disabled="!key">{{ language.data.db9 }}</button>
-            <button class="btn btn-sm btn-secondary" @click="$refs.db_file.click()">{{ language.data.db11 }}</button>
+            <textarea class="text-box" rows="3" v-model="key"></textarea>
+            <button class="btn blue" @click="sendKey" :disabled="!key">{{ language.data.db9 }}</button>
+            <button class="btn blue" @click="$refs.db_file.click()">{{ language.data.db11 }}</button>
             <input type="file" style="display: none" ref="db_file" @change="loadFile">
         </div>
     </div>

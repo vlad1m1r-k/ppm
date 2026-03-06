@@ -1,6 +1,7 @@
 package com.volodymyr.ppm.domain;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -27,6 +28,8 @@ public class Container {
     private String editedBy;
     private Date deletedDate;
     private String deletedBy;
+    
+    @Column(columnDefinition = "TINYINT(1)")
     private boolean deleted = false;
 
     @ManyToOne

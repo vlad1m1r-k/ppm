@@ -1,5 +1,6 @@
 package com.volodymyr.ppm.domain;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,6 +20,8 @@ public class Group {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    
+    @Column(columnDefinition = "TINYINT(1)")
     private boolean adminSettings = false;
 
     @ManyToMany
