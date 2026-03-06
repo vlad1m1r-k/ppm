@@ -1,28 +1,24 @@
 <template>
-    <div class="modal-dlg">
-        <div class="modal-dlg-body">
-            <div class="row">
-                <div class="col">
-                    {{ group.name }}
-                    <button class="close" @click="$emit('close-dlg')">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
+    <div class="modal">
+        <div class="modal-body dialog">
+            <div class="modal-header">
+                {{ group.name }}
+                <button class="btn-img cncl" @click="$emit('close-dlg')"></button>
             </div>
-            <div class="modal-dlg-scroll">
-                <table class="table table-bordered table-striped table-sm mt-3">
-                    <thead class="tab-header-area">
+            <div>
+                <table class="table">
+                    <thead>
                     <tr>
                         <th></th>
-                        <th><button class="btn btn-sm btn-link" @click="setSort('login')">{{ language.data.lf1 }}</button></th>
-                        <th><button class="btn btn-sm btn-link" @click="setSort('status')">{{ language.data.us2 }}</button></th>
+                        <th><button class="btn link" @click="setSort('login')">{{ language.data.lf1 }}</button></th>
+                        <th><button class="btn link" @click="setSort('status')">{{ language.data.us2 }}</button></th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr v-for="user in users">
                         <td><input type="checkbox" :checked="isChecked(user.id)" @change="setUser(user.id, $event.target.checked)"></td>
                         <td>{{ user.login }}</td>
-                        <td :class="{'bg-danger': user.status === 'DISABLED'}">{{ user.status }}</td>
+                        <td :class="{'text-danger': user.status === 'DISABLED'}">{{ user.status }}</td>
                     </tr>
                     </tbody>
                 </table>

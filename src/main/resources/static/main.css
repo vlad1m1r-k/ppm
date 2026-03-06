@@ -80,3 +80,16 @@ body {
         padding: 1rem;
     }
 }
+
+.acc-view {
+    margin-bottom: 0.2rem;
+
+    &:hover {
+        background-color: #daf5ff;
+    }
+
+    & .acc-grid {
+        display: grid;
+        grid-template-columns: auto max-content max-content max-content max-content;
+    }
+}

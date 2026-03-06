@@ -1,27 +1,27 @@
 <template>
-    <dl class="acce-dl">
-        <dt class="border-bottom">
-            <div class="row ml-0 mr-0">
-                <div class="col">{{ item.name }}</div>
-                <div class="col-auto pl-0">
+    <dl>
+        <dt class="acc-view">
+            <div class="acc-grid">
+                <div>{{ item.name }}</div>
+                <div>
                     <input type="checkbox" :checked="item.accessNA" @click.prevent="editAccess(item.accessNA, 'NA')">
                     NA
                 </div>
-                <div class="col-auto pl-0" :class="{'bg-info': item.accessPT}">
+                <div>
                     <input type="checkbox" :checked="item.accessPT" @click.prevent="editAccess(item.accessPT, 'PT')">
                     PT
                 </div>
-                <div class="col-auto pl-0" :class="{'bg-success': item.accessRO}">
+                <div>
                     <input type="checkbox" :checked="item.accessRO" @click.prevent="editAccess(item.accessRO, 'RO')">
                     RO
                 </div>
-                <div class="col-auto pl-0" :class="{'bg-danger': item.accessRW}">
+                <div>
                     <input type="checkbox" :checked="item.accessRW" @click.prevent="editAccess(item.accessRW, 'RW')">
                     RW
                 </div>
             </div>
         </dt>
-        <dd class="acce-dd" v-for="child in item.children" :key="'ati' + child.id">
+        <dd v-for="child in item.children" :key="'ati' + child.id">
             <access-tree-item :item="child" :group="group" @update-tree="updateTree"></access-tree-item>
         </dd>
     </dl>
