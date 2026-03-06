@@ -8,7 +8,7 @@
             <div>
                 <button class="btn blue" @click="addDlg = !addDlg">&#x2795;</button>
                 <div class="flex-view" v-if="addDlg">
-                    <input type="text" class="input-sm" v-model="ip" placeholder="x.x.x.x/xx" ref="admUsrAddIp" @keypress.enter="addIp" @keydown.esc="ip = ''; addDlg = false">
+                    <input type="text" v-model="ip" placeholder="x.x.x.x/xx" ref="admUsrAddIp" @keypress.enter="addIp" @keydown.esc="ip = ''; addDlg = false">
                     <button class="btn-img acpt" :disabled="!isIpValid" @click="addIp"></button>
                     <button class="btn-img cncl" @click="ip = ''; addDlg = false"></button>
                 </div>

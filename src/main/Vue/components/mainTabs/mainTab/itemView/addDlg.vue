@@ -1,6 +1,6 @@
 <template>
     <div style="display: flex;">
-        <input class="input-sm" v-model="name" @keypress.enter="addContainer" @keydown.esc="$emit('close-dlg')" ref="ivAddCnt">
+        <input v-model="name" @keypress.enter="addContainer" @keydown.esc="$emit('close-dlg')" ref="ivAddCnt">
         <button class="btn-img acpt" :disabled="name.length === 0" :title="language.data.cm3" @click="addContainer"></button>
         <button class="btn-img cncl" :title="language.data.cm4" @click="$emit('close-dlg')"></button>
     </div>

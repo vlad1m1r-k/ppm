@@ -13,7 +13,7 @@
         <tbody>
         <tr v-show="showAddDlg">
             <td class="flex-view" colspan="10">
-                <input type="text" class="input-sm" min="1" :placeholder="language.data.gp2" v-model="name" ref="admAddGrp" @keypress.enter="addGroup" @keydown.esc="cancel">
+                <input type="text" min="1" :placeholder="language.data.gp2" v-model="name" ref="admAddGrp" @keypress.enter="addGroup" @keydown.esc="cancel">
                 &nbsp;{{ language.data.gp3 }}:
                 <select v-model="adminSettings" :title="language.data.gp3">
                     <option :value=false>FALSE</option>

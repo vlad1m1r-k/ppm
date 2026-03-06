@@ -3,7 +3,7 @@
     <access-tree v-if="showAccessTree" :group="group" @close-dlg="showAccessTree = false"></access-tree>
     <tr v-if="showEditDlg">
         <td class="flex-view" colspan="10">
-            <input type="text" class="input-sm" :placeholder="language.data.gp2" v-model="name">
+            <input type="text" :placeholder="language.data.gp2" v-model="name">
             &nbsp;{{ language.data.gp3 }}:
             <select v-model="adminSettings" :title="language.data.gp3">
                 <option :value=false>FALSE</option>

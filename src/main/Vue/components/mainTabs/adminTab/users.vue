@@ -13,8 +13,8 @@
         <tbody>
         <tr v-show="showAddDlg">
             <td colspan="10" class="flex-view">
-                <input type="text" class="input-sm" min="1" :placeholder="language.data.lf1" v-model="login" ref="admAddUsr">
-                <input type="password" class="input-sm" min="1" :placeholder="language.data.lf2" v-model="pwd">
+                <input type="text" min="1" :placeholder="language.data.lf1" v-model="login" ref="admAddUsr">
+                <input type="password" min="1" :placeholder="language.data.lf2" v-model="pwd">
                 <select v-model="status">
                     <option v-for="status in statuses" :value="status">{{ status }}</option>
                 </select>
