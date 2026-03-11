@@ -58,7 +58,7 @@ public class DatabaseServiceImpl implements DatabaseService {
             if (settingsProvider.getDBEncryptionKeyId() != id) {
                 return MessageDto.builder().message("db10").build();
             }
-            byte[] dbKey = Base64.getDecoder().decode(json.get("key").asText());
+            byte[] dbKey = Base64.getDecoder().decode(json.get("key").asString());
             cryptoProvider.installDbKey(dbKey);
         }
         return MessageDto.builder().build();

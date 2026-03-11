@@ -153,8 +153,8 @@ public class CryptoProviderImpl implements CryptoProvider {
             Cipher rsaCipher = Cipher.getInstance(RSACIPHER, PROVIDER);
             rsaCipher.init(Cipher.DECRYPT_MODE, keyPair.getPrivate());
             JsonNode json = mapper.readTree(new String(rsaCipher.doFinal(keyBytes)));
-            byte[] aesKeyBytes = Base64.getDecoder().decode(json.get("key").textValue());
-            byte[] aesIVBytes = Base64.getDecoder().decode(json.get("iv").textValue());
+            byte[] aesKeyBytes = Base64.getDecoder().decode(json.get("key").asString());
+            byte[] aesIVBytes = Base64.getDecoder().decode(json.get("iv").asString());
 
             Cipher aesCipher = Cipher.getInstance(AESCIPHER, PROVIDER);
             aesCipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(aesKeyBytes, "AES"), new IvParameterSpec(aesIVBytes));

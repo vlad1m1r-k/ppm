@@ -44,9 +44,9 @@ public class GroupRestController {
     public CryptoDto getGroups(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
-            String token = json.get("token").textValue();
-            String publicKeyPEM = json.get("publicKey").textValue();
-            String sort = json.get("sort").textValue();
+            String token = json.get("token").asString();
+            String publicKeyPEM = json.get("publicKey").asString();
+            String sort = json.get("sort").asString();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 List<GroupDto> groups = groupService.getGroups(decryptedToken, sort);
@@ -60,9 +60,9 @@ public class GroupRestController {
     public CryptoDto addGroup(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
-            String token = json.get("token").textValue();
-            String publicKeyPEM = json.get("publicKey").textValue();
-            String name = json.get("name").textValue();
+            String token = json.get("token").asString();
+            String publicKeyPEM = json.get("publicKey").asString();
+            String name = json.get("name").asString();
             boolean adminSettings = json.get("admin").asBoolean();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
@@ -77,10 +77,10 @@ public class GroupRestController {
     public CryptoDto editGroup(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
-            String token = json.get("token").textValue();
-            String publicKeyPEM = json.get("publicKey").textValue();
+            String token = json.get("token").asString();
+            String publicKeyPEM = json.get("publicKey").asString();
             long groupId =  json.get("id").asLong();
-            String name = json.get("name").textValue();
+            String name = json.get("name").asString();
             boolean adminSettings = json.get("admin").asBoolean();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
@@ -95,8 +95,8 @@ public class GroupRestController {
     public CryptoDto deleteGroup(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
-            String token = json.get("token").textValue();
-            String publicKeyPEM = json.get("publicKey").textValue();
+            String token = json.get("token").asString();
+            String publicKeyPEM = json.get("publicKey").asString();
             long groupId = json.get("id").asLong();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
@@ -111,8 +111,8 @@ public class GroupRestController {
     public CryptoDto editGroupMembers(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
-            String token = json.get("token").textValue();
-            String publicKeyPEM = json.get("publicKey").textValue();
+            String token = json.get("token").asString();
+            String publicKeyPEM = json.get("publicKey").asString();
             long groupId = json.get("groupId").asLong();
             long userId = json.get("userId").asLong();
             boolean member = json.get("member").asBoolean();

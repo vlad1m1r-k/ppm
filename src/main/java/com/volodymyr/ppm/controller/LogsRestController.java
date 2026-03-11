@@ -41,12 +41,12 @@ public class LogsRestController {
     public CryptoDto getLogs(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
-            String token = json.get("token").textValue();
-            String publicKeyPEM = json.get("publicKey").textValue();
+            String token = json.get("token").asString();
+            String publicKeyPEM = json.get("publicKey").asString();
             int page = json.get("page").intValue();
             int size = json.get("size").intValue();
-            String direction = json.get("direction").textValue();
-            String field = json.get("field").textValue();
+            String direction = json.get("direction").asString();
+            String field = json.get("field").asString();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 return cryptoProvider.encrypt(publicKeyPEM, mapper.writeValueAsString(loggerService.getLogs(decryptedToken, page, size, direction, field)));
@@ -59,13 +59,13 @@ public class LogsRestController {
     public CryptoDto search(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
-            String token = json.get("token").textValue();
-            String publicKeyPEM = json.get("publicKey").textValue();
+            String token = json.get("token").asString();
+            String publicKeyPEM = json.get("publicKey").asString();
             int page = json.get("page").intValue();
             int size = json.get("size").intValue();
-            String direction = json.get("direction").textValue();
-            String field = json.get("field").textValue();
-            String text = json.get("text").textValue();
+            String direction = json.get("direction").asString();
+            String field = json.get("field").asString();
+            String text = json.get("text").asString();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 return cryptoProvider.encrypt(publicKeyPEM, mapper.writeValueAsString(loggerService
