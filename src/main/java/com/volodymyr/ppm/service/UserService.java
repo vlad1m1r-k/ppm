@@ -1,6 +1,5 @@
 package com.volodymyr.ppm.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.volodymyr.ppm.domain.Group;
 import com.volodymyr.ppm.domain.PwdGenSettings;
 import com.volodymyr.ppm.domain.Token;
@@ -19,7 +18,7 @@ public interface UserService {
     User getUserById(long userId);
     Set<Group> getGroups(Token token);
     boolean isAdmin(Token token);
-    MessageDto changePassword(Token token, String newPwd) throws JsonProcessingException;
+    MessageDto changePassword(Token token, String newPwd);
     List<UserDto> getUsers(Token token, String sort);
     boolean isUserEnabled(Token token);
     MessageDto addUser(Token token, String login, String pwd, UserStatus status, boolean changePwd);

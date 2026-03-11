@@ -1,7 +1,6 @@
 package com.volodymyr.ppm.domain;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.Base64;
 
@@ -24,11 +23,6 @@ public class DbKey {
 
     @Override
     public String toString() {
-        try {
-            return Base64.getEncoder().encodeToString(new ObjectMapper().writeValueAsString(this).getBytes()).replaceAll("(.{64})", "$1\n");
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        return null;
+    	return Base64.getEncoder().encodeToString(new ObjectMapper().writeValueAsString(this).getBytes()).replaceAll("(.{64})", "$1\n");
     }
 }

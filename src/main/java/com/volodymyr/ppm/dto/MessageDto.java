@@ -1,7 +1,6 @@
 package com.volodymyr.ppm.dto;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 public class MessageDto {
     private final String message;
@@ -20,7 +19,7 @@ public class MessageDto {
 		return data;
 	}
 
-	public String toJson() throws JsonProcessingException {
+	public String toJson() {
         return new ObjectMapper().writeValueAsString(this);
     }
 

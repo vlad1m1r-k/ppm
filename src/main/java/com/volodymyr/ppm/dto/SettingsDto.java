@@ -1,7 +1,6 @@
 package com.volodymyr.ppm.dto;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 public class SettingsDto {
     private final Integer serverKeyLifeTimeDays;
@@ -62,7 +61,7 @@ public class SettingsDto {
         return logLifeTime;
     }
 
-    public String toJson() throws JsonProcessingException {
+    public String toJson() {
         return new ObjectMapper().writeValueAsString(this);
     }
 

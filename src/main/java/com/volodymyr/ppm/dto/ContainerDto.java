@@ -1,11 +1,10 @@
 package com.volodymyr.ppm.dto;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.volodymyr.ppm.domain.Access;
-
 import java.util.Date;
 import java.util.List;
+
+import com.volodymyr.ppm.domain.Access;
+import tools.jackson.databind.ObjectMapper;
 
 public class ContainerDto {
     private final Long id;
@@ -90,7 +89,7 @@ public class ContainerDto {
         return deletedBy;
     }
 
-    public String toJson() throws JsonProcessingException {
+    public String toJson() {
         return new ObjectMapper().writeValueAsString(this);
     }
 
@@ -129,7 +128,7 @@ public class ContainerDto {
         }
 
         public Builder notes(List<NoteDto> notes) {
-            this.notes = notes;
+        	this.notes = notes;
             return this;
         }
 
@@ -139,12 +138,12 @@ public class ContainerDto {
         }
 
         public Builder files(List<FileDto> files) {
-            this.files = files;
+        	this.files = files;
             return this;
         }
 
         public Builder access(Access access) {
-            this.access = access;
+        	this.access = access;
             return this;
         }
 

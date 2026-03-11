@@ -1,7 +1,6 @@
 package com.volodymyr.ppm.dto;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 public class TokenDto {
     private final Long lifeTime;
@@ -48,7 +47,7 @@ public class TokenDto {
 		return changePwd;
 	}
 
-	public String toJson() throws JsonProcessingException {
+	public String toJson() {
         return new ObjectMapper().writeValueAsString(this);
     }
 

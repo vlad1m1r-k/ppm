@@ -1,8 +1,7 @@
 package com.volodymyr.ppm.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import com.volodymyr.ppm.domain.Token;
 import com.volodymyr.ppm.domain.UserStatus;
 import com.volodymyr.ppm.dto.CryptoDto;
@@ -41,7 +40,7 @@ public class UserRestController {
     }
 
     @PostMapping("/login")
-    public CryptoDto login(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+    public CryptoDto login(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String login = json.get("login").textValue();
@@ -54,7 +53,7 @@ public class UserRestController {
     }
 
     @PostMapping("/renewToken")
-    public CryptoDto renewToken(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+    public CryptoDto renewToken(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").textValue();
@@ -69,7 +68,7 @@ public class UserRestController {
     }
 
     @PostMapping("/setPwd")
-    public CryptoDto setPwd(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+    public CryptoDto setPwd(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").textValue();
@@ -85,7 +84,7 @@ public class UserRestController {
     }
 
     @PostMapping("/getUsers")
-    public CryptoDto getUsers(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+    public CryptoDto getUsers(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").textValue();
@@ -101,7 +100,7 @@ public class UserRestController {
     }
 
     @PostMapping("/getStatuses")
-    public CryptoDto getStatuses(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+    public CryptoDto getStatuses(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").textValue();
@@ -115,7 +114,7 @@ public class UserRestController {
     }
 
     @PostMapping("/addUser")
-    public CryptoDto addUser(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+    public CryptoDto addUser(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").textValue();
@@ -134,7 +133,7 @@ public class UserRestController {
     }
 
     @PostMapping("/editUser")
-    public CryptoDto editUser(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+    public CryptoDto editUser(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").textValue();
@@ -154,7 +153,7 @@ public class UserRestController {
     }
 
     @PostMapping("/deleteUser")
-    public CryptoDto deleteUser(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+    public CryptoDto deleteUser(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").textValue();
@@ -170,7 +169,7 @@ public class UserRestController {
     }
 
     @PostMapping("/addAllowedIp")
-    public CryptoDto addAllowedIp(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+    public CryptoDto addAllowedIp(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").textValue();
@@ -187,7 +186,7 @@ public class UserRestController {
     }
 
     @PostMapping("/getAllowedIp")
-    public CryptoDto getAllowedIp(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+    public CryptoDto getAllowedIp(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").textValue();
@@ -202,7 +201,7 @@ public class UserRestController {
     }
 
     @PostMapping("/removeAllowedIp")
-    public CryptoDto removeAllowedIp(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+    public CryptoDto removeAllowedIp(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").textValue();
@@ -219,7 +218,7 @@ public class UserRestController {
     }
 
     @PostMapping("/getPwdGenSettings")
-    public CryptoDto getPwdGenSettings(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+    public CryptoDto getPwdGenSettings(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").textValue();
@@ -233,7 +232,7 @@ public class UserRestController {
     }
 
     @PostMapping("/setPwdGenSettings")
-    public CryptoDto setPwdGenSettings(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+    public CryptoDto setPwdGenSettings(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").textValue();

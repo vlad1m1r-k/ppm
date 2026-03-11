@@ -1,8 +1,7 @@
 package com.volodymyr.ppm.provider;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import com.volodymyr.ppm.domain.Acts;
 import com.volodymyr.ppm.domain.DbKey;
 import com.volodymyr.ppm.domain.Objects;
@@ -136,7 +135,7 @@ public class CryptoProviderImpl implements CryptoProvider {
             rsaCipher.init(Cipher.ENCRYPT_MODE, frontPublicKey);
             encryptedAesKey = rsaCipher.doFinal(mapper.writeValueAsString(aesKeyBundle).getBytes());
         } catch (NoSuchAlgorithmException | InvalidKeySpecException | InvalidKeyException | IllegalBlockSizeException
-                | BadPaddingException | NoSuchProviderException | NoSuchPaddingException | JsonProcessingException e) {
+                | BadPaddingException | NoSuchProviderException | NoSuchPaddingException e) {
             e.printStackTrace();
         }
         return CryptoDto.builder()
@@ -161,7 +160,7 @@ public class CryptoProviderImpl implements CryptoProvider {
             aesCipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(aesKeyBytes, "AES"), new IvParameterSpec(aesIVBytes));
             decryptedString = new String(aesCipher.doFinal(dataBytes), StandardCharsets.UTF_8);
         } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException
-                | NoSuchAlgorithmException | NoSuchProviderException | NoSuchPaddingException | JsonProcessingException e) {
+                | NoSuchAlgorithmException | NoSuchProviderException | NoSuchPaddingException e) {
             e.printStackTrace();
         }
         return decryptedString;
@@ -179,14 +178,14 @@ public class CryptoProviderImpl implements CryptoProvider {
             encryptedToken = insertIv(iv, encryptedToken);
             encryptedB64Token = Base64.getEncoder().encodeToString(encryptedToken);
         } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException
-                | NoSuchAlgorithmException | NoSuchProviderException | NoSuchPaddingException | JsonProcessingException e) {
+                | NoSuchAlgorithmException | NoSuchProviderException | NoSuchPaddingException e) {
             e.printStackTrace();
         }
         return encryptedB64Token;
     }
 
     @Override
-    public Token decryptToken(String tokenStr) throws JsonProcessingException {
+    public Token decryptToken(String tokenStr) {
     	Token token = null;
         Map<String, byte[]> tokenMap = extractIv(Base64.getDecoder().decode(tokenStr));
         IvParameterSpec aesIv = new IvParameterSpec(tokenMap.get("iv"));
@@ -195,7 +194,7 @@ public class CryptoProviderImpl implements CryptoProvider {
             aesCipher.init(Cipher.DECRYPT_MODE, tokenAESKey, aesIv);
             token = mapper.readValue(aesCipher.doFinal(tokenMap.get("data")), Token.class);
         } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException | InvalidAlgorithmParameterException |
-                NoSuchAlgorithmException | NoSuchProviderException | NoSuchPaddingException | IOException e) {
+                NoSuchAlgorithmException | NoSuchProviderException | NoSuchPaddingException e) {
             e.printStackTrace();
         }
         return token;

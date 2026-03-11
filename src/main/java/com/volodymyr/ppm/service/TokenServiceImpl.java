@@ -2,7 +2,6 @@ package com.volodymyr.ppm.service;
 
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.volodymyr.ppm.domain.Token;
 import com.volodymyr.ppm.domain.User;
 import com.volodymyr.ppm.provider.CryptoProvider;
@@ -33,16 +32,16 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public Token validateToken(String token, String remoteAddr, String userAgent) throws JsonProcessingException {
+    public Token validateToken(String token, String remoteAddr, String userAgent) {
         return validate(token, remoteAddr, userAgent, false);
     }
     
     @Override
-	public Token validateToken(String token, String remoteAddr, String userAgent, boolean changePwd) throws JsonProcessingException {
+	public Token validateToken(String token, String remoteAddr, String userAgent, boolean changePwd) {
     	return validate(token, remoteAddr, userAgent, changePwd);
 	}
 
-	private Token validate(String token, String remoteAddr, String userAgent, boolean changePwd) throws JsonProcessingException {
+	private Token validate(String token, String remoteAddr, String userAgent, boolean changePwd) {
     	Token decryptedToken = cryptoProvider.decryptToken(token);
         if ((changePwd || !decryptedToken.isChangePwd()) && decryptedToken.getLifeTime() > System.currentTimeMillis() && decryptedToken.getRemoteAddr().equals(remoteAddr) &&
                 decryptedToken.getUserAgent().equals(userAgent)) {

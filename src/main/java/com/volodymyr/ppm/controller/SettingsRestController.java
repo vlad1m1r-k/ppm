@@ -1,8 +1,7 @@
 package com.volodymyr.ppm.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import com.volodymyr.ppm.domain.Token;
 import com.volodymyr.ppm.dto.CryptoDto;
 import com.volodymyr.ppm.dto.MessageDto;
@@ -48,7 +47,7 @@ public class SettingsRestController {
     }
 
     @PostMapping("/getSettings")
-    public CryptoDto getSettings(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+    public CryptoDto getSettings(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").textValue();
@@ -63,7 +62,7 @@ public class SettingsRestController {
     }
 
     @PostMapping("/saveSettings")
-    public CryptoDto saveSettings(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException, NoSuchAlgorithmException, NoSuchProviderException {
+    public CryptoDto saveSettings(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws NoSuchAlgorithmException, NoSuchProviderException {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").textValue();
@@ -85,7 +84,7 @@ public class SettingsRestController {
     }
 
     @PostMapping("/saveSecuritySettings")
-    public CryptoDto saveSecuritySettings(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+    public CryptoDto saveSecuritySettings(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").textValue();
@@ -103,7 +102,7 @@ public class SettingsRestController {
     }
 
     @PostMapping("/dbStatus")
-    public CryptoDto getDbStatus(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+    public CryptoDto getDbStatus(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").textValue();
@@ -118,7 +117,7 @@ public class SettingsRestController {
     }
 
     @PostMapping("/keyGen")
-    public CryptoDto generateKey(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+    public CryptoDto generateKey(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").textValue();
@@ -149,7 +148,7 @@ public class SettingsRestController {
     }
 
     @PostMapping("/addIpToBlackList")
-    public CryptoDto addIpToBlackList(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+    public CryptoDto addIpToBlackList(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").textValue();
@@ -165,7 +164,7 @@ public class SettingsRestController {
     }
 
     @PostMapping("/addIpToWhiteList")
-    public CryptoDto addIpToWhiteList(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+    public CryptoDto addIpToWhiteList(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").textValue();
@@ -181,7 +180,7 @@ public class SettingsRestController {
     }
 
     @PostMapping("/getIpBlackList")
-    public CryptoDto getIpBlackList(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+    public CryptoDto getIpBlackList(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").textValue();
@@ -196,7 +195,7 @@ public class SettingsRestController {
     }
 
     @PostMapping("/getIpWhiteList")
-    public CryptoDto getIpWhiteList(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+    public CryptoDto getIpWhiteList(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").textValue();
@@ -211,7 +210,7 @@ public class SettingsRestController {
     }
 
     @PostMapping("/removeIpFromBlackList")
-    public CryptoDto removeIpFromBlackList(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+    public CryptoDto removeIpFromBlackList(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").textValue();
@@ -227,7 +226,7 @@ public class SettingsRestController {
     }
 
     @PostMapping("/removeIpFromWhiteList")
-    public CryptoDto removeIpFromWhiteList(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+    public CryptoDto removeIpFromWhiteList(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").textValue();
@@ -243,7 +242,7 @@ public class SettingsRestController {
     }
 
     @PostMapping("/getDynamicList")
-    public CryptoDto getDynamicList(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+    public CryptoDto getDynamicList(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").textValue();
@@ -257,7 +256,7 @@ public class SettingsRestController {
     }
 
     @PostMapping("/removeIpFromDynamicList")
-    public CryptoDto removeIpFromDynamicList(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws JsonProcessingException {
+    public CryptoDto removeIpFromDynamicList(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").textValue();

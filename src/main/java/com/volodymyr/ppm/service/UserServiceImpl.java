@@ -1,6 +1,5 @@
 package com.volodymyr.ppm.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.volodymyr.ppm.domain.Acts;
 import com.volodymyr.ppm.domain.Group;
 import com.volodymyr.ppm.domain.Objects;
@@ -132,7 +131,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public MessageDto changePassword(Token token, String newPwd) throws JsonProcessingException {
+    public MessageDto changePassword(Token token, String newPwd) {
         User user = userRepository.findUserByLogin(token.getLogin());
         if (!validatorService.validatePwdLength(newPwd, settingsProvider.getPwdMinLength())) {
             return MessageDto.builder().message("usse2").build();

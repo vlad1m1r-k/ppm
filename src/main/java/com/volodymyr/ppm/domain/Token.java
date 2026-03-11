@@ -1,7 +1,6 @@
 package com.volodymyr.ppm.domain;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 import jakarta.persistence.Column;
 
@@ -42,7 +41,7 @@ public class Token {
     	return changePwd;
     }
 
-    public String toJson() throws JsonProcessingException {
+    public String toJson() {
         return new ObjectMapper().writeValueAsString(this);
     }
 }
