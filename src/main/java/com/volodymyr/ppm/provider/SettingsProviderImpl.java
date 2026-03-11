@@ -29,7 +29,7 @@ public class SettingsProviderImpl implements SettingsProvider {
     private void init() {
         SessionFactory sessionFactory = managerFactory.unwrap(SessionFactory.class);
         Session session = sessionFactory.openSession();
-        this.settings = Hibernate.unproxy(session.get(Settings.class, 1L), Settings.class);
+        this.settings = Hibernate.unproxy(session.find(Settings.class, 1L), Settings.class);
         session.close();
     }
 
