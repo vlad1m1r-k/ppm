@@ -1,47 +1,55 @@
 <template>
-    <table>
-        <thead></thead>
-        <tbody>
-        <tr><td>&nbsp;</td></tr>
-        <tr>
-            <td>{{ language.data.srv2 }}</td>
-            <td>
-                <input type="number" min="1" max="366" v-model="serverKeyLifeTime"
-                       :title="language.data.srv4">
-                1 - 366
-            </td>
-        </tr>
-        <tr>
-            <td>{{ language.data.srv3 }}</td>
-            <td><input type="number" min="1" max="59" v-model="userTokenLifeTime"> 1 - 59</td>
-        </tr>
-        <tr><td>&nbsp;</td></tr>
-        <tr>
-            <td>{{ language.data.srv5 }}</td>
-        </tr>
-        <tr>
-            <td>{{ language.data.srv6 }}</td>
-            <td><input type="number" min="3" max="20" v-model="pwdMinLength"> 3 - 20</td>
-        </tr>
-        <tr>
-            <td>{{ language.data.srv7 }}</td>
-            <td><input type="checkbox" v-model="pwdComplexity"></td>
-        </tr>
-        <tr>
-            <td>{{ language.data.srv8 }}</td>
-            <td><input type="checkbox" v-model="pwdSpecialChar"></td>
-        </tr>
-        <tr><td>&nbsp;</td></tr>
-        <tr>
-            <td>{{ language.data.srv9 }}</td>
-        </tr>
-        <tr>
-            <td>{{ language.data.srv10 }}</td>
-            <td><input type="number" min="1" max="900" v-model="logLifeTime"></td>
-        </tr>
-        </tbody>
-    </table>
-    <button class="btn blue" @click="saveSettings">{{ language.data.cm3 }}</button>
+    <div class="decor-adm">
+        <table>
+            <thead></thead>
+            <tbody>
+                <tr>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td>{{ language.data.srv2 }}</td>
+                    <td>
+                        <input type="number" min="1" max="366" v-model="serverKeyLifeTime"
+                            :title="language.data.srv4">
+                        1 - 366
+                    </td>
+                </tr>
+                <tr>
+                    <td>{{ language.data.srv3 }}</td>
+                    <td><input type="number" min="1" max="59" v-model="userTokenLifeTime"> 1 - 59</td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td>{{ language.data.srv5 }}</td>
+                </tr>
+                <tr>
+                    <td>{{ language.data.srv6 }}</td>
+                    <td><input type="number" min="3" max="20" v-model="pwdMinLength"> 3 - 20</td>
+                </tr>
+                <tr>
+                    <td>{{ language.data.srv7 }}</td>
+                    <td><input type="checkbox" v-model="pwdComplexity"></td>
+                </tr>
+                <tr>
+                    <td>{{ language.data.srv8 }}</td>
+                    <td><input type="checkbox" v-model="pwdSpecialChar"></td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td>{{ language.data.srv9 }}</td>
+                </tr>
+                <tr>
+                    <td>{{ language.data.srv10 }}</td>
+                    <td><input type="number" min="1" max="900" v-model="logLifeTime"></td>
+                </tr>
+            </tbody>
+        </table>
+        <button class="btn blue" @click="saveSettings">{{ language.data.cm3 }}</button>
+    </div>
 </template>
 
 <script>

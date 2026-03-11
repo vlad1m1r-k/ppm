@@ -2,35 +2,37 @@
     <black-list v-if="showBlackList" @close-dlg="showBlackList = false"></black-list>
     <white-list v-if="showWhiteList" @close-dlg="showWhiteList = false"></white-list>
     <dynamic-list v-if="showDynList" @close-dlg="showDynList = false"></dynamic-list>
-    <table>
-        <thead></thead>
-        <tbody>
-        <tr>
-            <td>{{ language.data.sec2 }}</td>
-            <td>
-                <input type="number" class="form-control-sm" min="1" max="20" v-model="incorrectLoginAttempts" size="3"> 1 - 20
-            </td>
-        </tr>
-        <tr>
-            <td>{{ language.data.sec3 }}</td>
-            <td>
-                <input type="number" class="form-control-sm" min="1" max="20" v-model="ipBanTimeDays" size="3"> 0 - 20
-                {{ language.data.sec4 }}
-            </td>
-        </tr>
-        <tr>
-            <td>{{ language.data.sec5 }}</td>
-            <td>
-                <input type="number" class="form-control-sm" min="1" max="20" v-model="incorrectPasswdAttempts" size="3"> 1 - 20
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    <button class="btn btn-sm btn-success" @click="saveSettings">{{ language.data.cm3 }}</button>
-    <hr>
-    <button class="btn btn-sm btn-outline-primary m-1" @click="showBlackList = true">{{ language.data.sec6 }}</button>{{ language.data.sec10 }}<br>
-    <button class="btn btn-sm btn-outline-primary m-1" @click="showWhiteList = true">{{ language.data.sec7 }}</button>{{ language.data.sec9 }}<br>
-    <button class="btn btn-sm btn-outline-primary m-1" @click="showDynList = true">{{ language.data.sec8 }}</button><br>
+    <div class="decor-adm">
+        <table>
+            <thead></thead>
+            <tbody>
+                <tr>
+                    <td>{{ language.data.sec2 }}</td>
+                    <td>
+                        <input type="number" min="1" max="20" v-model="incorrectLoginAttempts" size="3"> 1 - 20
+                    </td>
+                </tr>
+                <tr>
+                    <td>{{ language.data.sec3 }}</td>
+                    <td>
+                        <input type="number" min="1" max="20" v-model="ipBanTimeDays" size="3"> 0 - 20
+                        {{ language.data.sec4 }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>{{ language.data.sec5 }}</td>
+                    <td>
+                        <input type="number" min="1" max="20" v-model="incorrectPasswdAttempts" size="3"> 1 - 20
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <button class="btn blue" @click="saveSettings">{{ language.data.cm3 }}</button>
+        <hr>
+        <button class="btn blue" @click="showBlackList = true">{{ language.data.sec6 }}</button>{{ language.data.sec10 }}<br>
+        <button class="btn blue" @click="showWhiteList = true">{{ language.data.sec7 }}</button>{{ language.data.sec9 }}<br>
+        <button class="btn blue" @click="showDynList = true">{{ language.data.sec8 }}</button>
+    </div>
 </template>
 
 <script>

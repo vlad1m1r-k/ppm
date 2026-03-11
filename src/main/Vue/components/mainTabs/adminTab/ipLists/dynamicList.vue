@@ -1,17 +1,13 @@
 <template>
-    <div class="modal-dlg">
-        <div class="modal-dlg-body">
-            <div class="row">
-                <div class="col">
-                    {{ language.data.sec8 }}
-                    <button class="close" @click="$emit('close-dlg')">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
+    <div class="modal">
+        <div class="modal-body dialog">
+            <div class="modal-header">
+                {{ language.data.sec8 }}
+                <button class="btn-img cncl" @click="$emit('close-dlg')"></button>
             </div>
-            <div class="modal-dlg-scroll mt-3 p-1">
-                <table class="table table-bordered table-striped table-sm mt-1">
-                    <thead class="tab-header-area">
+            <div>
+                <table class="table">
+                    <thead>
                     <tr>
                         <th>{{ language.data.sec11 }}</th>
                         <th>{{ language.data.sec12 }}</th>
@@ -25,11 +21,8 @@
                     <tr v-for="(item, id) in list" :key="'dynls' + id">
                         <td>{{ item.ip }}</td>
                         <td>{{ item.expire }}</td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-danger" :title="language.data.cm5"
-                                    @click="removeIp(item.ip)">
-                                &#x1f5d1;
-                            </button>
+                        <td class="fit">
+                            <button class="btn-img rmv" :title="language.data.cm5" @click="removeIp(item.ip)"></button>
                         </td>
                     </tr>
                     </tbody>
