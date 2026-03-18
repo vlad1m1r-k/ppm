@@ -53,6 +53,7 @@ public class SettingsServiceImpl implements SettingsService {
                     .ipBanTimeDays(settingsProvider.getIpBanTimeDays())
                     .incorrectPasswdAttempts(settingsProvider.getIncorrectPasswdAttempts())
                     .logLifeTime(settingsProvider.getLogLifeTime())
+                    .tfaRequirePeriodHours(settingsProvider.getTfaRequirePeriod())
                     .build();
         }
         return null;
@@ -63,7 +64,7 @@ public class SettingsServiceImpl implements SettingsService {
                                    boolean pwdComplexity, boolean pwdSpecialChar, int logLifeTime)
             throws NoSuchAlgorithmException, NoSuchProviderException {
         if (userService.isAdmin(token) && validatorService.validateSrvKeyLT(serverKeyLifeTime)
-                && validatorService.validateUsrTknLT(tokenLifeTime) && validatorService.validatePwdMinLength(pwdMinLength)
+                && validatorService.validateUsrTknLT(tokenLifeTime) && validatorService.validatePwdMinLength(pwdMinLength) 
                 && logLifeTime > 0) {
             if (settingsProvider.getServerKeyLifeTimeDays() != serverKeyLifeTime) {
                 if (settingsProvider.getServerKeyLifeTimeDays() > serverKeyLifeTime) {
@@ -94,9 +95,9 @@ public class SettingsServiceImpl implements SettingsService {
     }
 
     @Override
-    public MessageDto saveSecuritySettings(Token token, int incorrectLoginAttempts, int ipBanTimeDays, int incorrectPasswdAttempts) {
+    public MessageDto saveSecuritySettings(Token token, int incorrectLoginAttempts, int ipBanTimeDays, int incorrectPasswdAttempts, int tfaRequirePeriod) {
         if (userService.isAdmin(token) && validatorService.validateIncLoginAtt(incorrectLoginAttempts)
-                && validatorService.validateIpBanTime(ipBanTimeDays) && validatorService.validateIncPassAtt(incorrectPasswdAttempts)) {
+                && validatorService.validateIpBanTime(ipBanTimeDays) && validatorService.validateIncPassAtt(incorrectPasswdAttempts) && validatorService.validateTfaRequirePeriod(tfaRequirePeriod)) {
             if (settingsProvider.getIncorrectLoginAttempts() != incorrectLoginAttempts) {
                 settingsProvider.setIncorrectLoginAttempts(incorrectLoginAttempts);
             }
@@ -105,6 +106,9 @@ public class SettingsServiceImpl implements SettingsService {
             }
             if (settingsProvider.getIncorrectPasswdAttempts() != incorrectPasswdAttempts) {
                 settingsProvider.setIncorrectPasswdAttempts(incorrectPasswdAttempts);
+            }
+            if (settingsProvider.getTfaRequirePeriod() != tfaRequirePeriod) {
+            	settingsProvider.setTfaRequirePeriod(tfaRequirePeriod);
             }
             logger.log(token.getLogin(), Acts.UPDATE, Objects.SETTINGS, "Security settings", new Date(), "");
             return MessageDto.builder().build();

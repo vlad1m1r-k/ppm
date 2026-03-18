@@ -12,6 +12,7 @@ public class SettingsDto {
     private final Integer ipBanTimeDays;
     private final Integer incorrectPasswdAttempts;
     private final Integer logLifeTime;
+    private final Integer tfaRequirePeriodHours;
 
     private SettingsDto(Builder builder) {
         this.serverKeyLifeTimeDays = builder.serverKeyLifeTimeDays;
@@ -23,6 +24,7 @@ public class SettingsDto {
         this.ipBanTimeDays = builder.ipBanTimeDays;
         this.incorrectPasswdAttempts = builder.incorrectPasswdAttempts;
         this.logLifeTime = builder.logLifeTime;
+        this.tfaRequirePeriodHours = builder.tfaRequirePeriodHours;
     }
 
     public Integer getServerKeyLifeTimeDays() {
@@ -60,6 +62,10 @@ public class SettingsDto {
     public Integer getLogLifeTime() {
         return logLifeTime;
     }
+    
+    public Integer getTfaRequirePeriodHours() {
+    	return tfaRequirePeriodHours;
+    }
 
     public String toJson() {
         return new ObjectMapper().writeValueAsString(this);
@@ -79,6 +85,7 @@ public class SettingsDto {
         private Integer ipBanTimeDays;
         private Integer incorrectPasswdAttempts;
         private Integer logLifeTime;
+        private Integer tfaRequirePeriodHours;
 
         public Builder serverKeyLifeTimeDays(Integer serverKeyLifeTimeDays) {
             this.serverKeyLifeTimeDays = serverKeyLifeTimeDays;
@@ -123,6 +130,11 @@ public class SettingsDto {
         public Builder logLifeTime(Integer logLifeTime) {
             this.logLifeTime = logLifeTime;
             return this;
+        }
+        
+        public Builder tfaRequirePeriodHours(Integer tfaRequirePerionHours) {
+        	this.tfaRequirePeriodHours = tfaRequirePerionHours;
+        	return this;
         }
 
         public SettingsDto build() {

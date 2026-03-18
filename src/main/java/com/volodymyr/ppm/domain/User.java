@@ -12,6 +12,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+
+import java.sql.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,6 +25,11 @@ public class User {
     private Long id;
     private String login;
     private String password;
+    private String tfaCode;
+    private Date lastTfaDate;
+    
+    @Enumerated(EnumType.STRING)
+    private UserTfaStatus tfaStatus = UserTfaStatus.DISABLED;
     
     @Column(columnDefinition = "TINYINT(1)")
     private Boolean changePwdOnNextLogon = false;
@@ -38,6 +45,9 @@ public class User {
 
     @OneToOne
     private PwdGenSettings pwdGenSettings;
+    
+    @OneToOne
+    private UserAuthData authData;
 
     public User() {}
 
@@ -79,6 +89,22 @@ public class User {
     public PwdGenSettings getPwdGenSettings() {
         return pwdGenSettings;
     }
+    
+    public Date getLastTfaDate() {
+    	return lastTfaDate;
+    }
+    
+    public String getTfaCode() {
+    	return tfaCode;
+    }
+    
+    public UserTfaStatus getTfaStatus() {
+    	return tfaStatus;
+    }
+    
+    public UserAuthData geUserAuthData() {
+    	return authData;
+    }
 
     public void setLogin(String login) {
         this.login = login;
@@ -98,6 +124,22 @@ public class User {
 
     public void setPwdGenSettings(PwdGenSettings pwdGenSettings) {
         this.pwdGenSettings = pwdGenSettings;
+    }
+    
+    public void setLastTfaDate(Date lastTfaDate) {
+    	this.lastTfaDate = lastTfaDate;
+    }
+    
+    public void setTfaCode(String tfaCode) {
+    	this.tfaCode = tfaCode;
+    }
+    
+    public void setTfaStatus(UserTfaStatus tfaStatus) {
+    	this.tfaStatus = tfaStatus;
+    }
+    
+    public void setUserAuthData(UserAuthData authData) {
+    	this.authData = authData;
     }
 
     public boolean isEnabled() {

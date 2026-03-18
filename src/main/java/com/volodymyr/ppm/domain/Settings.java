@@ -32,6 +32,7 @@ public class Settings {
     private volatile Integer ipBanTimeDays;
     private volatile Integer incorrectPasswdAttempts;
     private volatile Integer logLifeTime;
+    private volatile Integer tfaRequirePeriodHours;
 
     @ElementCollection(fetch = FetchType.EAGER)
     private final Set<String> ipBlackList = new HashSet<>();
@@ -90,6 +91,10 @@ public class Settings {
     public Integer getLogLifeTime() {
         return logLifeTime;
     }
+    
+    public Integer getTfaRequirePeriodHours() {
+    	return tfaRequirePeriodHours;
+    }
 
     public void setEncryptionKeyId(Long encryptionKeyId) {
         this.encryptionKeyId = encryptionKeyId;
@@ -129,5 +134,9 @@ public class Settings {
 
     public void setLogLifeTime(Integer logLifeTime) {
         this.logLifeTime = logLifeTime;
+    }
+    
+    public void setTfaRequirePeriodHours(Integer tfaRequirePeriodHours) {
+    	this.tfaRequirePeriodHours = tfaRequirePeriodHours;
     }
 }

@@ -25,6 +25,12 @@
                         <input type="number" min="1" max="20" v-model="incorrectPasswdAttempts" size="3"> 1 - 20
                     </td>
                 </tr>
+                <tr>
+                    <td>{{ language.data.sec13 }}</td>
+                    <td>
+                        <input type="number" min="-1" max="144" v-model="tfaRequirePeriod" size="3"> -1 - 144 {{ language.data.sec14 }}
+                    </td>
+                </tr>
             </tbody>
         </table>
         <button class="btn blue" @click="saveSettings">{{ language.data.cm3 }}</button>
@@ -52,6 +58,7 @@ export default {
             incorrectLoginAttempts: null,
             ipBanTimeDays: null,
             incorrectPasswdAttempts: null,
+            tfaRequirePeriod: null,
             showBlackList: false,
             showWhiteList: false,
             showDynList: false
@@ -72,6 +79,7 @@ export default {
                 this.incorrectLoginAttempts = data.incorrectLoginAttempts;
                 this.ipBanTimeDays = data.ipBanTimeDays;
                 this.incorrectPasswdAttempts = data.incorrectPasswdAttempts;
+                this.tfaRequirePeriod = data.tfaRequirePeriodHours;
             } catch (e) {
                 this.eventHub.emit("show-msg", this.errorParser(e));
             }
@@ -84,7 +92,8 @@ export default {
                     token: token,
                     incorrectLoginAttempts: this.incorrectLoginAttempts,
                     ipBanTimeDays: this.ipBanTimeDays,
-                    incorrectPasswdAttempts: this.incorrectPasswdAttempts
+                    incorrectPasswdAttempts: this.incorrectPasswdAttempts,
+                    tfaPeriod: this.tfaRequirePeriod
                 });
                 const answer = await $.ajax({
                     url: "/settings/saveSecuritySettings",

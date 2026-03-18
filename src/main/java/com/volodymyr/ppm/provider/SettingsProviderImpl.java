@@ -82,6 +82,11 @@ public class SettingsProviderImpl implements SettingsProvider {
     public int getLogLifeTime() {
         return settings.getLogLifeTime();
     }
+    
+    @Override
+    public int getTfaRequirePeriod() {
+    	return settings.getTfaRequirePeriodHours();
+    }
 
     @Override
     public Set<String> getIpBlacklist() {
@@ -171,6 +176,14 @@ public class SettingsProviderImpl implements SettingsProvider {
         Settings settings = settingsRepository.getReferenceById(1L);
         this.settings.setLogLifeTime(lifeTime);
         settings.setLogLifeTime(lifeTime);
+    }
+    
+    @Override
+    @Transactional
+    public void setTfaRequirePeriod(int tfaPeriod) {
+    	Settings settings = settingsRepository.getReferenceById(1L);
+    	this.settings.setTfaRequirePeriodHours(tfaPeriod);
+    	settings.setTfaRequirePeriodHours(tfaPeriod);
     }
 
     @Override

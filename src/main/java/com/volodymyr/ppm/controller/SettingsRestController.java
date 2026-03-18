@@ -72,7 +72,7 @@ public class SettingsRestController {
             int pwdMinLength = json.get("pwdMinLength").asInt();
             int logLifeTime = json.get("logLifeTime").asInt();
             boolean pwdComplexity = json.get("pwdComplexity").asBoolean();
-            boolean pwdSpecialChar = json.get("pwdSpecialChar").asBoolean();
+            boolean pwdSpecialChar = json.get("pwdSpecialChar").asBoolean();         
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 MessageDto message = settingsService.saveSettings(decryptedToken, serverKeyLifeTime, tokenLifeTime,
@@ -92,9 +92,10 @@ public class SettingsRestController {
             int incorrectLoginAttempts = json.get("incorrectLoginAttempts").asInt();
             int ipBanTimeDays = json.get("ipBanTimeDays").asInt();
             int incorrectPasswdAttempts = json.get("incorrectPasswdAttempts").asInt();
+            int tfaPeriod = json.get("tfaPeriod").asInt();
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
-                MessageDto message = settingsService.saveSecuritySettings(decryptedToken, incorrectLoginAttempts, ipBanTimeDays, incorrectPasswdAttempts);
+                MessageDto message = settingsService.saveSecuritySettings(decryptedToken, incorrectLoginAttempts, ipBanTimeDays, incorrectPasswdAttempts, tfaPeriod);
                 return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
             }
         }

@@ -90,4 +90,9 @@ public class ValidatorServiceImpl implements ValidatorService {
     public boolean validateString(String str) {
         return str != null && str.length() > 0;
     }
+    
+    @Override
+    public boolean validateTfaRequirePeriod(int tfaPeriod) {
+    	return tfaPeriod >= -1 && tfaPeriod <= 144;
+    }
 }

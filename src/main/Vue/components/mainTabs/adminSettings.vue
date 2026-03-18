@@ -1,14 +1,16 @@
 <template>
     <div>
-        <button class="btn blue" @click="currentTab = 'users'" :class="{ selected: currentTab === 'users' }">{{ language.data.us1 }}</button>
-        <button class="btn blue" @click="currentTab = 'groups'" :class="{ selected: currentTab === 'groups' }">{{ language.data.gp1 }}</button>
-        <button class="btn blue" @click="currentTab = 'dbSettings'" :class="{ selected: currentTab === 'dbSettings' }">{{ language.data.db1 }}</button>
-        <button class="btn blue" @click="currentTab = 'srvSettings'" :class="{ selected: currentTab === 'srvSettings' }">{{ language.data.srv1 }}</button>
-        <button class="btn blue" @click="currentTab = 'security'" :class="{ selected: currentTab === 'security' }">{{ language.data.sec1 }}</button>
-        <button class="btn blue" @click="currentTab = 'logs'" :class="{ selected: currentTab === 'logs' }">{{ language.data.lg1 }}</button>
-    </div>
-    <div>
-        <component :is="currentTab"></component>
+        <div>
+            <button class="btn blue" @click="currentTab = 'users'" :class="{ selected: currentTab === 'users' }">{{ language.data.us1 }}</button>
+            <button class="btn blue" @click="currentTab = 'groups'" :class="{ selected: currentTab === 'groups' }">{{ language.data.gp1 }}</button>
+            <button class="btn blue" @click="currentTab = 'dbSettings'" :class="{ selected: currentTab === 'dbSettings' }">{{ language.data.db1 }}</button>
+            <button class="btn blue" @click="currentTab = 'srvSettings'" :class="{ selected: currentTab === 'srvSettings' }">{{ language.data.srv1 }}</button>
+            <button class="btn blue" @click="currentTab = 'security'" :class="{ selected: currentTab === 'security' }">{{ language.data.sec1 }}</button>
+            <button class="btn blue" @click="currentTab = 'logs'" :class="{ selected: currentTab === 'logs' }">{{ language.data.lg1 }}</button>
+        </div>
+        <div>
+            <component :is="currentTab"></component>
+        </div>
     </div>
 </template>
 
