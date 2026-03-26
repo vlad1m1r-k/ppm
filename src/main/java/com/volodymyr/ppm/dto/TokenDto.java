@@ -9,7 +9,8 @@ public class TokenDto {
     private final Boolean adminSettings;
     private final Boolean systemClosed;
     private final Boolean changePwd;
-
+    private final Boolean tfaRequired;
+    
     private TokenDto(Builder builder) {
         this.lifeTime = builder.lifeTime;
         this.message = builder.message;
@@ -17,6 +18,7 @@ public class TokenDto {
         this.adminSettings = builder.adminSettings;
         this.systemClosed = builder.systemClosed;
         this.changePwd = builder.changePwd;
+        this.tfaRequired = builder.tfaRequired;
     }
 
     public Long getLifeTime() {
@@ -46,6 +48,10 @@ public class TokenDto {
     public Boolean getChangePwd() {
 		return changePwd;
 	}
+    
+    public Boolean gettfaRequired() {
+		return tfaRequired;
+	}
 
 	public String toJson() {
         return new ObjectMapper().writeValueAsString(this);
@@ -58,6 +64,7 @@ public class TokenDto {
         private Boolean adminSettings;
         private Boolean systemClosed;
         private Boolean changePwd;
+        private Boolean tfaRequired;
 
         public Builder lifeTime(Long lifeTime) {
             this.lifeTime = lifeTime;
@@ -86,6 +93,11 @@ public class TokenDto {
         
         public Builder changePwd(boolean changePwd) {
         	this.changePwd = changePwd;
+        	return this;
+        }
+        
+        public Builder tfaRequired(boolean tfaRequired) {
+        	this.tfaRequired = tfaRequired;
         	return this;
         }
 

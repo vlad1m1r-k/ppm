@@ -13,6 +13,7 @@
 - IP blacklist
 - IP whitelist
 - dynamic blocking for incorrect login attempts
+- 2FA authentication
 
 ### Installation
 Prerequisites:

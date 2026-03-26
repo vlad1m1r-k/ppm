@@ -142,10 +142,11 @@ public class UserRestController {
             String login = json.get("login").asString();
             String pwd = json.get("pwd").asString();
             boolean changePwd = json.get("changePwd").asBoolean();
+            boolean tfaStatus = json.get("tfaStatus").asBoolean();
             UserStatus status = UserStatus.valueOf(json.get("status").asString());
             Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
-                MessageDto message = userService.editUser(decryptedToken, userId, login, pwd, status, changePwd);
+                MessageDto message = userService.editUser(decryptedToken, userId, login, pwd, status, changePwd, tfaStatus);
                 return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
             }
         }

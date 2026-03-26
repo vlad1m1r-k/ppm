@@ -52,3 +52,10 @@ databaseChangeLog:
                valueNumeric: 24
                constraints:
                   nullable: false
+           - column:
+               name: tfa_token_life_time_minutes
+               type: int
+               valueNumeric: 60
+               afterColumn: token_life_time_minutes
+               constraints:
+                  nullable: false

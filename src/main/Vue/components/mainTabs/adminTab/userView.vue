@@ -9,6 +9,7 @@
                 <option v-for="status in statuses" :value="status">{{ status }}</option>
             </select>
             <input type="checkbox" v-model="changePwdAtNextLogon"> {{ language.data.us5 }}
+            <input type="checkbox" v-model="tfaStatus"> TFA
             <button class="btn-img acpt" :disabled="login.length === 0" :title="language.data.cm3" @click="save"></button>
             <button class="btn-img cncl" :title="language.data.cm4" @click="cancel"></button>
         </td>
@@ -16,6 +17,7 @@
     <tr v-else>
         <td>{{ user.login }}</td>
         <td :class="{'text-danger': user.status === 'DISABLED'}">{{ user.status }}</td>
+        <td> {{ user.tfaStatus }} </td>
         <td>
             <button class="btn blue" @click="showGroupSelector = true">{{ language.data.gp1 }} ({{ user.groups.length }})</button>
         </td>
@@ -49,7 +51,8 @@ export default {
             login: this.user.login,
             pwd: "",
             status: this.user.status,
-            changePwdAtNextLogon: this.user.changePwd
+            changePwdAtNextLogon: this.user.changePwd,
+            tfaStatus: false
         }
     },
     methods: {
@@ -63,7 +66,8 @@ export default {
                     login: this.login,
                     pwd: this.pwd,
                     status: this.status,
-                    changePwd: this.changePwdAtNextLogon
+                    changePwd: this.changePwdAtNextLogon,
+                    tfaStatus: this.tfaStatus
                 });
                 const answer = await $.ajax({
                     url: "/user/editUser",
@@ -108,6 +112,9 @@ export default {
                 }
             }
         }
+    },
+    beforeMount() {
+        this.tfaStatus = this.user.tfaStatus === "DISABLED" ? false : true;
     }
 }
 </script>

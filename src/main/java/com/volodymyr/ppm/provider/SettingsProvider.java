@@ -5,6 +5,7 @@ import java.util.Set;
 public interface SettingsProvider {
     int getServerKeyLifeTimeDays();
     int getTokenLifeTimeMinutes();
+    int getTfaTokenLifeTimeMinutes();
     Long getDBEncryptionKeyId();
     int getPwdMinLength();
     boolean getPwdComplexity();
@@ -18,6 +19,7 @@ public interface SettingsProvider {
     Set<String> getIpWhiteList();
     void setServerKeyLifeTimeDays(int lifeTime);
     void setTokenLifeTimeMinutes(int lifeTime);
+    void setTfaTokenLifeTimeMinutes(int lifeTime);
     void setDBEncryptionKeyId(long id);
     void setPwdMinLength(int minLength);
     void setPwdComplexity(boolean complexity);

@@ -42,6 +42,11 @@ public class SettingsProviderImpl implements SettingsProvider {
     public int getTokenLifeTimeMinutes() {
         return settings.getTokenLifeTimeMinutes();
     }
+    
+    @Override
+    public int getTfaTokenLifeTimeMinutes() {
+    	return settings.getTfaTokenLifeTimeMinutes();
+    }
 
     @Override
     public Long getDBEncryptionKeyId() {
@@ -112,6 +117,14 @@ public class SettingsProviderImpl implements SettingsProvider {
         this.settings.setTokenLifeTimeMinutes(lifeTime);
         Settings settings = settingsRepository.getReferenceById(1L);
         settings.setTokenLifeTimeMinutes(lifeTime);
+    }
+    
+    @Override
+    @Transactional
+    public void setTfaTokenLifeTimeMinutes(int lifeTime) {
+    	this.settings.setTfaTokenLifeTimeMinutes(lifeTime);
+    	Settings settings = settingsRepository.getReferenceById(1L);
+    	settings.setTfaTokenLifeTimeMinutes(lifeTime);
     }
 
     @Override

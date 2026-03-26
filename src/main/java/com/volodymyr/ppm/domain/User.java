@@ -27,6 +27,7 @@ public class User {
     private String password;
     private String tfaCode;
     private Date lastTfaDate;
+    //TODO implement last tfa date, authData
     
     @Enumerated(EnumType.STRING)
     private UserTfaStatus tfaStatus = UserTfaStatus.DISABLED;
@@ -145,4 +146,8 @@ public class User {
     public boolean isEnabled() {
         return status == UserStatus.ENABLED;
     }
+    
+    public boolean isTfaEnabled() {
+		return tfaStatus != UserTfaStatus.DISABLED;
+	}
 }

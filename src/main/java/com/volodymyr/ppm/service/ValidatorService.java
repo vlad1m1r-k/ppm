@@ -5,6 +5,7 @@ public interface ValidatorService {
     boolean validateCrypto(String key, String data);
     boolean validateSrvKeyLT(int srvKeyLT);
     boolean validateUsrTknLT(int usrTknLT);
+    boolean validateTfaTknLT(int tfaTknLT);
     boolean validatePwdMinLength(int length);
     boolean validatePwdLength(String pwd, int length);
     boolean validatePwdComplexity(String pwd);

@@ -54,16 +54,17 @@ public class SettingsServiceImpl implements SettingsService {
                     .incorrectPasswdAttempts(settingsProvider.getIncorrectPasswdAttempts())
                     .logLifeTime(settingsProvider.getLogLifeTime())
                     .tfaRequirePeriodHours(settingsProvider.getTfaRequirePeriod())
+                    .tfaTokenLifeTimeMinutes(settingsProvider.getTfaTokenLifeTimeMinutes())
                     .build();
         }
         return null;
     }
 
     @Override
-    public MessageDto saveSettings(Token token, int serverKeyLifeTime, int tokenLifeTime, int pwdMinLength,
+    public MessageDto saveSettings(Token token, int serverKeyLifeTime, int tokenLifeTime, int tfaTokenLifeTime, int pwdMinLength,
                                    boolean pwdComplexity, boolean pwdSpecialChar, int logLifeTime)
             throws NoSuchAlgorithmException, NoSuchProviderException {
-        if (userService.isAdmin(token) && validatorService.validateSrvKeyLT(serverKeyLifeTime)
+        if (userService.isAdmin(token) && validatorService.validateSrvKeyLT(serverKeyLifeTime) && validatorService.validateTfaTknLT(tfaTokenLifeTime)
                 && validatorService.validateUsrTknLT(tokenLifeTime) && validatorService.validatePwdMinLength(pwdMinLength) 
                 && logLifeTime > 0) {
             if (settingsProvider.getServerKeyLifeTimeDays() != serverKeyLifeTime) {
@@ -75,6 +76,9 @@ public class SettingsServiceImpl implements SettingsService {
             }
             if (settingsProvider.getTokenLifeTimeMinutes() != tokenLifeTime) {
                 settingsProvider.setTokenLifeTimeMinutes(tokenLifeTime);
+            }
+            if (settingsProvider.getTfaTokenLifeTimeMinutes() != tfaTokenLifeTime) {
+            	settingsProvider.setTfaTokenLifeTimeMinutes(tfaTokenLifeTime);
             }
             if (settingsProvider.getPwdMinLength() != pwdMinLength) {
                 settingsProvider.setPwdMinLength(pwdMinLength);

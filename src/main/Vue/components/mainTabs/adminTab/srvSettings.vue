@@ -19,6 +19,10 @@
                     <td><input type="number" min="1" max="59" v-model="userTokenLifeTime"> 1 - 59</td>
                 </tr>
                 <tr>
+                    <td>{{ language.data.srv11 }}</td>
+                    <td><input type="number" min="1" max="180" v-model="tfaTokenLifeTime">1 - 180</td>
+                </tr>
+                <tr>
                     <td>&nbsp;</td>
                 </tr>
                 <tr>
@@ -61,6 +65,7 @@ export default {
             language: this.$root.$data.language,
             serverKeyLifeTime: null,
             userTokenLifeTime: null,
+            tfaTokenLifeTime: null,
             pwdMinLength: null,
             pwdComplexity: null,
             pwdSpecialChar: null,
@@ -85,6 +90,7 @@ export default {
                 this.pwdComplexity = data.pwdComplexity;
                 this.pwdSpecialChar = data.pwdSpecialChar;
                 this.logLifeTime = data.logLifeTime;
+                this.tfaTokenLifeTime = data.tfaTokenLifeTimeMinutes;
             } catch (e) {
                 this.eventHub.emit("show-msg", this.errorParser(e));
             }
@@ -103,7 +109,8 @@ export default {
                         pwdMinLength: this.pwdMinLength,
                         pwdComplexity: this.pwdComplexity,
                         pwdSpecialChar: this.pwdSpecialChar,
-                        logLifeTime: this.logLifeTime
+                        logLifeTime: this.logLifeTime,
+                        tfaTokenLifeTime: this.tfaTokenLifeTime
                     });
                     const answer = await $.ajax({
                         url: "/settings/saveSettings",

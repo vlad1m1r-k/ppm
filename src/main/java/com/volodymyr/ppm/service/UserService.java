@@ -22,7 +22,7 @@ public interface UserService {
     List<UserDto> getUsers(Token token, String sort);
     boolean isUserEnabled(Token token);
     MessageDto addUser(Token token, String login, String pwd, UserStatus status, boolean changePwd);
-    MessageDto editUser(Token token, long userId, String login, String pwd, UserStatus status, boolean changePwd);
+    MessageDto editUser(Token token, long userId, String login, String pwd, UserStatus status, boolean changePwd, boolean tfaStatus);
     MessageDto deleteUser(Token token, long userId);
     MessageDto addAllowedIp(Token token, long userId, String ip);
     List<String> getAllowedIp(Token token, long userId);

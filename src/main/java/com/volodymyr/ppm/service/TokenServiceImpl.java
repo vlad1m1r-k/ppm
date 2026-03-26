@@ -23,7 +23,8 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public Token getToken(User user, String remoteAddr, String userAgent, boolean changePwd) {
         long tokenLifeTime = System.currentTimeMillis() + (long) settingsProvider.getTokenLifeTimeMinutes() * 60 * 1000;
-        return new Token(user.getLogin(), tokenLifeTime, remoteAddr, userAgent, changePwd);
+        return new Token(user.getLogin(), tokenLifeTime, remoteAddr, userAgent, changePwd, null);
+        //TODO implement sessionId check
     }
 
     @Override
@@ -45,6 +46,7 @@ public class TokenServiceImpl implements TokenService {
     	Token decryptedToken = cryptoProvider.decryptToken(token);
         if ((changePwd || !decryptedToken.isChangePwd()) && decryptedToken.getLifeTime() > System.currentTimeMillis() && decryptedToken.getRemoteAddr().equals(remoteAddr) &&
                 decryptedToken.getUserAgent().equals(userAgent)) {
+        	//TODO implement sessionId check
             return decryptedToken;
         }
         if (!decryptedToken.isChangePwd()) {

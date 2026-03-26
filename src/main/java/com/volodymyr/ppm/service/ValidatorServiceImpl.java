@@ -18,6 +18,11 @@ public class ValidatorServiceImpl implements ValidatorService {
     public boolean validateUsrTknLT(int usrTknLT) {
         return usrTknLT > 0 && usrTknLT <= 59;
     }
+    
+    @Override
+    public boolean validateTfaTknLT(int tfaTknLT) {
+    	return tfaTknLT > 0 && tfaTknLT <= 180;
+    }
 
     @Override
     public boolean validatePwdMinLength(int length) {

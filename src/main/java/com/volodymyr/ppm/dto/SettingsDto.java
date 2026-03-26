@@ -13,6 +13,7 @@ public class SettingsDto {
     private final Integer incorrectPasswdAttempts;
     private final Integer logLifeTime;
     private final Integer tfaRequirePeriodHours;
+    private final Integer tfaTokenLifeTimeMinutes;
 
     private SettingsDto(Builder builder) {
         this.serverKeyLifeTimeDays = builder.serverKeyLifeTimeDays;
@@ -25,6 +26,7 @@ public class SettingsDto {
         this.incorrectPasswdAttempts = builder.incorrectPasswdAttempts;
         this.logLifeTime = builder.logLifeTime;
         this.tfaRequirePeriodHours = builder.tfaRequirePeriodHours;
+        this.tfaTokenLifeTimeMinutes = builder.tfaTokenLifeTimeMinutes;
     }
 
     public Integer getServerKeyLifeTimeDays() {
@@ -66,6 +68,10 @@ public class SettingsDto {
     public Integer getTfaRequirePeriodHours() {
     	return tfaRequirePeriodHours;
     }
+    
+    public Integer getTfaTokenLifeTimeMinutes() {
+    	return tfaTokenLifeTimeMinutes;
+    }
 
     public String toJson() {
         return new ObjectMapper().writeValueAsString(this);
@@ -86,6 +92,7 @@ public class SettingsDto {
         private Integer incorrectPasswdAttempts;
         private Integer logLifeTime;
         private Integer tfaRequirePeriodHours;
+        private Integer tfaTokenLifeTimeMinutes;
 
         public Builder serverKeyLifeTimeDays(Integer serverKeyLifeTimeDays) {
             this.serverKeyLifeTimeDays = serverKeyLifeTimeDays;
@@ -134,6 +141,11 @@ public class SettingsDto {
         
         public Builder tfaRequirePeriodHours(Integer tfaRequirePerionHours) {
         	this.tfaRequirePeriodHours = tfaRequirePerionHours;
+        	return this;
+        }
+        
+        public Builder tfaTokenLifeTimeMinutes(Integer tfaTokenLifeTimeMinutes ) {
+        	this.tfaTokenLifeTimeMinutes = tfaTokenLifeTimeMinutes;
         	return this;
         }
 

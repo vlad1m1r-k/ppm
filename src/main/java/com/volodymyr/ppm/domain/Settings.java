@@ -20,6 +20,9 @@ public class Settings {
     private Long encryptionKeyId;
     private volatile Integer serverKeyLifeTimeDays;
     private volatile Integer tokenLifeTimeMinutes;
+    private volatile Integer tfaTokenLifeTimeMinutes; 
+    //TODO implement tfa token life time
+    
     private volatile Integer pwdMinLength;
     
     @Column(columnDefinition = "TINYINT(1)")
@@ -33,6 +36,7 @@ public class Settings {
     private volatile Integer incorrectPasswdAttempts;
     private volatile Integer logLifeTime;
     private volatile Integer tfaRequirePeriodHours;
+    //TODO implement tfa require period
 
     @ElementCollection(fetch = FetchType.EAGER)
     private final Set<String> ipBlackList = new HashSet<>();
@@ -54,6 +58,10 @@ public class Settings {
 
     public Integer getTokenLifeTimeMinutes() {
         return tokenLifeTimeMinutes;
+    }
+    
+    public Integer getTfaTokenLifeTimeMinutes() {
+    	return tfaTokenLifeTimeMinutes;
     }
 
     public Integer getPwdMinLength() {
@@ -106,6 +114,10 @@ public class Settings {
 
     public void setTokenLifeTimeMinutes(Integer tokenLifeTimeMinutes) {
         this.tokenLifeTimeMinutes = tokenLifeTimeMinutes;
+    }
+    
+    public void setTfaTokenLifeTimeMinutes(Integer tfaTokenLifeTimeMinutes) {
+    	this.tfaTokenLifeTimeMinutes = tfaTokenLifeTimeMinutes;
     }
 
     public void setPwdMinLength(Integer pwdMinLength) {

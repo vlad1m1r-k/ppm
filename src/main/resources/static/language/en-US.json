@@ -108,6 +108,7 @@
     "srv8": "Special characters required",
     "srv9": "Logging:",
     "srv10": "Remove log records older than, Days",
+    "srv11": "User TFA token life time, Minutes",
     "srve1": "Error saving settings.",
     "uss1": "Change password",
     "uss2": "Password",

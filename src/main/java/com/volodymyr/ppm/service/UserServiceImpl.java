@@ -7,6 +7,7 @@ import com.volodymyr.ppm.domain.PwdGenSettings;
 import com.volodymyr.ppm.domain.Token;
 import com.volodymyr.ppm.domain.User;
 import com.volodymyr.ppm.domain.UserStatus;
+import com.volodymyr.ppm.domain.UserTfaStatus;
 import com.volodymyr.ppm.dto.GroupDto;
 import com.volodymyr.ppm.dto.MessageDto;
 import com.volodymyr.ppm.dto.TokenDto;
@@ -15,6 +16,7 @@ import com.volodymyr.ppm.provider.CryptoProvider;
 import com.volodymyr.ppm.provider.Logger;
 import com.volodymyr.ppm.provider.SecurityProvider;
 import com.volodymyr.ppm.provider.SettingsProvider;
+import com.volodymyr.ppm.provider.TfaProvider;
 import com.volodymyr.ppm.repository.PwdGenSettingsRepository;
 import com.volodymyr.ppm.repository.UserRepository;
 
@@ -41,10 +43,11 @@ public class UserServiceImpl implements UserService {
     private final SecurityProvider securityProvider;
     private final PwdGenSettingsRepository pwdGenSettingsRepository;
     private final Logger logger;
+    private final TfaProvider tfaProvider;
 
     public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder encoder, TokenService tokenService,
                            CryptoProvider cryptoProvider, ValidatorService validatorService, SettingsProvider settingsProvider,
-                           SecurityProvider securityProvider, PwdGenSettingsRepository pwdGenSettingsRepository, Logger logger) {
+                           SecurityProvider securityProvider, PwdGenSettingsRepository pwdGenSettingsRepository, Logger logger, TfaProvider tfaProvider) {
         this.userRepository = userRepository;
         this.encoder = encoder;
         this.tokenService = tokenService;
@@ -54,6 +57,7 @@ public class UserServiceImpl implements UserService {
         this.securityProvider = securityProvider;
         this.pwdGenSettingsRepository = pwdGenSettingsRepository;
         this.logger = logger;
+        this.tfaProvider = tfaProvider;
     }
 
     @Override
@@ -68,13 +72,13 @@ public class UserServiceImpl implements UserService {
             securityProvider.registerLoginAttempt(remoteAddr, false);
             return TokenDto.builder().message("lfe4").build();
         }
+        if (!user.isEnabled()) {
+        	return TokenDto.builder().message("lfe3").build();
+        }
         if (!encoder.matches(password, user.getPassword())) {
             securityProvider.registerPasswordAttempt(user.getId(), false);
             logger.log(login, Acts.LOGIN_FAILED, Objects.SYSTEM, "", new Date(), "Ip: " + remoteAddr);
             return TokenDto.builder().message("lfe1").build();
-        }
-        if (!user.isEnabled()) {
-            return TokenDto.builder().message("lfe3").build();
         }
         if (cryptoProvider.isSystemClosed() && !isAdmin(user.getGroups())) {
             return TokenDto.builder().message("lfe2").build();
@@ -177,6 +181,7 @@ public class UserServiceImpl implements UserService {
                             .adminSettings(g.isAdminSettings())
                             .build())
                             .collect(Collectors.toList()))
+                    .tfaStatus(u.getTfaStatus())
                     .build())
                     .collect(Collectors.toList());
         }
@@ -213,7 +218,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public MessageDto editUser(Token token, long userId, String login, String pwd, UserStatus status, boolean changePwd) {
+    public MessageDto editUser(Token token, long userId, String login, String pwd, UserStatus status, boolean changePwd, boolean tfaStatus) {
         if (isAdmin(token)) {
             if (!validatorService.validateString(login)) {
                 return MessageDto.builder().message("use1").build();
@@ -232,6 +237,13 @@ public class UserServiceImpl implements UserService {
             	securityProvider.registerPasswordAttempt(userId, true);
             }
             user.setChangePwdOnNextLogon(changePwd);
+            if (tfaStatus && user.getTfaStatus() == UserTfaStatus.DISABLED) {
+            	user.setTfaStatus(UserTfaStatus.INPROGRESS);
+            	user.setTfaCode(tfaProvider.generateTfaSecret());
+            }
+            if (!tfaStatus) {
+            	user.setTfaStatus(UserTfaStatus.DISABLED);
+            }
             logger.log(token.getLogin(), Acts.UPDATE, Objects.USER, login, new Date(), "");
         }
         return MessageDto.builder().build();

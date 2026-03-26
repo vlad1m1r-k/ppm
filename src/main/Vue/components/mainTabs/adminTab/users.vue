@@ -4,6 +4,7 @@
         <tr>
             <th><button class="btn link" @click="setSort('login')">{{ language.data.lf1 }}</button></th>
             <th><button class="btn link" @click="setSort('status')">{{ language.data.us2 }}</button></th>
+            <th><button class="btn link" @click="setSort('tfaStatus')">TFA Status</button></th>
             <th>{{ language.data.gp1 }}</th>
             <th>{{ language.data.us4 }}</th>
             <th><button class="btn blue" @click="showAddDlg = !showAddDlg">&#x2795;</button></th>
