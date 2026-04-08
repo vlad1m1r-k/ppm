@@ -150,4 +150,8 @@ public class User {
     public boolean isTfaEnabled() {
 		return tfaStatus != UserTfaStatus.DISABLED;
 	}
+    
+    public boolean isTfaSetup() {
+    	return tfaStatus == UserTfaStatus.INPROGRESS;
+    }
 }

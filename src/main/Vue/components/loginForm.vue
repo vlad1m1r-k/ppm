@@ -1,12 +1,18 @@
 <template>
-    <div class="modal" v-if="tokenProvider.token === null">
+    <div class="modal" v-if="tokenProvider.token === null || tokenProvider.tfaSetup || tokenProvider.tfaRequired">
         <div class="modal-body login">
             <div class="alert" v-if="message" @click="message = ''">
                 {{ message }}
             </div>
-            <input type="text" class="input" :placeholder="language.data.lf1" v-model="login" ref="lfLogin">
-            <input type="password" class="input" :placeholder="language.data.lf2" v-model="password" @keypress.enter="doLogin" ref="lfPwd">
-            <button class="btn blue" @click=doLogin>{{ language.data.lf3 }}</button>
+            <template v-if="tokenProvider.token === null">
+                <input type="text" class="input" :placeholder="language.data.lf1" v-model="login" ref="lfLogin">
+                <input type="password" class="input" :placeholder="language.data.lf2" v-model="password" @keypress.enter="doLogin" ref="lfPwd">
+                <button class="btn blue" @click=doLogin>{{ language.data.lf3 }}</button>
+            </template>
+            <template v-else>
+                <img v-if="tokenProvider.tfaSetup" :src="tokenProvider.tfaQrCode">
+
+            </template>
         </div>
     </div>
 </template>

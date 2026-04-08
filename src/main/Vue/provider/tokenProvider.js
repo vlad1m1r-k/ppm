@@ -39,8 +39,8 @@ export default {
                 await (() => new Promise((resolve) => setTimeout(resolve, 1000)))();
             }
         }
-        if (this.changePwd && !any) {
-            while (this.changePwd) {
+        if ((this.changePwd || this.tfaRequired || this.tfaSetup) && !any) {
+            while (this.changePwd || this.tfaRequired || this.tfaSetup) {
                 await (() => new Promise((resolve) => setTimeout(resolve, 1000)))();
             }
         }
@@ -69,6 +69,5 @@ export default {
         this.tfaRequired = token.tfaRequired;
         this.tfaSetup = token.tfaSetup;
         this.tfaQrCode = token.tfaQrCode;
-        console.log(this);
     }
 }

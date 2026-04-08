@@ -98,8 +98,8 @@ public class UserServiceImpl implements UserService {
                 .systemClosed(cryptoProvider.isSystemClosed())
                 .changePwd(user.isHaveToChangePwd())
                 .tfaRequired(user.isTfaEnabled() && !token.isTfaApproved())
-                .tfaSetup(user.isTfaEnabled() && !token.isTfaApproved())
-                .tfaQrCode((user.isTfaEnabled() && !token.isTfaApproved()) ? tfaProvider.getTfaQrCode(user.getLogin(), user.getTfaCode()) : null)
+                .tfaSetup(user.isTfaSetup())
+                .tfaQrCode(user.isTfaSetup() ? tfaProvider.getTfaQrCode(user.getLogin(), user.getTfaCode()) : null)
                 .build();
     }
 
