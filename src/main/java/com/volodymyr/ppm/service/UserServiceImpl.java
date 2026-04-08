@@ -20,6 +20,8 @@ import com.volodymyr.ppm.provider.TfaProvider;
 import com.volodymyr.ppm.repository.PwdGenSettingsRepository;
 import com.volodymyr.ppm.repository.UserRepository;
 
+import dev.samstevens.totp.exceptions.QrGenerationException;
+
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.util.matcher.IpAddressMatcher;
@@ -62,7 +64,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public TokenDto login(String login, String password, String remoteAddr, String userAgent) {
+    public TokenDto login(String login, String password, String remoteAddr, String userAgent) throws QrGenerationException {
         User user = userRepository.findUserByLogin(login);
         if (user == null) {
             securityProvider.registerLoginAttempt(remoteAddr, false);
@@ -95,6 +97,9 @@ public class UserServiceImpl implements UserService {
                 .adminSettings(isAdmin(user.getGroups()))
                 .systemClosed(cryptoProvider.isSystemClosed())
                 .changePwd(user.isHaveToChangePwd())
+                .tfaRequired(user.isTfaEnabled() && !token.isTfaApproved())
+                .tfaSetup(user.isTfaEnabled() && !token.isTfaApproved())
+                .tfaQrCode((user.isTfaEnabled() && !token.isTfaApproved()) ? tfaProvider.getTfaQrCode(user.getLogin(), user.getTfaCode()) : null)
                 .build();
     }
 
@@ -118,6 +123,12 @@ public class UserServiceImpl implements UserService {
     public User getUserById(long userId) {
         return userRepository.getReferenceById(userId);
     }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public User getUser(Token token) {
+    	return userRepository.findUserByLogin(token.getLogin());
+    }
 
     @Override
     @Transactional(readOnly = true)
@@ -135,8 +146,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public MessageDto changePassword(Token token, String newPwd) {
+    public MessageDto changePassword(Token token, String newPwd, String oldPwd) {
         User user = userRepository.findUserByLogin(token.getLogin());
+        if (!encoder.matches(oldPwd, user.getPassword())) {
+        	securityProvider.registerPasswordAttempt(user.getId(), false);
+            logger.log(token.getLogin(), Acts.LOGIN_FAILED, Objects.SYSTEM, "", new Date(), "Password change. Ip: " + token.getRemoteAddr());
+        	return MessageDto.builder().message("usse8").build();
+        }
         if (!validatorService.validatePwdLength(newPwd, settingsProvider.getPwdMinLength())) {
             return MessageDto.builder().message("usse2").build();
         }

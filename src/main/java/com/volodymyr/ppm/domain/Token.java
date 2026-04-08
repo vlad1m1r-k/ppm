@@ -11,16 +11,6 @@ public class Token {
     private final boolean changePwd;
     private final boolean tfaApproved;
 
-    public Token(String login, long lifeTime, String remoteAddr, String userAgent, boolean changePwd, String sessionId) {
-        this.login = login;
-        this.lifeTime = lifeTime;
-        this.remoteAddr = remoteAddr;
-        this.userAgent = userAgent;
-		this.changePwd = changePwd;
-		this.sessionId = sessionId;
-		this.tfaApproved = false;
-    }
-    
     public Token(String login, long lifeTime, String remoteAddr, String userAgent, boolean changePwd, String sessionId, boolean tfaApproved) {
         this.login = login;
         this.lifeTime = lifeTime;

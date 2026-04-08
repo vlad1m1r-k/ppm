@@ -3,6 +3,7 @@ package com.volodymyr.ppm.controller;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 import com.volodymyr.ppm.domain.Token;
+import com.volodymyr.ppm.domain.User;
 import com.volodymyr.ppm.dto.CryptoDto;
 import com.volodymyr.ppm.dto.GroupDto;
 import com.volodymyr.ppm.dto.MessageDto;
@@ -47,7 +48,8 @@ public class GroupRestController {
             String token = json.get("token").asString();
             String publicKeyPEM = json.get("publicKey").asString();
             String sort = json.get("sort").asString();
-            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            User user = userService.getUser(tokenService.decryptToken(token));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 List<GroupDto> groups = groupService.getGroups(decryptedToken, sort);
                 return cryptoProvider.encrypt(publicKeyPEM, mapper.writeValueAsString(groups));
@@ -64,7 +66,8 @@ public class GroupRestController {
             String publicKeyPEM = json.get("publicKey").asString();
             String name = json.get("name").asString();
             boolean adminSettings = json.get("admin").asBoolean();
-            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            User user = userService.getUser(tokenService.decryptToken(token));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 MessageDto message = groupService.addGroup(decryptedToken, name, adminSettings);
                 return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
@@ -82,7 +85,8 @@ public class GroupRestController {
             long groupId =  json.get("id").asLong();
             String name = json.get("name").asString();
             boolean adminSettings = json.get("admin").asBoolean();
-            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            User user = userService.getUser(tokenService.decryptToken(token));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 MessageDto message = groupService.editGroup(decryptedToken, groupId, name, adminSettings);
                 return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
@@ -98,7 +102,8 @@ public class GroupRestController {
             String token = json.get("token").asString();
             String publicKeyPEM = json.get("publicKey").asString();
             long groupId = json.get("id").asLong();
-            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            User user = userService.getUser(tokenService.decryptToken(token));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 MessageDto message = groupService.deleteGroup(decryptedToken, groupId);
                 return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
@@ -116,7 +121,8 @@ public class GroupRestController {
             long groupId = json.get("groupId").asLong();
             long userId = json.get("userId").asLong();
             boolean member = json.get("member").asBoolean();
-            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            User user = userService.getUser(tokenService.decryptToken(token));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 MessageDto message = groupService.editGroupMembers(decryptedToken, groupId, userId, member);
                 return cryptoProvider.encrypt(publicKeyPEM, message.toJson());

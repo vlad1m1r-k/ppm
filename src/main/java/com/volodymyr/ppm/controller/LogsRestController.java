@@ -3,6 +3,7 @@ package com.volodymyr.ppm.controller;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 import com.volodymyr.ppm.domain.Token;
+import com.volodymyr.ppm.domain.User;
 import com.volodymyr.ppm.dto.CryptoDto;
 import com.volodymyr.ppm.provider.CryptoProvider;
 import com.volodymyr.ppm.service.LoggerService;
@@ -47,7 +48,8 @@ public class LogsRestController {
             int size = json.get("size").intValue();
             String direction = json.get("direction").asString();
             String field = json.get("field").asString();
-            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            User user = userService.getUser(tokenService.decryptToken(token));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 return cryptoProvider.encrypt(publicKeyPEM, mapper.writeValueAsString(loggerService.getLogs(decryptedToken, page, size, direction, field)));
             }
@@ -66,7 +68,8 @@ public class LogsRestController {
             String direction = json.get("direction").asString();
             String field = json.get("field").asString();
             String text = json.get("text").asString();
-            Token decryptedToken = tokenService.validateToken(token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            User user = userService.getUser(tokenService.decryptToken(token));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"));
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 return cryptoProvider.encrypt(publicKeyPEM, mapper.writeValueAsString(loggerService
                         .search(decryptedToken, page, size, direction, field, text)));

@@ -23,29 +23,35 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public Token getToken(User user, String remoteAddr, String userAgent, boolean changePwd) {
         long tokenLifeTime = System.currentTimeMillis() + (long) settingsProvider.getTokenLifeTimeMinutes() * 60 * 1000;
-        return new Token(user.getLogin(), tokenLifeTime, remoteAddr, userAgent, changePwd, null);
+        return new Token(user.getLogin(), tokenLifeTime, remoteAddr, userAgent, changePwd, "", false);
         //TODO implement sessionId check
+        //TODO implement TFA tokens
     }
 
     @Override
     public String encrypt(Token token) {
         return cryptoProvider.encryptToken(token);
     }
+    
+    @Override
+    public Token decryptToken(String token) {
+    	return cryptoProvider.decryptToken(token);
+    }
 
     @Override
-    public Token validateToken(String token, String remoteAddr, String userAgent) {
-        return validate(token, remoteAddr, userAgent, false);
+    public Token validateToken(User user, String token, String remoteAddr, String userAgent) {
+        return validate(user, token, remoteAddr, userAgent, false);
     }
     
     @Override
-	public Token validateToken(String token, String remoteAddr, String userAgent, boolean changePwd) {
-    	return validate(token, remoteAddr, userAgent, changePwd);
+	public Token validateToken(User user, String token, String remoteAddr, String userAgent, boolean changePwd) {
+    	return validate(user, token, remoteAddr, userAgent, changePwd);
 	}
 
-	private Token validate(String token, String remoteAddr, String userAgent, boolean changePwd) {
+	private Token validate(User user, String token, String remoteAddr, String userAgent, boolean changePwd) {
     	Token decryptedToken = cryptoProvider.decryptToken(token);
         if ((changePwd || !decryptedToken.isChangePwd()) && decryptedToken.getLifeTime() > System.currentTimeMillis() && decryptedToken.getRemoteAddr().equals(remoteAddr) &&
-                decryptedToken.getUserAgent().equals(userAgent)) {
+                decryptedToken.getUserAgent().equals(userAgent) && (!user.isTfaEnabled() || decryptedToken.isTfaApproved())){
         	//TODO implement sessionId check
             return decryptedToken;
         }

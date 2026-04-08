@@ -5,6 +5,9 @@ export default {
     userName: null,
     adminSettings: false,
     changePwd: false,
+    tfaRequired: false,
+    tfaSetup: false,
+    tfaQrCode: null,
     async login(login, password) {
         let data = {login: "", password: ""};
         data.login = login;
@@ -63,5 +66,9 @@ export default {
         this.adminSettings = token.adminSettings;
         this.renewTime = Date.now() + (token.lifeTime - Date.now()) / 2;
         this.changePwd = token.changePwd;
+        this.tfaRequired = token.tfaRequired;
+        this.tfaSetup = token.tfaSetup;
+        this.tfaQrCode = token.tfaQrCode;
+        console.log(this);
     }
 }

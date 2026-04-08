@@ -9,16 +9,19 @@ import com.volodymyr.ppm.dto.MessageDto;
 import com.volodymyr.ppm.dto.TokenDto;
 import com.volodymyr.ppm.dto.UserDto;
 
+import dev.samstevens.totp.exceptions.QrGenerationException;
+
 import java.util.List;
 import java.util.Set;
 
 public interface UserService {
-    TokenDto login(String login, String password, String remoteAddr, String userAgent);
+    TokenDto login(String login, String password, String remoteAddr, String userAgent) throws QrGenerationException;
     TokenDto renewToken(Token token);
     User getUserById(long userId);
+    User getUser(Token token);
     Set<Group> getGroups(Token token);
     boolean isAdmin(Token token);
-    MessageDto changePassword(Token token, String newPwd);
+    MessageDto changePassword(Token token, String newPwd, String oldPwd);
     List<UserDto> getUsers(Token token, String sort);
     boolean isUserEnabled(Token token);
     MessageDto addUser(Token token, String login, String pwd, UserStatus status, boolean changePwd);

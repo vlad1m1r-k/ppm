@@ -10,6 +10,8 @@ public class TokenDto {
     private final Boolean systemClosed;
     private final Boolean changePwd;
     private final Boolean tfaRequired;
+    private final Boolean tfaSetup;
+    private final String tfaQrCode;
     
     private TokenDto(Builder builder) {
         this.lifeTime = builder.lifeTime;
@@ -19,6 +21,8 @@ public class TokenDto {
         this.systemClosed = builder.systemClosed;
         this.changePwd = builder.changePwd;
         this.tfaRequired = builder.tfaRequired;
+        this.tfaSetup = builder.tfaSetup;
+        this.tfaQrCode = builder.tfaQrCode;
     }
 
     public Long getLifeTime() {
@@ -49,9 +53,17 @@ public class TokenDto {
 		return changePwd;
 	}
     
-    public Boolean gettfaRequired() {
+    public Boolean getTfaRequired() {
 		return tfaRequired;
 	}
+    
+    public Boolean getTfaSetup() {
+    	return tfaSetup;
+    }
+    
+    public String getTfaQrCode() {
+    	return tfaQrCode;
+    }
 
 	public String toJson() {
         return new ObjectMapper().writeValueAsString(this);
@@ -65,6 +77,8 @@ public class TokenDto {
         private Boolean systemClosed;
         private Boolean changePwd;
         private Boolean tfaRequired;
+        private Boolean tfaSetup;
+        private String tfaQrCode;
 
         public Builder lifeTime(Long lifeTime) {
             this.lifeTime = lifeTime;
@@ -98,6 +112,16 @@ public class TokenDto {
         
         public Builder tfaRequired(boolean tfaRequired) {
         	this.tfaRequired = tfaRequired;
+        	return this;
+        }
+        
+        public Builder tfaSetup(boolean tfaSetup) {
+        	this.tfaSetup = tfaSetup;
+        	return this;
+        }
+        
+        public Builder tfaQrCode(String qrCode) {
+        	this.tfaQrCode = qrCode;
         	return this;
         }
 

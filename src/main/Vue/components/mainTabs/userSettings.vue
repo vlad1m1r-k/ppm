@@ -12,8 +12,12 @@
                 <thead></thead>
                 <tbody>
                     <tr>
+                        <td>{{ language.data.uss4 }}</td>
+                        <td><input type="password" class="input" v-model="oldPwd" ref="usPwd1" @keypress.enter="send"></td>
+                    </tr>
+                    <tr>
                         <td>{{ language.data.uss2 }}</td>
-                        <td><input type="password" class="input" v-model="pwd" ref="usPwd1" @keypress.enter="send"></td>
+                        <td><input type="password" class="input" v-model="pwd" @keypress.enter="send"></td>
                     </tr>
                     <tr>
                         <td>{{ language.data.uss3 }}</td>
@@ -37,20 +41,22 @@ export default {
             language: this.$root.$data.language,
             msg: "",
             pwd: "",
-            pwd2: ""
+            pwd2: "",
+            oldPwd: ""
         }
     },
     methods: {
         async send() {
             this.msg = "";
-            if (this.pwd && this.pwd.length > 0 && this.pwd2 && this.pwd2.length > 0) {
+            if (this.pwd && this.pwd.length > 0 && this.pwd2 && this.pwd2.length > 0 && this.oldPwd && this.oldPwd.length > 0) {
                 if (this.pwd === this.pwd2) {
                     this.eventHub.emit("show-msg", "");
                     try {
                         const token = await this.tokenProvider.getToken(true);
                         const encryptedData = await cryptoProvider.encrypt({
                             token: token,
-                            pwd: this.pwd
+                            pwd: this.pwd,
+                            oldPwd: this.oldPwd
                         });
                         const answer = await $.ajax({
                             url: "/user/setPwd",
@@ -64,11 +70,13 @@ export default {
                             this.tokenProvider.setToken(JSON.parse(data.data));
                             this.pwd = "";
                             this.pwd2 = "";
+                            this.oldPwd = "";
                             this.$emit('close-dlg');
                         }
                     } catch (e) {
                         this.pwd = "";
                         this.pwd2 = "";
+                        this.oldPwd = "";
                         this.eventHub.emit("show-msg", this.errorParser(e));
                     }
                 } else {
