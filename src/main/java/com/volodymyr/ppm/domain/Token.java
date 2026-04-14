@@ -10,8 +10,9 @@ public class Token {
     private final String sessionId;
     private final boolean changePwd;
     private final boolean tfaApproved;
+    private final boolean tfaSetup;
 
-    public Token(String login, long lifeTime, String remoteAddr, String userAgent, boolean changePwd, String sessionId, boolean tfaApproved) {
+    public Token(String login, long lifeTime, String remoteAddr, String userAgent, boolean changePwd, String sessionId, boolean tfaApproved, boolean tfaSetup) {
         this.login = login;
         this.lifeTime = lifeTime;
         this.remoteAddr = remoteAddr;
@@ -19,6 +20,7 @@ public class Token {
 		this.changePwd = changePwd;
 		this.sessionId = sessionId;
 		this.tfaApproved = tfaApproved;
+		this.tfaSetup = tfaSetup;
     }
 
     public String getLogin() {
@@ -47,6 +49,10 @@ public class Token {
     
     public boolean isTfaApproved() {
     	return tfaApproved;
+    }
+    
+    public boolean isTfaSetup() {
+    	return tfaSetup;
     }
 
     public String toJson() {

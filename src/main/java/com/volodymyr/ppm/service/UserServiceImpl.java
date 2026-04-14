@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -85,12 +86,13 @@ public class UserServiceImpl implements UserService {
         if (cryptoProvider.isSystemClosed() && !isAdmin(user.getGroups())) {
             return TokenDto.builder().message("lfe2").build();
         }
-        Token token = tokenService.getToken(user, remoteAddr, userAgent, user.isHaveToChangePwd());
+        Token token = tokenService.getToken(user, remoteAddr, userAgent, user.isHaveToChangePwd(), isTokenWillBeTfaApproved(user));
         long tokenLifeTime = token.getLifeTime();
         String encryptedToken = tokenService.encrypt(token);
         securityProvider.registerLoginAttempt(remoteAddr, true);
         securityProvider.registerPasswordAttempt(user.getId(), true);
         logger.log(login, Acts.LOGIN_SUCCESS, Objects.SYSTEM, "", new Date(), "Ip: " + remoteAddr);
+        //TODO implement logging login from different IP
         return TokenDto.builder()
                 .lifeTime(tokenLifeTime)
                 .token(encryptedToken)
@@ -106,16 +108,48 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public TokenDto renewToken(Token token) {
-        User user = userRepository.findUserByLogin(token.getLogin());
-        Token newToken = tokenService.getToken(user, token.getRemoteAddr(), token.getUserAgent(), false);
+        User user = userRepository.findUserByLogin(token.getLogin());        
+        Token newToken = tokenService.getToken(user, token.getRemoteAddr(), token.getUserAgent(), false, isTokenWillBeTfaApproved(user));
         long tokenLifeTime = newToken.getLifeTime();
         String encryptedToken = tokenService.encrypt(newToken);
         return TokenDto.builder()
                 .lifeTime(tokenLifeTime)
                 .token(encryptedToken)
                 .adminSettings(isAdmin(user.getGroups()))
+                .systemClosed(cryptoProvider.isSystemClosed())
                 .changePwd(user.isHaveToChangePwd())
+                .tfaRequired(user.isTfaEnabled() && !newToken.isTfaApproved())
                 .build();
+    }
+    
+    @Override
+    @Transactional
+    public TokenDto verifyTfaCode(Token token, String code) throws QrGenerationException {
+    	User user = userRepository.findUserByLogin(token.getLogin());
+    	if (validatorService.valideteTfaCodeString(code) && tfaProvider.isTfaCodeValid(user.getTfaCode(), code)) {
+            if (user.getTfaStatus() == UserTfaStatus.INPROGRESS) {
+            	user.setTfaStatus(UserTfaStatus.CONFIGURED);
+            }
+            user.setLastTfaDate(new Date());
+            Token tfaToken = tokenService.getToken(user, token.getRemoteAddr(), token.getUserAgent(), false, true);
+            String encryptedToken = tokenService.encrypt(tfaToken);
+            securityProvider.registerLoginAttempt(tfaToken.getRemoteAddr(), true);
+            securityProvider.registerPasswordAttempt(user.getId(), true);
+            logger.log(user.getLogin(), Acts.TFA_SUCCESS, Objects.SYSTEM, "", new Date(), "Ip: " + tfaToken.getRemoteAddr());
+            return TokenDto.builder()
+            		.lifeTime(tfaToken.getLifeTime())
+            		.token(encryptedToken)
+            		.adminSettings(isAdmin(user.getGroups()))
+            		.systemClosed(cryptoProvider.isSystemClosed())
+            		.changePwd(user.isHaveToChangePwd())
+            		.tfaRequired(user.isTfaEnabled() && !tfaToken.isTfaApproved())
+                    .tfaSetup(user.isTfaSetup())
+                    .tfaQrCode(user.isTfaSetup() ? tfaProvider.getTfaQrCode(user.getLogin(), user.getTfaCode()) : null)
+                    .build();
+    	}
+    	securityProvider.registerPasswordAttempt(user.getId(), false);
+    	logger.log(user.getLogin(), Acts.TFA_FAILED, Objects.SYSTEM, "", new Date(), "Ip: " + token.getRemoteAddr());
+    	return TokenDto.builder().message("lfe5").build();
     }
 
     @Override
@@ -259,6 +293,7 @@ public class UserServiceImpl implements UserService {
             }
             if (!tfaStatus) {
             	user.setTfaStatus(UserTfaStatus.DISABLED);
+            	user.setTfaCode(null);
             }
             logger.log(token.getLogin(), Acts.UPDATE, Objects.USER, login, new Date(), "");
         }
@@ -354,5 +389,16 @@ public class UserServiceImpl implements UserService {
             }
         }
         return false;
+    }
+    
+    private boolean isTokenWillBeTfaApproved (User user) {
+    	//TODO check Auth data
+    	if (user.getLastTfaDate() == null) {
+    		return false;
+    	}
+        Calendar tfaTokenLifeTime = Calendar.getInstance();
+        tfaTokenLifeTime.setTime(user.getLastTfaDate());
+        tfaTokenLifeTime.add(Calendar.HOUR, settingsProvider.getTfaRequirePeriod());
+        return settingsProvider.getTfaRequirePeriod() < 0 || new Date().compareTo(tfaTokenLifeTime.getTime()) <= 0;
     }
 }

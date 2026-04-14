@@ -80,7 +80,7 @@ public class UserRestController {
             String newPwd = json.get("pwd").asString();
             String oldPwd = json.get("oldPwd").asString();
             User user = userService.getUser(tokenService.decryptToken(token));
-            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), true);
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), true, false);
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 MessageDto message = userService.changePassword(decryptedToken, newPwd, oldPwd);
                 return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
@@ -264,5 +264,21 @@ public class UserRestController {
             }
         }
         return null;
+    }
+    
+    @PostMapping("/verifyTfaCode")
+    public CryptoDto verifyTfaCode(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws QrGenerationException {
+    	if (validatorService.validateCrypto(key, data)) {
+    		JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+    		String token = json.get("token").asString();
+            String publicKeyPEM = json.get("publicKey").asString();
+            String tfaCode = json.get("tfaCode").asString();
+            User user = userService.getUser(tokenService.decryptToken(token));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), false, true);
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+            	return cryptoProvider.encrypt(publicKeyPEM, userService.verifyTfaCode(decryptedToken, tfaCode).toJson());
+            }
+    	}
+    	return null;
     }
 }

@@ -21,11 +21,15 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public Token getToken(User user, String remoteAddr, String userAgent, boolean changePwd) {
-        long tokenLifeTime = System.currentTimeMillis() + (long) settingsProvider.getTokenLifeTimeMinutes() * 60 * 1000;
-        return new Token(user.getLogin(), tokenLifeTime, remoteAddr, userAgent, changePwd, "", false);
+    public Token getToken(User user, String remoteAddr, String userAgent, boolean changePwd, boolean tfaApproved) {
+    	long tokenLifeTime;
+    	if (tfaApproved) {
+    		tokenLifeTime = System.currentTimeMillis() + (long) settingsProvider.getTfaTokenLifeTimeMinutes() * 60 * 1000;
+    	} else {
+    		tokenLifeTime = System.currentTimeMillis() + (long) settingsProvider.getTokenLifeTimeMinutes() * 60 * 1000;    		
+    	}
+        return new Token(user.getLogin(), tokenLifeTime, remoteAddr, userAgent, changePwd, "", tfaApproved);
         //TODO implement sessionId check
-        //TODO implement TFA tokens
     }
 
     @Override
@@ -40,18 +44,19 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public Token validateToken(User user, String token, String remoteAddr, String userAgent) {
-        return validate(user, token, remoteAddr, userAgent, false);
+        return validate(user, token, remoteAddr, userAgent, false, false);
     }
     
     @Override
-	public Token validateToken(User user, String token, String remoteAddr, String userAgent, boolean changePwd) {
-    	return validate(user, token, remoteAddr, userAgent, changePwd);
+	public Token validateToken(User user, String token, String remoteAddr, String userAgent, boolean changePwd, boolean validateTfaCode) {
+    	return validate(user, token, remoteAddr, userAgent, changePwd, validateTfaCode);
 	}
 
-	private Token validate(User user, String token, String remoteAddr, String userAgent, boolean changePwd) {
+	private Token validate(User user, String token, String remoteAddr, String userAgent, boolean changePwd, boolean validateTfaCode) {
     	Token decryptedToken = cryptoProvider.decryptToken(token);
-        if ((changePwd || !decryptedToken.isChangePwd()) && decryptedToken.getLifeTime() > System.currentTimeMillis() && decryptedToken.getRemoteAddr().equals(remoteAddr) &&
-                decryptedToken.getUserAgent().equals(userAgent) && (!user.isTfaEnabled() || decryptedToken.isTfaApproved())){
+    	boolean isTokenSourceValid = decryptedToken.getLifeTime() > System.currentTimeMillis() && decryptedToken.getRemoteAddr().equals(remoteAddr) && decryptedToken.getUserAgent().equals(userAgent);
+    	boolean isTokenTfaStatusValid = !user.isTfaEnabled() || decryptedToken.isTfaApproved() || validateTfaCode;
+        if (isTokenSourceValid && isTokenTfaStatusValid && (changePwd || !decryptedToken.isChangePwd())){
         	//TODO implement sessionId check
             return decryptedToken;
         }

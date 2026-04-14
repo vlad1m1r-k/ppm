@@ -100,4 +100,9 @@ public class ValidatorServiceImpl implements ValidatorService {
     public boolean validateTfaRequirePeriod(int tfaPeriod) {
     	return tfaPeriod >= -1 && tfaPeriod <= 144;
     }
+    
+    @Override
+    public boolean valideteTfaCodeString(String code) {
+    	return code.matches("^[0-9]{6}$");
+    }
 }

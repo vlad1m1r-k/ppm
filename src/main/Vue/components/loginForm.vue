@@ -10,8 +10,13 @@
                 <button class="btn blue" @click=doLogin>{{ language.data.lf3 }}</button>
             </template>
             <template v-else>
-                <img v-if="tokenProvider.tfaSetup" :src="tokenProvider.tfaQrCode">
-
+                <template v-if="tokenProvider.tfaSetup">
+                    {{ language.data.lf4 }}
+                    <img :src="tokenProvider.tfaQrCode">
+                </template>
+                {{ language.data.lf6 }}
+                <input class="input" type="text" v-model="tfaCode" @keypress.enter="tfaVerify">
+                <button class="btn blue" :disabled="!isCodeValid" @click="tfaVerify">{{ language.data.lf5 }}</button>
             </template>
         </div>
     </div>
@@ -26,7 +31,8 @@ export default {
             language: this.$root.$data.language,
             message: "",
             login: "",
-            password: ""
+            password: "",
+            tfaCode: ""
         }
     },
     watch: {
@@ -40,6 +46,11 @@ export default {
                     }
                 })
             }
+        }
+    },
+    computed: {
+        isCodeValid() {
+            return this.tfaCode.match("^[0-9]{6}$");
         }
     },
     methods: {
@@ -59,6 +70,22 @@ export default {
                     }
                 } finally {
                     this.password = "";
+                }
+            }
+        },
+        async tfaVerify() {
+            if (this.isCodeValid) {
+                this.message="";
+                try {
+                    await this.tokenProvider.verifyTfaCode(this.tfaCode);
+                } catch (e) {
+                    if (e.message) {
+                        this.message = this.language.data[e.message];
+                    } else {
+                        this.message = this.errorParser(e);
+                    }
+                } finally {
+                    this.tfaCode = "";
                 }
             }
         }

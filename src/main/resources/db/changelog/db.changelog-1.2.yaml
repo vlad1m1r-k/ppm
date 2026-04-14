@@ -27,7 +27,7 @@ databaseChangeLog:
             columns:
             - column:
                 name: last_tfa_date
-                type: date
+                type: datetime(6)
             - column:
                 name: tfa_code
                 type: varchar(32)

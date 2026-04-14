@@ -69,5 +69,19 @@ export default {
         this.tfaRequired = token.tfaRequired;
         this.tfaSetup = token.tfaSetup;
         this.tfaQrCode = token.tfaQrCode;
+    },
+    async verifyTfaCode(code) {
+        const data = {token: this.token, tfaCode: code};
+        const encryptedData = await cryptoProvider.encrypt(data);
+        const answer = await $.ajax({
+            url: "/user/verifyTfaCode",
+            method: "POST",
+            data: encryptedData
+        });
+        const decryptedAnswer = cryptoProvider.decrypt(answer);
+        if (decryptedAnswer.message) {
+            throw new Error(decryptedAnswer.message);
+        }
+        this.setToken(decryptedAnswer);
     }
 }

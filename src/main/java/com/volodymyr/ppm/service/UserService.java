@@ -17,6 +17,7 @@ import java.util.Set;
 public interface UserService {
     TokenDto login(String login, String password, String remoteAddr, String userAgent) throws QrGenerationException;
     TokenDto renewToken(Token token);
+    TokenDto verifyTfaCode(Token token, String code) throws QrGenerationException;
     User getUserById(long userId);
     User getUser(Token token);
     Set<Group> getGroups(Token token);

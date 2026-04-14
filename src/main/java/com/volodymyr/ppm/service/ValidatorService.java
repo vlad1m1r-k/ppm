@@ -17,4 +17,5 @@ public interface ValidatorService {
     boolean validateIncPassAtt(int passAtt);
     boolean validateIpOrSubnet(String subnet);
     boolean validateTfaRequirePeriod(int tfaPeriod);
+    boolean valideteTfaCodeString(String code);
 }
