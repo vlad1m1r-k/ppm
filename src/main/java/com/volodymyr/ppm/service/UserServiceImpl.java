@@ -86,7 +86,7 @@ public class UserServiceImpl implements UserService {
         if (cryptoProvider.isSystemClosed() && !isAdmin(user.getGroups())) {
             return TokenDto.builder().message("lfe2").build();
         }
-        Token token = tokenService.getToken(user, remoteAddr, userAgent, user.isHaveToChangePwd(), isTokenWillBeTfaApproved(user));
+        Token token = tokenService.getToken(user, remoteAddr, userAgent, user.isHaveToChangePwd(), isTokenWillBeTfaApproved(user), user.isTfaSetup());
         long tokenLifeTime = token.getLifeTime();
         String encryptedToken = tokenService.encrypt(token);
         securityProvider.registerLoginAttempt(remoteAddr, true);
@@ -107,9 +107,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public TokenDto renewToken(Token token) {
+    public TokenDto renewToken(Token token) throws QrGenerationException {
         User user = userRepository.findUserByLogin(token.getLogin());        
-        Token newToken = tokenService.getToken(user, token.getRemoteAddr(), token.getUserAgent(), false, isTokenWillBeTfaApproved(user));
+        Token newToken = tokenService.getToken(user, token.getRemoteAddr(), token.getUserAgent(), false, isTokenWillBeTfaApproved(user), user.isTfaSetup());
         long tokenLifeTime = newToken.getLifeTime();
         String encryptedToken = tokenService.encrypt(newToken);
         return TokenDto.builder()
@@ -119,6 +119,8 @@ public class UserServiceImpl implements UserService {
                 .systemClosed(cryptoProvider.isSystemClosed())
                 .changePwd(user.isHaveToChangePwd())
                 .tfaRequired(user.isTfaEnabled() && !newToken.isTfaApproved())
+                .tfaSetup(user.isTfaSetup())
+                .tfaQrCode(user.isTfaSetup() ? tfaProvider.getTfaQrCode(user.getLogin(), user.getTfaCode()) : null)
                 .build();
     }
     
@@ -131,7 +133,7 @@ public class UserServiceImpl implements UserService {
             	user.setTfaStatus(UserTfaStatus.CONFIGURED);
             }
             user.setLastTfaDate(new Date());
-            Token tfaToken = tokenService.getToken(user, token.getRemoteAddr(), token.getUserAgent(), false, true);
+            Token tfaToken = tokenService.getToken(user, token.getRemoteAddr(), token.getUserAgent(), false, true, user.isTfaSetup());
             String encryptedToken = tokenService.encrypt(tfaToken);
             securityProvider.registerLoginAttempt(tfaToken.getRemoteAddr(), true);
             securityProvider.registerPasswordAttempt(user.getId(), true);
@@ -180,7 +182,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public MessageDto changePassword(Token token, String newPwd, String oldPwd) {
+    public MessageDto changePassword(Token token, String newPwd, String oldPwd) throws QrGenerationException {
         User user = userRepository.findUserByLogin(token.getLogin());
         if (!encoder.matches(oldPwd, user.getPassword())) {
         	securityProvider.registerPasswordAttempt(user.getId(), false);
@@ -280,6 +282,9 @@ public class UserServiceImpl implements UserService {
             }
             if (!user.getLogin().equals(login) && userRepository.findUserByLogin(login) != null) {
                 return MessageDto.builder().message("use3").build();
+            }
+            if (changePwd && user.getTfaStatus() == UserTfaStatus.INPROGRESS) {
+            	return MessageDto.builder().message("use4").build();
             }
             user.setLogin(login);
             user.setStatus(status);
@@ -393,6 +398,7 @@ public class UserServiceImpl implements UserService {
     
     private boolean isTokenWillBeTfaApproved (User user) {
     	//TODO check Auth data
+    	//TODO force tfa when auth data changes
     	if (user.getLastTfaDate() == null) {
     		return false;
     	}

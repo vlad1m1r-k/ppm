@@ -72,6 +72,7 @@
     "use1": "Incorrect login",
     "use2": "Incorrect password",
     "use3": "The login is already taken",
+    "use4": "Do not check \"Change pasword at next logon\" and \"setup 2FA\" at the same time.",
     "gp1": "Groups",
     "gp2": "Name",
     "gp3": "Admin",

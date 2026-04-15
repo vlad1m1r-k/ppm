@@ -15,7 +15,7 @@
                     <img :src="tokenProvider.tfaQrCode">
                 </template>
                 {{ language.data.lf6 }}
-                <input class="input" type="text" v-model="tfaCode" @keypress.enter="tfaVerify">
+                <input class="input" type="text" v-model="tfaCode" @keypress.enter="tfaVerify" ref="tfaCode">
                 <button class="btn blue" :disabled="!isCodeValid" @click="tfaVerify">{{ language.data.lf5 }}</button>
             </template>
         </div>
@@ -44,6 +44,11 @@ export default {
                     } else {
                         this.$refs.lfLogin.focus();
                     }
+                })
+            } 
+            if (this.tokenProvider.tfaSetup || this.tokenProvider.tfaRequired) {
+                this.$nextTick(() => {
+                    this.$refs.tfaCode.focus();
                 })
             }
         }

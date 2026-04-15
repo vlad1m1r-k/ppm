@@ -21,7 +21,6 @@ public class Settings {
     private volatile Integer serverKeyLifeTimeDays;
     private volatile Integer tokenLifeTimeMinutes;
     private volatile Integer tfaTokenLifeTimeMinutes; 
-    //TODO implement tfa token life time
     
     private volatile Integer pwdMinLength;
     

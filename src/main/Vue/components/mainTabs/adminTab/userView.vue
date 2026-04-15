@@ -90,6 +90,8 @@ export default {
             this.login = this.user.login;
             this.pwd = "";
             this.status = this.user.status;
+            this.changePwdAtNextLogon = this.user.changePwd;
+            this.tfaStatus = this.user.tfaStatus === "DISABLED" ? false : true;
             this.showEditDlg = false;
         },
         async deleteUser() {

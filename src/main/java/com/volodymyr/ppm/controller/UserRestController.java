@@ -56,7 +56,7 @@ public class UserRestController {
     }
 
     @PostMapping("/renewToken")
-    public CryptoDto renewToken(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+    public CryptoDto renewToken(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws QrGenerationException {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").asString();
@@ -72,7 +72,7 @@ public class UserRestController {
     }
 
     @PostMapping("/setPwd")
-    public CryptoDto setPwd(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+    public CryptoDto setPwd(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws QrGenerationException {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").asString();
