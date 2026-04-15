@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/logs")
@@ -39,7 +40,7 @@ public class LogsRestController {
     }
 
     @PostMapping("/getLogs")
-    public CryptoDto getLogs(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+    public CryptoDto getLogs(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").asString();
@@ -49,7 +50,7 @@ public class LogsRestController {
             String direction = json.get("direction").asString();
             String field = json.get("field").asString();
             User user = userService.getUser(tokenService.decryptToken(token));
-            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 return cryptoProvider.encrypt(publicKeyPEM, mapper.writeValueAsString(loggerService.getLogs(decryptedToken, page, size, direction, field)));
             }
@@ -58,7 +59,7 @@ public class LogsRestController {
     }
 
     @PostMapping("/search")
-    public CryptoDto search(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+    public CryptoDto search(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").asString();
@@ -69,7 +70,7 @@ public class LogsRestController {
             String field = json.get("field").asString();
             String text = json.get("text").asString();
             User user = userService.getUser(tokenService.decryptToken(token));
-            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 return cryptoProvider.encrypt(publicKeyPEM, mapper.writeValueAsString(loggerService
                         .search(decryptedToken, page, size, direction, field, text)));

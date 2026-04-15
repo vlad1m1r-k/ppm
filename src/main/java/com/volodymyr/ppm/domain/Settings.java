@@ -35,7 +35,6 @@ public class Settings {
     private volatile Integer incorrectPasswdAttempts;
     private volatile Integer logLifeTime;
     private volatile Integer tfaRequirePeriodHours;
-    //TODO implement tfa require period
 
     @ElementCollection(fetch = FetchType.EAGER)
     private final Set<String> ipBlackList = new HashSet<>();

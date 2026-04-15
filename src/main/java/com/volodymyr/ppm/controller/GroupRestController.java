@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+
 import java.util.List;
 
 @RestController
@@ -42,14 +44,14 @@ public class GroupRestController {
     }
 
     @PostMapping("/getGroups")
-    public CryptoDto getGroups(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+    public CryptoDto getGroups(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").asString();
             String publicKeyPEM = json.get("publicKey").asString();
             String sort = json.get("sort").asString();
             User user = userService.getUser(tokenService.decryptToken(token));
-            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 List<GroupDto> groups = groupService.getGroups(decryptedToken, sort);
                 return cryptoProvider.encrypt(publicKeyPEM, mapper.writeValueAsString(groups));
@@ -59,7 +61,7 @@ public class GroupRestController {
     }
 
     @PostMapping("/addGroup")
-    public CryptoDto addGroup(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+    public CryptoDto addGroup(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").asString();
@@ -67,7 +69,7 @@ public class GroupRestController {
             String name = json.get("name").asString();
             boolean adminSettings = json.get("admin").asBoolean();
             User user = userService.getUser(tokenService.decryptToken(token));
-            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 MessageDto message = groupService.addGroup(decryptedToken, name, adminSettings);
                 return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
@@ -77,7 +79,7 @@ public class GroupRestController {
     }
 
     @PostMapping("/editGroup")
-    public CryptoDto editGroup(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+    public CryptoDto editGroup(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").asString();
@@ -86,7 +88,7 @@ public class GroupRestController {
             String name = json.get("name").asString();
             boolean adminSettings = json.get("admin").asBoolean();
             User user = userService.getUser(tokenService.decryptToken(token));
-            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 MessageDto message = groupService.editGroup(decryptedToken, groupId, name, adminSettings);
                 return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
@@ -96,14 +98,14 @@ public class GroupRestController {
     }
 
     @PostMapping("/deleteGroup")
-    public CryptoDto deleteGroup(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+    public CryptoDto deleteGroup(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").asString();
             String publicKeyPEM = json.get("publicKey").asString();
             long groupId = json.get("id").asLong();
             User user = userService.getUser(tokenService.decryptToken(token));
-            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 MessageDto message = groupService.deleteGroup(decryptedToken, groupId);
                 return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
@@ -113,7 +115,7 @@ public class GroupRestController {
     }
 
     @PostMapping("/editGroupMembers")
-    public CryptoDto editGroupMembers(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+    public CryptoDto editGroupMembers(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").asString();
@@ -122,7 +124,7 @@ public class GroupRestController {
             long userId = json.get("userId").asLong();
             boolean member = json.get("member").asBoolean();
             User user = userService.getUser(tokenService.decryptToken(token));
-            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 MessageDto message = groupService.editGroupMembers(decryptedToken, groupId, userId, member);
                 return cryptoProvider.encrypt(publicKeyPEM, message.toJson());

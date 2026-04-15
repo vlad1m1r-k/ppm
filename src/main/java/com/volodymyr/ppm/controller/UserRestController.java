@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+
 import java.util.List;
 
 @RestController
@@ -43,26 +45,26 @@ public class UserRestController {
     }
 
     @PostMapping("/login")
-    public CryptoDto login(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws QrGenerationException {
+    public CryptoDto login(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) throws QrGenerationException {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String login = json.get("login").asString();
             String password = json.get("password").asString();
             String publicKeyPEM = json.get("publicKey").asString();
-            TokenDto tokenDto = userService.login(login, password, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            TokenDto tokenDto = userService.login(login, password, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
             return cryptoProvider.encrypt(publicKeyPEM, tokenDto.toJson());
         }
         return null;
     }
 
     @PostMapping("/renewToken")
-    public CryptoDto renewToken(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws QrGenerationException {
+    public CryptoDto renewToken(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) throws QrGenerationException {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").asString();
             String publicKeyPEM = json.get("publicKey").asString();
             User user = userService.getUser(tokenService.decryptToken(token));
-            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 TokenDto tokenDto = userService.renewToken(decryptedToken);
                 return cryptoProvider.encrypt(publicKeyPEM, tokenDto.toJson());
@@ -72,7 +74,7 @@ public class UserRestController {
     }
 
     @PostMapping("/setPwd")
-    public CryptoDto setPwd(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws QrGenerationException {
+    public CryptoDto setPwd(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) throws QrGenerationException {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").asString();
@@ -80,7 +82,7 @@ public class UserRestController {
             String newPwd = json.get("pwd").asString();
             String oldPwd = json.get("oldPwd").asString();
             User user = userService.getUser(tokenService.decryptToken(token));
-            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), true, false);
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId(), true, false);
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 MessageDto message = userService.changePassword(decryptedToken, newPwd, oldPwd);
                 return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
@@ -90,14 +92,14 @@ public class UserRestController {
     }
 
     @PostMapping("/getUsers")
-    public CryptoDto getUsers(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+    public CryptoDto getUsers(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").asString();
             String publicKeyPEM = json.get("publicKey").asString();
             String sort = json.get("sort").asString();
             User user = userService.getUser(tokenService.decryptToken(token));
-            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 List<UserDto> users = userService.getUsers(decryptedToken, sort);
                 return cryptoProvider.encrypt(publicKeyPEM, mapper.writeValueAsString(users));
@@ -107,13 +109,13 @@ public class UserRestController {
     }
 
     @PostMapping("/getStatuses")
-    public CryptoDto getStatuses(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+    public CryptoDto getStatuses(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").asString();
             String publicKeyPEM = json.get("publicKey").asString();
             User user = userService.getUser(tokenService.decryptToken(token));
-            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken) && userService.isAdmin(decryptedToken)) {
                 return cryptoProvider.encrypt(publicKeyPEM, mapper.writeValueAsString(UserStatus.values()));
             }
@@ -122,7 +124,7 @@ public class UserRestController {
     }
 
     @PostMapping("/addUser")
-    public CryptoDto addUser(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+    public CryptoDto addUser(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").asString();
@@ -132,7 +134,7 @@ public class UserRestController {
             boolean changePwd = json.get("changePwd").asBoolean();
             UserStatus status = UserStatus.valueOf(json.get("status").asString());
             User user = userService.getUser(tokenService.decryptToken(token));
-            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 MessageDto message = userService.addUser(decryptedToken, login, pwd, status, changePwd);
                 return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
@@ -142,7 +144,7 @@ public class UserRestController {
     }
 
     @PostMapping("/editUser")
-    public CryptoDto editUser(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+    public CryptoDto editUser(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").asString();
@@ -154,7 +156,7 @@ public class UserRestController {
             boolean tfaStatus = json.get("tfaStatus").asBoolean();
             UserStatus status = UserStatus.valueOf(json.get("status").asString());
             User user = userService.getUser(tokenService.decryptToken(token));
-            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 MessageDto message = userService.editUser(decryptedToken, userId, login, pwd, status, changePwd, tfaStatus);
                 return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
@@ -164,14 +166,14 @@ public class UserRestController {
     }
 
     @PostMapping("/deleteUser")
-    public CryptoDto deleteUser(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+    public CryptoDto deleteUser(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").asString();
             String publicKeyPEM = json.get("publicKey").asString();
             long userId = json.get("id").asLong();
             User user = userService.getUser(tokenService.decryptToken(token));
-            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 MessageDto message = userService.deleteUser(decryptedToken, userId);
                 return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
@@ -181,7 +183,7 @@ public class UserRestController {
     }
 
     @PostMapping("/addAllowedIp")
-    public CryptoDto addAllowedIp(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+    public CryptoDto addAllowedIp(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").asString();
@@ -189,7 +191,7 @@ public class UserRestController {
             long userId = json.get("userId").asLong();
             String ip = json.get("ip").asString();
             User user = userService.getUser(tokenService.decryptToken(token));
-            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 MessageDto message = userService.addAllowedIp(decryptedToken, userId, ip);
                 return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
@@ -199,14 +201,14 @@ public class UserRestController {
     }
 
     @PostMapping("/getAllowedIp")
-    public CryptoDto getAllowedIp(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+    public CryptoDto getAllowedIp(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").asString();
             String publicKeyPEM = json.get("publicKey").asString();
             long userId = json.get("userId").asLong();
             User user = userService.getUser(tokenService.decryptToken(token));
-            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 return cryptoProvider.encrypt(publicKeyPEM, mapper.writeValueAsString(userService.getAllowedIp(decryptedToken, userId)));
             }
@@ -215,7 +217,7 @@ public class UserRestController {
     }
 
     @PostMapping("/removeAllowedIp")
-    public CryptoDto removeAllowedIp(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+    public CryptoDto removeAllowedIp(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").asString();
@@ -223,7 +225,7 @@ public class UserRestController {
             long userId = json.get("userId").asLong();
             String ip = json.get("ip").asString();
             User user = userService.getUser(tokenService.decryptToken(token));
-            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 userService.removeAllowedIp(decryptedToken, userId, ip);
                 return cryptoProvider.encrypt(publicKeyPEM, mapper.writeValueAsString(""));
@@ -233,13 +235,13 @@ public class UserRestController {
     }
 
     @PostMapping("/getPwdGenSettings")
-    public CryptoDto getPwdGenSettings(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+    public CryptoDto getPwdGenSettings(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").asString();
             String publicKeyPEM = json.get("publicKey").asString();
             User user = userService.getUser(tokenService.decryptToken(token));
-            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 return cryptoProvider.encrypt(publicKeyPEM, mapper.writeValueAsString(userService.getPwdGenSettings(decryptedToken)));
             }
@@ -248,7 +250,7 @@ public class UserRestController {
     }
 
     @PostMapping("/setPwdGenSettings")
-    public CryptoDto setPwdGenSettings(@RequestParam String key, @RequestParam String data, HttpServletRequest request) {
+    public CryptoDto setPwdGenSettings(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
         if (validatorService.validateCrypto(key, data)) {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String token = json.get("token").asString();
@@ -257,7 +259,7 @@ public class UserRestController {
             boolean numbers = json.get("numbers").asBoolean();
             boolean symbols = json.get("symbols").asBoolean();
             User user = userService.getUser(tokenService.decryptToken(token));
-            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
                 MessageDto message = userService.setPwdGenSettings(decryptedToken, pwdLength, numbers, symbols);
                 return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
@@ -267,14 +269,14 @@ public class UserRestController {
     }
     
     @PostMapping("/verifyTfaCode")
-    public CryptoDto verifyTfaCode(@RequestParam String key, @RequestParam String data, HttpServletRequest request) throws QrGenerationException {
+    public CryptoDto verifyTfaCode(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) throws QrGenerationException {
     	if (validatorService.validateCrypto(key, data)) {
     		JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
     		String token = json.get("token").asString();
             String publicKeyPEM = json.get("publicKey").asString();
             String tfaCode = json.get("tfaCode").asString();
             User user = userService.getUser(tokenService.decryptToken(token));
-            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), false, true);
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId(), false, true);
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
             	return cryptoProvider.encrypt(publicKeyPEM, userService.verifyTfaCode(decryptedToken, tfaCode).toJson());
             }

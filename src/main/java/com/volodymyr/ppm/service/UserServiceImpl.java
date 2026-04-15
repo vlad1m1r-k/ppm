@@ -65,7 +65,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public TokenDto login(String login, String password, String remoteAddr, String userAgent) throws QrGenerationException {
+    public TokenDto login(String login, String password, String remoteAddr, String userAgent, String sessionId) throws QrGenerationException {
         User user = userRepository.findUserByLogin(login);
         if (user == null) {
             securityProvider.registerLoginAttempt(remoteAddr, false);
@@ -86,7 +86,7 @@ public class UserServiceImpl implements UserService {
         if (cryptoProvider.isSystemClosed() && !isAdmin(user.getGroups())) {
             return TokenDto.builder().message("lfe2").build();
         }
-        Token token = tokenService.getToken(user, remoteAddr, userAgent, user.isHaveToChangePwd(), isTokenWillBeTfaApproved(user), user.isTfaSetup());
+        Token token = tokenService.getToken(user, remoteAddr, userAgent, sessionId, user.isHaveToChangePwd(), isTokenWillBeTfaApproved(user), user.isTfaSetup());
         long tokenLifeTime = token.getLifeTime();
         String encryptedToken = tokenService.encrypt(token);
         securityProvider.registerLoginAttempt(remoteAddr, true);
@@ -109,7 +109,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public TokenDto renewToken(Token token) throws QrGenerationException {
         User user = userRepository.findUserByLogin(token.getLogin());        
-        Token newToken = tokenService.getToken(user, token.getRemoteAddr(), token.getUserAgent(), false, isTokenWillBeTfaApproved(user), user.isTfaSetup());
+        Token newToken = tokenService.getToken(user, token.getRemoteAddr(), token.getUserAgent(), token.getSessionId(), false, isTokenWillBeTfaApproved(user), user.isTfaSetup());
         long tokenLifeTime = newToken.getLifeTime();
         String encryptedToken = tokenService.encrypt(newToken);
         return TokenDto.builder()
@@ -133,7 +133,7 @@ public class UserServiceImpl implements UserService {
             	user.setTfaStatus(UserTfaStatus.CONFIGURED);
             }
             user.setLastTfaDate(new Date());
-            Token tfaToken = tokenService.getToken(user, token.getRemoteAddr(), token.getUserAgent(), false, true, user.isTfaSetup());
+            Token tfaToken = tokenService.getToken(user, token.getRemoteAddr(), token.getUserAgent(), token.getSessionId(),false, true, user.isTfaSetup());
             String encryptedToken = tokenService.encrypt(tfaToken);
             securityProvider.registerLoginAttempt(tfaToken.getRemoteAddr(), true);
             securityProvider.registerPasswordAttempt(user.getId(), true);
