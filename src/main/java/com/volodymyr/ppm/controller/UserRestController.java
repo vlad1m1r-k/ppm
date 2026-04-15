@@ -66,7 +66,7 @@ public class UserRestController {
             User user = userService.getUser(tokenService.decryptToken(token));
             Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
-                TokenDto tokenDto = userService.renewToken(decryptedToken);
+                TokenDto tokenDto = userService.renewToken(decryptedToken, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
                 return cryptoProvider.encrypt(publicKeyPEM, tokenDto.toJson());
             }
         }
@@ -84,7 +84,7 @@ public class UserRestController {
             User user = userService.getUser(tokenService.decryptToken(token));
             Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId(), true, false);
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
-                MessageDto message = userService.changePassword(decryptedToken, newPwd, oldPwd);
+                MessageDto message = userService.changePassword(decryptedToken, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId(), newPwd, oldPwd);
                 return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
             }
         }

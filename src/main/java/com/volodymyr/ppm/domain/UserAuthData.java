@@ -43,4 +43,11 @@ public class UserAuthData {
 	public void setIp(String ip) {
 		this.ip = ip;
 	}
+	
+	public boolean validate(String remoteAddr, String userAgent, String sessionId) {
+		if (this.ip == null || this.userAgent == null || this.sessionId == null) {
+			return false;
+		}
+		return this.ip.equals(remoteAddr) && this.userAgent.equals(userAgent) && this.sessionId.equals(sessionId); 
+	}
 }

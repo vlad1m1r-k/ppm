@@ -6,6 +6,7 @@ import com.volodymyr.ppm.domain.Objects;
 import com.volodymyr.ppm.domain.PwdGenSettings;
 import com.volodymyr.ppm.domain.Token;
 import com.volodymyr.ppm.domain.User;
+import com.volodymyr.ppm.domain.UserAuthData;
 import com.volodymyr.ppm.domain.UserStatus;
 import com.volodymyr.ppm.domain.UserTfaStatus;
 import com.volodymyr.ppm.dto.GroupDto;
@@ -18,6 +19,7 @@ import com.volodymyr.ppm.provider.SecurityProvider;
 import com.volodymyr.ppm.provider.SettingsProvider;
 import com.volodymyr.ppm.provider.TfaProvider;
 import com.volodymyr.ppm.repository.PwdGenSettingsRepository;
+import com.volodymyr.ppm.repository.UserAtuthDataRepository;
 import com.volodymyr.ppm.repository.UserRepository;
 
 import dev.samstevens.totp.exceptions.QrGenerationException;
@@ -47,10 +49,11 @@ public class UserServiceImpl implements UserService {
     private final PwdGenSettingsRepository pwdGenSettingsRepository;
     private final Logger logger;
     private final TfaProvider tfaProvider;
+    private final UserAtuthDataRepository userAtuthDataRepository;
 
     public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder encoder, TokenService tokenService,
                            CryptoProvider cryptoProvider, ValidatorService validatorService, SettingsProvider settingsProvider,
-                           SecurityProvider securityProvider, PwdGenSettingsRepository pwdGenSettingsRepository, Logger logger, TfaProvider tfaProvider) {
+                           SecurityProvider securityProvider, PwdGenSettingsRepository pwdGenSettingsRepository, Logger logger, TfaProvider tfaProvider, UserAtuthDataRepository userAtuthDataRepository) {
         this.userRepository = userRepository;
         this.encoder = encoder;
         this.tokenService = tokenService;
@@ -61,6 +64,7 @@ public class UserServiceImpl implements UserService {
         this.pwdGenSettingsRepository = pwdGenSettingsRepository;
         this.logger = logger;
         this.tfaProvider = tfaProvider;
+        this.userAtuthDataRepository = userAtuthDataRepository;
     }
 
     @Override
@@ -86,7 +90,13 @@ public class UserServiceImpl implements UserService {
         if (cryptoProvider.isSystemClosed() && !isAdmin(user.getGroups())) {
             return TokenDto.builder().message("lfe2").build();
         }
-        Token token = tokenService.getToken(user, remoteAddr, userAgent, sessionId, user.isHaveToChangePwd(), isTokenWillBeTfaApproved(user), user.isTfaSetup());
+        Token token = tokenService.getToken(user, remoteAddr, userAgent, sessionId, user.isHaveToChangePwd(), isTokenWillBeTfaApproved(user, remoteAddr, userAgent, sessionId), user.isTfaSetup());
+        UserAuthData authData = user.getUserAuthData();
+        authData.setIp(remoteAddr);
+        authData.setUserAgent(userAgent);
+        authData.setSessionId(sessionId);
+        userAtuthDataRepository.save(authData);
+        user.setUserAuthData(authData);
         long tokenLifeTime = token.getLifeTime();
         String encryptedToken = tokenService.encrypt(token);
         securityProvider.registerLoginAttempt(remoteAddr, true);
@@ -107,9 +117,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public TokenDto renewToken(Token token) throws QrGenerationException {
+    public TokenDto renewToken(Token token, String remoteAddr, String userAgent, String sessionId) throws QrGenerationException {
         User user = userRepository.findUserByLogin(token.getLogin());        
-        Token newToken = tokenService.getToken(user, token.getRemoteAddr(), token.getUserAgent(), token.getSessionId(), false, isTokenWillBeTfaApproved(user), user.isTfaSetup());
+        Token newToken = tokenService.getToken(user, token.getRemoteAddr(), token.getUserAgent(), token.getSessionId(), false, isTokenWillBeTfaApproved(user, remoteAddr, userAgent, sessionId), user.isTfaSetup());
         long tokenLifeTime = newToken.getLifeTime();
         String encryptedToken = tokenService.encrypt(newToken);
         return TokenDto.builder()
@@ -182,7 +192,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public MessageDto changePassword(Token token, String newPwd, String oldPwd) throws QrGenerationException {
+    public MessageDto changePassword(Token token, String remoteAddr, String userAgent, String sessionId, String newPwd, String oldPwd) throws QrGenerationException {
         User user = userRepository.findUserByLogin(token.getLogin());
         if (!encoder.matches(oldPwd, user.getPassword())) {
         	securityProvider.registerPasswordAttempt(user.getId(), false);
@@ -211,7 +221,7 @@ public class UserServiceImpl implements UserService {
         user.setChangePwdOnNextLogon(false);
         logger.log(token.getLogin(), Acts.CHANGE_PASSWORD, Objects.USER, token.getLogin(), new Date(), "");
         return MessageDto.builder()
-        		.data(renewToken(token).toJson())
+        		.data(renewToken(token, remoteAddr, userAgent, sessionId).toJson())
         		.build();
     }
 
@@ -396,15 +406,16 @@ public class UserServiceImpl implements UserService {
         return false;
     }
     
-    private boolean isTokenWillBeTfaApproved (User user) {
-    	//TODO check Auth data
-    	//TODO force tfa when auth data changes
+    private boolean isTokenWillBeTfaApproved (User user, String remoteAddr, String userAgent, String sessionId) {
     	if (user.getLastTfaDate() == null) {
     		return false;
     	}
-        Calendar tfaTokenLifeTime = Calendar.getInstance();
-        tfaTokenLifeTime.setTime(user.getLastTfaDate());
-        tfaTokenLifeTime.add(Calendar.HOUR, settingsProvider.getTfaRequirePeriod());
-        return settingsProvider.getTfaRequirePeriod() < 0 || new Date().compareTo(tfaTokenLifeTime.getTime()) <= 0;
+		if (user.getUserAuthData().validate(remoteAddr, userAgent, sessionId)) {
+			Calendar tfaTokenLifeTime = Calendar.getInstance();
+			tfaTokenLifeTime.setTime(user.getLastTfaDate());
+			tfaTokenLifeTime.add(Calendar.HOUR, settingsProvider.getTfaRequirePeriod());
+			return settingsProvider.getTfaRequirePeriod() < 0 || new Date().compareTo(tfaTokenLifeTime.getTime()) <= 0;
+		}
+		return false;
     }
 }

@@ -27,7 +27,6 @@ public class User {
     private String password;
     private String tfaCode;
     private Date lastTfaDate;
-    //TODO implement last tfa date, authData
     
     @Enumerated(EnumType.STRING)
     private UserTfaStatus tfaStatus = UserTfaStatus.DISABLED;
@@ -103,8 +102,8 @@ public class User {
     	return tfaStatus;
     }
     
-    public UserAuthData geUserAuthData() {
-    	return authData;
+    public UserAuthData getUserAuthData() {
+    	return authData == null ? new UserAuthData() : authData;
     }
 
     public void setLogin(String login) {
