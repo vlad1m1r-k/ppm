@@ -92,6 +92,7 @@ public class UserServiceImpl implements UserService {
         }
         Token token = tokenService.getToken(user, remoteAddr, userAgent, sessionId, user.isHaveToChangePwd(), isTokenWillBeTfaApproved(user, remoteAddr, userAgent, sessionId), user.isTfaSetup());
         UserAuthData authData = user.getUserAuthData();
+        String oldIp = authData.getIp();
         authData.setIp(remoteAddr);
         authData.setUserAgent(userAgent);
         authData.setSessionId(sessionId);
@@ -101,8 +102,7 @@ public class UserServiceImpl implements UserService {
         String encryptedToken = tokenService.encrypt(token);
         securityProvider.registerLoginAttempt(remoteAddr, true);
         securityProvider.registerPasswordAttempt(user.getId(), true);
-        logger.log(login, Acts.LOGIN_SUCCESS, Objects.SYSTEM, "", new Date(), "Ip: " + remoteAddr);
-        //TODO implement logging login from different IP
+        logger.log(login, Acts.LOGIN_SUCCESS, Objects.SYSTEM, "", new Date(), "Ip: " + remoteAddr + (!remoteAddr.equals(oldIp) ? ";   Old IP: " + oldIp : ""));
         return TokenDto.builder()
                 .lifeTime(tokenLifeTime)
                 .token(encryptedToken)
@@ -407,10 +407,7 @@ public class UserServiceImpl implements UserService {
     }
     
     private boolean isTokenWillBeTfaApproved (User user, String remoteAddr, String userAgent, String sessionId) {
-    	if (user.getLastTfaDate() == null) {
-    		return false;
-    	}
-		if (user.getUserAuthData().validate(remoteAddr, userAgent, sessionId)) {
+		if (user.getLastTfaDate() != null && user.getUserAuthData().validate(remoteAddr, userAgent, sessionId)) {
 			Calendar tfaTokenLifeTime = Calendar.getInstance();
 			tfaTokenLifeTime.setTime(user.getLastTfaDate());
 			tfaTokenLifeTime.add(Calendar.HOUR, settingsProvider.getTfaRequirePeriod());
