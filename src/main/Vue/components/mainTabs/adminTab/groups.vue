@@ -1,29 +1,26 @@
 <template>
-    <table class="table table-bordered table-striped table-sm">
-        <thead class="tab-header-area">
+    <table class="table">
+        <thead>
         <tr>
-            <th><button class="btn btn-sm btn-link" @click="setSort('name')">{{ language.data.gp2 }}</button></th>
-            <th><button class="btn btn-sm btn-link" @click="setSort('adminSettings')">{{ language.data.gp3 }}</button></th>
+            <th><button class="btn link" @click="setSort('name')">{{ language.data.gp2 }}</button></th>
+            <th><button class="btn link" @click="setSort('adminSettings')">{{ language.data.gp3 }}</button></th>
             <th>{{ language.data.us1 }}</th>
             <th>{{ language.data.amg1 }}</th>
-            <th><span class="btn-dc text-success" @click="showAddDlg = !showAddDlg">&#x2795;</span></th>
+            <th><button class="btn blue" @click="showAddDlg = !showAddDlg">&#x2795;</button></th>
             <th></th>
         </tr>
         </thead>
         <tbody>
         <tr v-show="showAddDlg">
-            <td colspan="10">
-                <input type="text" class="form-control-sm align-middle" min="1" :placeholder="language.data.gp2" v-model="name"
-                    ref="admAddGrp" @keypress.enter="addGroup" @keydown.esc="cancel">
+            <td class="flex-view" colspan="10">
+                <input type="text" min="1" :placeholder="language.data.gp2" v-model="name" ref="admAddGrp" @keypress.enter="addGroup" @keydown.esc="cancel">
                 &nbsp;{{ language.data.gp3 }}:
-                <select class="form-control-sm align-middle" :class="{'bg-danger': adminSettings}" v-model="adminSettings"
-                        :title="language.data.gp3">
-                    <option class="bg-light" :value=false>FALSE</option>
-                    <option class="bg-danger" :value=true>TRUE</option>
+                <select v-model="adminSettings" :title="language.data.gp3">
+                    <option :value=false>FALSE</option>
+                    <option :value=true>TRUE</option>
                 </select>
-                <button class="btn btn-sm btn-outline-success" :disabled="name.length === 0" @click="addGroup">&check;
-                </button>
-                <button class="btn btn-sm btn-danger" @click="cancel">X</button>
+                <button class="btn-img acpt" :disabled="name.length === 0" @click="addGroup"></button>
+                <button class="btn-img cncl" @click="cancel"></button>
             </td>
         </tr>
         <group-view v-for="group in groups" :group="group" :key="'gpv' + group.id" @group-changed="getGroups"></group-view>

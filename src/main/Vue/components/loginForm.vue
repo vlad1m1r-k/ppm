@@ -1,20 +1,23 @@
 <template>
-    <div class="l-modal" v-if="tokenProvider.token === null">
-        <div class="l-modal-body">
-            <div class="alert alert-danger" v-if="message" @click="message = ''">
+    <div class="modal" v-if="tokenProvider.token === null || tokenProvider.tfaSetup || tokenProvider.tfaRequired">
+        <div class="modal-body login">
+            <div class="alert" v-if="message" @click="message = ''">
                 {{ message }}
             </div>
-            <div class="form-group">
-                <input type="text" class="form-control" :placeholder="language.data.lf1" v-model="login" ref="lfLogin">
-            </div>
-            <div class="form-group">
-                <input type="password" class="form-control" :placeholder="language.data.lf2" v-model="password" @keypress.enter="doLogin" ref="lfPwd">
-            </div>
-            <div class="container">
-                <div class="row justify-content-md-center">
-                    <button class="btn btn-primary" @click=doLogin>{{ language.data.lf3 }}</button>
-                </div>
-            </div>
+            <template v-if="tokenProvider.token === null">
+                <input type="text" class="input" :placeholder="language.data.lf1" v-model="login" ref="lfLogin">
+                <input type="password" class="input" :placeholder="language.data.lf2" v-model="password" @keypress.enter="doLogin" ref="lfPwd">
+                <button class="btn blue" @click=doLogin>{{ language.data.lf3 }}</button>
+            </template>
+            <template v-else>
+                <template v-if="tokenProvider.tfaSetup">
+                    {{ language.data.lf4 }}
+                    <img :src="tokenProvider.tfaQrCode">
+                </template>
+                {{ language.data.lf6 }}
+                <input class="input" type="text" v-model="tfaCode" @keypress.enter="tfaVerify" ref="tfaCode">
+                <button class="btn blue" :disabled="!isCodeValid" @click="tfaVerify">{{ language.data.lf5 }}</button>
+            </template>
         </div>
     </div>
 </template>
@@ -28,7 +31,8 @@ export default {
             language: this.$root.$data.language,
             message: "",
             login: "",
-            password: ""
+            password: "",
+            tfaCode: ""
         }
     },
     watch: {
@@ -41,7 +45,17 @@ export default {
                         this.$refs.lfLogin.focus();
                     }
                 })
+            } 
+            if (this.tokenProvider.tfaSetup || this.tokenProvider.tfaRequired) {
+                this.$nextTick(() => {
+                    this.$refs.tfaCode.focus();
+                })
             }
+        }
+    },
+    computed: {
+        isCodeValid() {
+            return this.tfaCode.match("^[0-9]{6}$");
         }
     },
     methods: {
@@ -61,6 +75,22 @@ export default {
                     }
                 } finally {
                     this.password = "";
+                }
+            }
+        },
+        async tfaVerify() {
+            if (this.isCodeValid) {
+                this.message="";
+                try {
+                    await this.tokenProvider.verifyTfaCode(this.tfaCode);
+                } catch (e) {
+                    if (e.message) {
+                        this.message = this.language.data[e.message];
+                    } else {
+                        this.message = this.errorParser(e);
+                    }
+                } finally {
+                    this.tfaCode = "";
                 }
             }
         }

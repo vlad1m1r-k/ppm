@@ -1,19 +1,7 @@
 <template>
-    <div class="decor-iv">
-        <div class="row m-0">
-            <div class="col">
-                <button class="btn btn-sm btn-outline-secondary" :class="{selected: currentTab === 'containers'}"
-                        @click="currentTab = 'containers'">{{ language.data.di2 }}</button>
-                <button class="btn btn-sm btn-outline-secondary" :class="{selected: currentTab === 'items'}"
-                        @click="currentTab = 'items'">{{ language.data.di3 }}</button>
-            </div>
-        </div>
-        <div class="row m-0">
-            <div class="col">
-                <component :item="item" :is="currentTab"></component>
-            </div>
-        </div>
-    </div>
+    <button class="btn blue" :class="{ selected: currentTab === 'containers' }" @click="currentTab = 'containers'">{{ language.data.di2 }}</button>
+    <button class="btn blue" :class="{ selected: currentTab === 'items' }" @click="currentTab = 'items'">{{ language.data.di3 }}</button>
+    <component :item="item" :is="currentTab"></component>
 </template>
 
 <script>

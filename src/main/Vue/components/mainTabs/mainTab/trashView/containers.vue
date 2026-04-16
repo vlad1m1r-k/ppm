@@ -1,19 +1,19 @@
 <template>
-    <table class="table table-bordered table-striped table-sm">
-        <thead class="tab-header-area">
+    <table class="table">
+        <thead>
         <tr>
             <th>
-                <button class="btn btn-sm btn-link" @click="setSort('name')">{{ language.data.div1 }}</button>
+                <button class="btn link" @click="setSort('name')">{{ language.data.div1 }}</button>
             </th>
             <th>{{ language.data.iv7 }}</th>
             <th>{{ language.data.iv8 }}</th>
             <th>{{ language.data.fl1 }}</th>
-            <th><button class="btn btn-sm btn-link" @click="setSort('createdDate')">{{ language.data.div2 }}</button></th>
-            <th><button class="btn btn-sm btn-link" @click="setSort('createdBy')">{{ language.data.div3 }}</button></th>
-            <th><button class="btn btn-sm btn-link" @click="setSort('editedDate')">{{ language.data.div4 }}</button></th>
-            <th><button class="btn btn-sm btn-link" @click="setSort('editedBy')">{{ language.data.div5 }}</button></th>
-            <th><button class="btn btn-sm btn-link" @click="setSort('deletedDate')">{{ language.data.div6 }}</button></th>
-            <th><button class="btn btn-sm btn-link" @click="setSort('deletedBy')">{{ language.data.div7 }}</button></th>
+            <th><button class="btn link" @click="setSort('createdDate')">{{ language.data.div2 }}</button></th>
+            <th><button class="btn link" @click="setSort('createdBy')">{{ language.data.div3 }}</button></th>
+            <th><button class="btn link" @click="setSort('editedDate')">{{ language.data.div4 }}</button></th>
+            <th><button class="btn link" @click="setSort('editedBy')">{{ language.data.div5 }}</button></th>
+            <th><button class="btn link" @click="setSort('deletedDate')">{{ language.data.div6 }}</button></th>
+            <th><button class="btn link" @click="setSort('deletedBy')">{{ language.data.div7 }}</button></th>
             <th></th>
             <th></th>
         </tr>
@@ -22,19 +22,19 @@
             <tr v-for="cont in containers">
                 <td>{{ cont.name }}</td>
                 <td>
-                    <select class="form-control-sm">
+                    <select>
                         <option selected>{{ language.data.iv7 }} {{ cont.notes.length }}</option>
                         <option v-for="note in cont.notes" disabled>{{ note.name }}</option>
                     </select>
                 </td>
                 <td>
-                    <select class="form-control-sm">
+                    <select>
                         <option selected>{{ language.data.iv8 }} {{ cont.passwords.length }}</option>
                         <option v-for="pwd in cont.passwords" disabled>{{ pwd.name }}</option>
                     </select>
                 </td>
                 <td>
-                    <select class="form-control-sm">
+                    <select>
                         <option selected>{{ language.data.fl1 }} {{ cont.files.length }}</option>
                         <option v-for="file in cont.files" disabled>{{ file.name }}</option>
                     </select>
@@ -45,8 +45,8 @@
                 <td>{{ cont.editedBy }}</td>
                 <td>{{ cont.deletedDate }}</td>
                 <td>{{ cont.deletedBy }}</td>
-                <td><span class="btn-dc text-success" :title="language.data.cm7" @click="restore(cont.id, cont.name)">&#x21ba;</span></td>
-                <td><span class="btn-dc" :title="language.data.cm5" @click="remove(cont.id, cont.name)">&#x1f5d1;</span></td>
+                <td class="fit"><button class="btn-img redo" :title="language.data.cm7" @click="restore(cont.id, cont.name)"></button></td>
+                <td class="fit"><button class="btn-img rmv" :title="language.data.cm5" @click="remove(cont.id, cont.name)"></button></td>
             </tr>
         </tbody>
     </table>

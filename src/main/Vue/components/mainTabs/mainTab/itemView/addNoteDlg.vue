@@ -1,23 +1,8 @@
 <template>
-    <div>
-        <div class="row">
-            <div class="col">
-                <button class="btn btn-sm btn-outline-success" :disabled="name.length === 0" @click="addNote">&check;
-                </button>
-                <button class="btn btn-sm btn-outline-danger" @click="$emit('close-dlg')">&Chi;</button>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <input class="form-control" v-model="name" :placeholder="language.data.iv6" ref="ivAddNote" @keydown.esc="$emit('close-dlg')">
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <textarea class="form-control" rows="4" v-model="text"></textarea>
-            </div>
-        </div>
-    </div>
+    <button class="btn-img acpt" :disabled="name.length === 0" @click="addNote" :title="language.data.cm3"></button>
+    <button class="btn-img cncl" @click="$emit('close-dlg')" :title="language.data.cm4"></button>
+    <input class="input" v-model="name" :placeholder="language.data.iv6" ref="ivAddNote" @keydown.esc="$emit('close-dlg')">
+    <textarea class="text-box" rows="4" v-model="text"></textarea>
 </template>
 
 <script>

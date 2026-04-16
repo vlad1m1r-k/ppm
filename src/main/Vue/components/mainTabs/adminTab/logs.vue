@@ -1,24 +1,24 @@
 <template>
-    <table class="table table-bordered table-striped table-sm">
+    <table class="table">
         <thead>
         <tr>
             <th>
-                <button class="btn btn-link btn-sm" @click="setSort('user')">User</button>
+                <button class="btn link" @click="setSort('user')">User</button>
             </th>
             <th>
-                <button class="btn btn-link btn-sm" @click="setSort('act')">Act</button>
+                <button class="btn link" @click="setSort('act')">Act</button>
             </th>
             <th>
-                <button class="btn btn-link btn-sm" @click="setSort('object')">Object</button>
+                <button class="btn link" @click="setSort('object')">Object</button>
             </th>
             <th>
-                <button class="btn btn-link btn-sm" @click="setSort('objName')">ObjName</button>
+                <button class="btn link" @click="setSort('objName')">ObjName</button>
             </th>
             <th>
-                <button class="btn btn-link btn-sm" @click="setSort('date')">Date</button>
+                <button class="btn link" @click="setSort('date')">Date</button>
             </th>
             <th>
-                <button class="btn btn-link btn-sm" @click="setSort('comment')">Comment</button>
+                <button class="btn link" @click="setSort('comment')">Comment</button>
             </th>
         </tr>
         </thead>
@@ -36,23 +36,18 @@
         </tr>
         </tbody>
     </table>
-    <div class="row justify-content-center">
-        <div class="col-auto">
-            <select v-model="pager.pageSize" @change="setPageSize">
-                <option value="10">10</option>
-                <option value="20">20</option>
-                <option value="50" selected>50</option>
-                <option value="100">100</option>
-            </select>
-        </div>
-        <div class="col-auto">
-            <ul class="pagination pagination-sm">
-                <li class="page-item text-dark" v-for="n in logData.totalPages" :class="{active: n - 1 === logData.number}"
-                    :key="'LGPager' + n" style="cursor: pointer">
-                    <a class="page-link" @click="setPage(n - 1)">{{ n }}</a>
-                </li>
-            </ul>
-        </div>
+    <div class="flex-view">
+        <select v-model="pager.pageSize" @change="setPageSize">
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="50" selected>50</option>
+            <option value="100">100</option>
+        </select>
+        <ul class="page" v-if="Object.hasOwn(logData, 'page')">
+            <li v-for="n in logData.page.totalPages" :class="{ active: n - 1 === logData.page.number }" :key="'LGPager' + n" style="cursor: pointer" @click="setPage(n - 1)">
+                {{ n }}
+            </li>
+        </ul>
     </div>
 </template>
 

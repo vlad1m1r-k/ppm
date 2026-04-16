@@ -2,53 +2,34 @@
     filter: blur(5px);
 }
 
-.h-100 {
-    height: 100vh;
+.alert {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    font-size: 1.5rem;
+    width: 100%;
+    text-align: center;
 }
 
-.selected {
-    border-bottom: 4px solid darkblue !important;
+.s-icon {
+    height: 2rem;
 }
 
-.searchTarget {
-    background-color: #b7f696 !important;
-}
-
-.area-body {
-    background-color: #eaeaea;
-    border-radius: 3px;
-}
-
-.area-header {
-    background-color: #d0d0d0;
-}
-
-.fit-cell {
-    width: 1%;
-    white-space: nowrap;
-}
-
-.form-bg {
-    background-color: lightgrey;
-}
-
-.us-form-bg {
-    background-color: #f1f1f1 !important;
-    border-radius: 3px;
-}
-
-.tr-ul {
+.item-tree {
     list-style-type: none;
-    padding-left: 20px;
+    li {
+        margin-top: 0.2rem;
+    }
 }
 
 .caret {
     cursor: pointer;
-}
+    margin-right: 0.3rem;
 
-.caret::before {
-    content: "\25B7";
-    color: black;
+    &::before {
+        content: "\25B7";
+        color: black;
+    }
 }
 
 .caret-down::before {
@@ -58,53 +39,157 @@
 .branch {
     user-select: none;
     cursor: pointer;
-    padding-right: 5px;
-    padding-left: 5px;
-    border-radius: .2rem;
+    padding: 0.05rem 0.4rem;
+    border-radius: .25rem;
+
+    &:hover {
+        text-decoration: underline;
+        color: #0070e7;
+    }
 }
 
 .tr-selected {
-    border: 1px solid blue;
+    font-size: 1.2rem;
+    border: 2px solid blue;
     background-color: white;
-}
-
-.decor-iv {
-    background-color: #eaeaea;
-    border-radius: 3px;
-}
-
-.decor {
-    white-space: nowrap;
-    border: 1px solid black;
-    border-radius: 10px;
-    padding-left: 5px;
-    margin-top: 1px;
-}
-
-.decor:hover {
-    background-color: rgb(207, 207, 207);
-}
-
-.decor-tr {
-    white-space: nowrap;
-    border: 2px solid #ffab03;
-    border-radius: 10px;
-    padding-left: 5px;
-    cursor: pointer;
 }
 
 .cursor-stop {
     cursor: not-allowed;
 }
 
-.cursor-pointer {
-    cursor: pointer;
-}
-.acce-dd {
-    margin-left: 22px;
-    margin-bottom: auto;
+.searchTarget {
+    background-color: #b7f696 !important;
 }
 
-.acce-dl {
-    margin-bottom: auto;
+.iv-d {
+    user-select: none;
+    margin-left: 2rem;
+}
+
+.iv-d2 {
+    margin-top: 1.5rem;
+    font-size: large;
+}
+
+.iv-item {
+    display: grid;
+    grid-template-columns: min-content min-content auto min-content min-content;
+    white-space: nowrap;
+    border: 2px solid #2e91fb;
+    border-radius: 0.25rem;
+    padding: 0.2rem;
+    margin-top: 0.1rem;
+    align-items: center;
+
+    &:hover {
+        background-color: #d7eaff;
+    }
+}
+
+.flex-view {
+    display: flex;
+    align-items: center;
+    & * {
+        margin-left: 0.2rem;
+    }
+}
+
+.iv-item-name {
+    cursor: pointer;
+    color: #0070e7;
+    margin-left: 1rem;
+    margin-right: 1rem;
+    
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+.iv-icon {
+    height: 2rem;
+}
+
+.iv-item-link {
+    @media (max-width: 550px) {
+        display: none;
+    }
+}
+
+.table {
+    width: 100%;
+    border: 1px solid #c2e0ff;
+
+    tr:nth-of-type(odd) {
+        background-color: #eff7ff;
+    }
+    & .fit {
+        width: 1%;
+        white-space: nowrap;
+    }
+}
+
+.selected {
+    border: 1px solid blue;
+    border-bottom: 4px solid blue;
+    margin: 4px;
+    text-decoration: underline;
+}
+
+.decor-tr {
+    display: flex;
+    align-items: center;
+    user-select: none;
+    cursor: pointer;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    border-radius: 0.25rem;
+    border: 1px solid #b9cbf7;
+}
+
+.text-danger {
+    color: #dc3545;
+}
+
+.decor-adm {
+    padding: 0.7rem;
+
+    & * {
+        margin-right: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+}
+
+.page {
+    display: flex;
+    list-style: none;
+    border-radius: 0.25rem;
+
+    & li {
+        position: relative;
+        display: block;
+        padding: 0.5rem 0.75rem;
+        margin-left: -1px;
+        line-height: 1.25;
+        color: #007bff;
+        background-color: #fff;
+        border: 1px solid #dee2e6;
+
+        &.active {
+            z-index: 3;
+            color: #fff;
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        &:hover {
+            z-index: 2;
+            color: #0056b3;
+            text-decoration: none;
+            background-color: #e9ecef;
+            border-color: #dee2e6;
+        }
+    }
 }

@@ -1,0 +1,575 @@
+package com.volodymyr.ppm.controller;
+
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import com.volodymyr.ppm.domain.Access;
+import com.volodymyr.ppm.domain.Token;
+import com.volodymyr.ppm.domain.User;
+import com.volodymyr.ppm.dto.AccessDto;
+import com.volodymyr.ppm.dto.AccessTreeDto;
+import com.volodymyr.ppm.dto.ContainerDto;
+import com.volodymyr.ppm.dto.CryptoDto;
+import com.volodymyr.ppm.dto.MessageDto;
+import com.volodymyr.ppm.dto.PasswordDto;
+import com.volodymyr.ppm.provider.CryptoProvider;
+import com.volodymyr.ppm.service.ContainerService;
+import com.volodymyr.ppm.service.TokenService;
+import com.volodymyr.ppm.service.UserService;
+import com.volodymyr.ppm.service.ValidatorService;
+
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
+
+import java.util.List;
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/container")
+public class ContainerRestController {
+    private final ValidatorService validatorService;
+    private final CryptoProvider cryptoProvider;
+    private final TokenService tokenService;
+    private final ContainerService containerService;
+    private final ObjectMapper mapper;
+    private final UserService userService;
+
+    public ContainerRestController(ValidatorService validatorService, CryptoProvider cryptoProvider,
+                                   TokenService tokenService, ContainerService containerService, ObjectMapper mapper, UserService userService) {
+        this.validatorService = validatorService;
+        this.cryptoProvider = cryptoProvider;
+        this.tokenService = tokenService;
+        this.containerService = containerService;
+        this.mapper = mapper;
+        this.userService = userService;
+    }
+
+    @PostMapping("/getTree")
+    public CryptoDto getTree(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String token = json.get("token").asString();
+            String publicKeyPEM = json.get("publicKey").asString();
+            User user = userService.getUser(tokenService.decryptToken(token));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                ContainerDto tree = containerService.getTree(decryptedToken);
+                return cryptoProvider.encrypt(publicKeyPEM, tree.toJson());
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/move")
+    public CryptoDto move(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String publicKeyPEM = json.get("publicKey").asString();
+            String token = json.get("token").asString();
+            long itemId = json.get("item").longValue();
+            long moveToId = json.get("moveTo").longValue();
+            User user = userService.getUser(tokenService.decryptToken(token));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                MessageDto message = containerService.moveContainer(decryptedToken, itemId, moveToId);
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/add")
+    public CryptoDto add(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String publicKeyPEM = json.get("publicKey").asString();
+            String token = json.get("token").asString();
+            long parentId = json.get("parent").longValue();
+            String name = json.get("name").asString();
+            User user = userService.getUser(tokenService.decryptToken(token));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                MessageDto message = containerService.add(decryptedToken, parentId, name);
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/restore")
+    public CryptoDto restore(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String publicKeyPEM = json.get("publicKey").asString();
+            String token = json.get("token").asString();
+            long contId = json.get("contId").longValue();
+            long restoreToId = json.get("restoreToId").longValue();
+            User user = userService.getUser(tokenService.decryptToken(token));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                MessageDto message = containerService.restore(decryptedToken, contId, restoreToId);
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/delete")
+    public CryptoDto delete(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String publicKeyPEM = json.get("publicKey").asString();
+            String token = json.get("token").asString();
+            long itemId = json.get("item").longValue();
+            boolean permanent = Optional.ofNullable(json.get("permanent")).orElse(mapper.createObjectNode().booleanNode(false)).asBoolean();
+            User user = userService.getUser(tokenService.decryptToken(token));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                MessageDto message = containerService.delete(decryptedToken, itemId, permanent);
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/rename")
+    public CryptoDto rename(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String publicKeyPEM = json.get("publicKey").asString();
+            String token = json.get("token").asString();
+            long itemId = json.get("item").longValue();
+            String name = json.get("name").asString();
+            User user = userService.getUser(tokenService.decryptToken(token));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                MessageDto message = containerService.rename(decryptedToken, itemId, name);
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/addNote")
+    public CryptoDto addNote(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String publicKeyPEM = json.get("publicKey").asString();
+            String token = json.get("token").asString();
+            long parentId = json.get("parent").longValue();
+            String name = json.get("name").asString();
+            String text = json.get("text").asString();
+            User user = userService.getUser(tokenService.decryptToken(token));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                MessageDto message = containerService.addNote(decryptedToken, parentId, name, text);
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/getNote")
+    public CryptoDto getNote(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String publicKeyPEM = json.get("publicKey").asString();
+            String token = json.get("token").asString();
+            long noteId = json.get("note").longValue();
+            User user = userService.getUser(tokenService.decryptToken(token));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                MessageDto message = containerService.getNote(decryptedToken, noteId);
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/editNote")
+    public CryptoDto editNote(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String publicKeyPEM = json.get("publicKey").asString();
+            String token = json.get("token").asString();
+            long noteId = json.get("note").longValue();
+            String name = json.get("name").asString();
+            String text = json.get("text").asString();
+            User user = userService.getUser(tokenService.decryptToken(token));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                MessageDto message = containerService.editNote(decryptedToken, noteId, name, text);
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/removeNote")
+    public CryptoDto removeNote(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String publicKeyPEM = json.get("publicKey").asString();
+            String token = json.get("token").asString();
+            long noteId = json.get("note").longValue();
+            boolean permanent = Optional.ofNullable(json.get("permanent")).orElse(mapper.createObjectNode().booleanNode(false)).asBoolean();
+            User user = userService.getUser(tokenService.decryptToken(token));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                MessageDto message = containerService.removeNote(decryptedToken, noteId, permanent);
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/addPasswd")
+    public CryptoDto addPasswd(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String publicKeyPEM = json.get("publicKey").asString();
+            String token = json.get("token").asString();
+            long parentId = json.get("parent").longValue();
+            String name = json.get("name").asString();
+            String login = json.get("login").asString();
+            String pass = json.get("pass").asString();
+            String note = json.get("note").asString();
+            User user = userService.getUser(tokenService.decryptToken(token));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                MessageDto message = containerService.addPasswd(decryptedToken, parentId, name, login, pass, note);
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/getPwdEnv")
+    public CryptoDto getPwdEnv(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String publicKeyPEM = json.get("publicKey").asString();
+            String token = json.get("token").asString();
+            long pwdId = json.get("pwd").longValue();
+            User user = userService.getUser(tokenService.decryptToken(token));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                PasswordDto passwd = containerService.getPwdEnv(decryptedToken, pwdId);
+                return cryptoProvider.encrypt(publicKeyPEM, passwd.toJson());
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/getPwdBody")
+    public CryptoDto getPwdBody(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String publicKeyPEM = json.get("publicKey").asString();
+            String token = json.get("token").asString();
+            long pwdId = json.get("pwd").longValue();
+            User user = userService.getUser(tokenService.decryptToken(token));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                PasswordDto passwd = containerService.getPwdBody(decryptedToken, pwdId);
+                return cryptoProvider.encrypt(publicKeyPEM, passwd.toJson());
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/editPassword")
+    public CryptoDto editPassword(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String publicKeyPEM = json.get("publicKey").asString();
+            String token = json.get("token").asString();
+            long pwdId = json.get("pwd").longValue();
+            String name = json.get("name").asString();
+            String login = json.get("login").asString();
+            String pass = json.get("pass").asString();
+            String note = json.get("note").asString();
+            User user = userService.getUser(tokenService.decryptToken(token));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                MessageDto message = containerService.editPassword(decryptedToken, pwdId, name, login, pass, note);
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/removePassword")
+    public CryptoDto removePassword(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String publicKeyPEM = json.get("publicKey").asString();
+            String token = json.get("token").asString();
+            long pwdId = json.get("pwd").longValue();
+            boolean permanent = Optional.ofNullable(json.get("permanent")).orElse(mapper.createObjectNode().booleanNode(false)).asBoolean();
+            User user = userService.getUser(tokenService.decryptToken(token));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                MessageDto message = containerService.removePassword(decryptedToken, pwdId, permanent);
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/getDeletedItems")
+    public CryptoDto getDeletedItems(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String publicKeyPEM = json.get("publicKey").asString();
+            String token = json.get("token").asString();
+            long containerId = json.get("item").longValue();
+            String sortNotes = json.get("sortNotes").asString();
+            String sortPwd = json.get("sortPwd").asString();
+            String sortFls = json.get("sortFls").asString();
+            User user = userService.getUser(tokenService.decryptToken(token));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                ContainerDto container = containerService.getDeletedItems(decryptedToken, containerId, sortNotes, sortPwd, sortFls);
+                return cryptoProvider.encrypt(publicKeyPEM, container.toJson());
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/restoreNote")
+    public CryptoDto restoreNote(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String publicKeyPEM = json.get("publicKey").asString();
+            String token = json.get("token").asString();
+            long noteId = json.get("noteId").longValue();
+            User user = userService.getUser(tokenService.decryptToken(token));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                MessageDto message = containerService.restoreNote(decryptedToken, noteId);
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/restorePasswd")
+    public CryptoDto restorePasswd(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String publicKeyPEM = json.get("publicKey").asString();
+            String token = json.get("token").asString();
+            long pwdId = json.get("pwdId").longValue();
+            User user = userService.getUser(tokenService.decryptToken(token));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                MessageDto message = containerService.restorePasswd(decryptedToken, pwdId);
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/getDeletedContainers")
+    public CryptoDto getDeletedContainers(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String publicKeyPEM = json.get("publicKey").asString();
+            String token = json.get("token").asString();
+            String sort = json.get("sort").asString();
+            User user = userService.getUser(tokenService.decryptToken(token));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                List<ContainerDto> containers = containerService.getDeletedContainers(decryptedToken, sort);
+                return cryptoProvider.encrypt(publicKeyPEM, mapper.writeValueAsString(containers));
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/setAccess")
+    public CryptoDto setAccess(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String publicKeyPEM = json.get("publicKey").asString();
+            String token = json.get("token").asString();
+            long containerId = json.get("containerId").longValue();
+            long groupId = json.get("groupId").longValue();
+            Access access = Access.valueOf(json.get("access").asString());
+            boolean ptAbove = json.get("ptAbove").asBoolean();
+            boolean sameBelow = json.get("sameBelow").asBoolean();
+            User user = userService.getUser(tokenService.decryptToken(token));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                MessageDto message = containerService.setAccess(decryptedToken, containerId, groupId, access, ptAbove, sameBelow);
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/getAssignedGroups")
+    public CryptoDto getAssignedGroups(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String publicKeyPEM = json.get("publicKey").asString();
+            String token = json.get("token").asString();
+            long containerId = json.get("containerId").longValue();
+            User user = userService.getUser(tokenService.decryptToken(token));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                List<AccessDto> accessList = containerService.getAssignedGroups(decryptedToken, containerId);
+                return cryptoProvider.encrypt(publicKeyPEM, mapper.writeValueAsString(accessList));
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/removeAccess")
+    public CryptoDto removeAccess(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String publicKeyPEM = json.get("publicKey").asString();
+            String token = json.get("token").asString();
+            long containerId = json.get("containerId").longValue();
+            long groupId = json.get("groupId").longValue();
+            Access access = Access.valueOf(json.get("access").asString());
+            User user = userService.getUser(tokenService.decryptToken(token));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                containerService.removeAccess(decryptedToken, containerId, groupId, access);
+                return cryptoProvider.encrypt(publicKeyPEM, "");
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/getAccessTree")
+    public CryptoDto getAccessTree(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String token = json.get("token").asString();
+            String publicKeyPEM = json.get("publicKey").asString();
+            long groupId = json.get("groupId").asLong();
+            User user = userService.getUser(tokenService.decryptToken(token));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                AccessTreeDto treeDto = containerService.getAccessTree(decryptedToken, groupId);
+                return cryptoProvider.encrypt(publicKeyPEM, treeDto.toJson());
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/search")
+    public CryptoDto search(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String token = json.get("token").asString();
+            String publicKeyPEM = json.get("publicKey").asString();
+            String text = json.get("text").asString();
+            User user = userService.getUser(tokenService.decryptToken(token));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                List<ContainerDto> searchResult = containerService.search(decryptedToken, text);
+                return cryptoProvider.encrypt(publicKeyPEM, mapper.writeValueAsString(searchResult));
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/addFile")
+    public CryptoDto addFile(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String token = json.get("token").asString();
+            String publicKeyPEM = json.get("publicKey").asString();
+            long containerId = json.get("containerId").asLong();
+            String name = json.get("name").asString();
+            int size = json.get("size").intValue();
+            String body = json.get("body").asString();
+            User user = userService.getUser(tokenService.decryptToken(token));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                MessageDto message = containerService.addFile(decryptedToken, containerId, name, size, body);
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/getFile")
+    public CryptoDto getFile(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String token = json.get("token").asString();
+            String publicKeyPEM = json.get("publicKey").asString();
+            long fileId = json.get("fileId").asLong();
+            User user = userService.getUser(tokenService.decryptToken(token));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                MessageDto message = containerService.getFile(decryptedToken, fileId);
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/editFile")
+    public CryptoDto editFile(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String token = json.get("token").asString();
+            String publicKeyPEM = json.get("publicKey").asString();
+            long fileId = json.get("fileId").asLong();
+            String name = json.get("name").asString();
+            User user = userService.getUser(tokenService.decryptToken(token));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                MessageDto message = containerService.editFile(decryptedToken, fileId, name);
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/removeFile")
+    public CryptoDto removeFile(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String publicKeyPEM = json.get("publicKey").asString();
+            String token = json.get("token").asString();
+            long fileId = json.get("fileId").asLong();
+            boolean permanent = Optional.ofNullable(json.get("permanent")).orElse(mapper.createObjectNode().booleanNode(false)).asBoolean();
+            User user = userService.getUser(tokenService.decryptToken(token));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                MessageDto message = containerService.removeFile(decryptedToken, fileId, permanent);
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
+            }
+        }
+        return null;
+    }
+
+    @PostMapping("/restoreFile")
+    public CryptoDto restoreFile(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
+        if (validatorService.validateCrypto(key, data)) {
+            JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String publicKeyPEM = json.get("publicKey").asString();
+            String token = json.get("token").asString();
+            long fileId = json.get("fileId").longValue();
+            User user = userService.getUser(tokenService.decryptToken(token));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+                MessageDto message = containerService.restoreFile(decryptedToken, fileId);
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
+            }
+        }
+        return null;
+    }
+}

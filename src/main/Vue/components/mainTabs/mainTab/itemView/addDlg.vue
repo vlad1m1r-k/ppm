@@ -1,9 +1,8 @@
 <template>
-    <div>
-        <input class="form-control-sm" v-model="name" @keypress.enter="addContainer" @keydown.esc="$emit('close-dlg')" ref="ivAddCnt">
-        <button class="btn btn-sm btn-outline-success" :disabled="name.length === 0" @click="addContainer">&check;
-        </button>
-        <button class="btn btn-sm btn-outline-danger" @click="$emit('close-dlg')">&Chi;</button>
+    <div style="display: flex;">
+        <input v-model="name" @keypress.enter="addContainer" @keydown.esc="$emit('close-dlg')" ref="ivAddCnt">
+        <button class="btn-img acpt" :disabled="name.length === 0" :title="language.data.cm3" @click="addContainer"></button>
+        <button class="btn-img cncl" :title="language.data.cm4" @click="$emit('close-dlg')"></button>
     </div>
 </template>
 

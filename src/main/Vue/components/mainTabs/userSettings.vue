@@ -1,35 +1,32 @@
 <template>
-    <div class="modal-dlg">
-        <div class="modal-dlg-body">
-            <div class="row">
-                <div class="col">
-                    {{ language.data.uss1 }}
-                    <button class="close" @click="$emit('close-dlg')">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
+    <div class="modal">
+        <div class="modal-body dialog">
+            <div class="modal-header">
+                {{ language.data.uss1 }}
+                <button class="btn-img cncl" @click="$emit('close-dlg')"></button>
             </div>
-            <div class="modal-dlg-scroll">
-                <div class="alert alert-danger" v-if="msg">
-                    {{ msg }}
-                </div>
-                <table>
-                    <thead></thead>
-                    <tbody>
+            <div class="alert" v-if="msg">
+                {{ msg }}
+            </div>
+            <table>
+                <thead></thead>
+                <tbody>
+                    <tr>
+                        <td>{{ language.data.uss4 }}</td>
+                        <td><input type="password" class="input" v-model="oldPwd" ref="usPwd1" @keypress.enter="send"></td>
+                    </tr>
                     <tr>
                         <td>{{ language.data.uss2 }}</td>
-                        <td><input type="password" class="form-control-sm" v-model="pwd" ref="usPwd1" @keypress.enter="send"></td>
+                        <td><input type="password" class="input" v-model="pwd" @keypress.enter="send"></td>
                     </tr>
                     <tr>
                         <td>{{ language.data.uss3 }}</td>
-                        <td><input type="password" class="form-control-sm" v-model="pwd2" @keypress.enter="send"></td>
+                        <td><input type="password" class="input" v-model="pwd2" @keypress.enter="send">
+                        </td>
                     </tr>
-                    </tbody>
-                </table>
-                <div class="row justify-content-md-center m-0 p-1">
-                    <button class="btn btn-sm btn-success" @click="send">{{ language.data.cm3 }}</button>
-                </div>
-            </div>
+                </tbody>
+            </table>
+            <button class="btn blue" @click="send">{{ language.data.cm3 }}</button>
         </div>
     </div>
 </template>
@@ -44,20 +41,22 @@ export default {
             language: this.$root.$data.language,
             msg: "",
             pwd: "",
-            pwd2: ""
+            pwd2: "",
+            oldPwd: ""
         }
     },
     methods: {
         async send() {
             this.msg = "";
-            if (this.pwd && this.pwd.length > 0 && this.pwd2 && this.pwd2.length > 0) {
+            if (this.pwd && this.pwd.length > 0 && this.pwd2 && this.pwd2.length > 0 && this.oldPwd && this.oldPwd.length > 0) {
                 if (this.pwd === this.pwd2) {
                     this.eventHub.emit("show-msg", "");
                     try {
                         const token = await this.tokenProvider.getToken(true);
                         const encryptedData = await cryptoProvider.encrypt({
                             token: token,
-                            pwd: this.pwd
+                            pwd: this.pwd,
+                            oldPwd: this.oldPwd
                         });
                         const answer = await $.ajax({
                             url: "/user/setPwd",
@@ -71,11 +70,13 @@ export default {
                             this.tokenProvider.setToken(JSON.parse(data.data));
                             this.pwd = "";
                             this.pwd2 = "";
+                            this.oldPwd = "";
                             this.$emit('close-dlg');
                         }
                     } catch (e) {
                         this.pwd = "";
                         this.pwd2 = "";
+                        this.oldPwd = "";
                         this.eventHub.emit("show-msg", this.errorParser(e));
                     }
                 } else {

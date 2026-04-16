@@ -1,21 +1,29 @@
 <template>
     <tr v-if="edit">
         <td colspan="15">
-            <input type="text" class="form-control-sm" v-model="name">
-            <span class="btn-dc" :title="language.data.cm3" @click="save">&#x2705;</span>
-            <span class="btn-dc" :title="language.data.cm4" @click="cancel">&#x274c;</span>
+            <span style="display: flex;">
+                <button class="btn-img acpt" :title="language.data.cm3" :disabled="name.length === 0" @click="save"></button>
+                <button class="btn-img cncl" :title="language.data.cm4" @click="cancel"></button>
+                <input type="text" class="input" v-model="name">
+            </span>
         </td>
     </tr>
     <tr :class="{'searchTarget': isSearchTarget}" v-else>
-        <td class="fit-cell">&#x1f512;</td>
-        <td class="fit-cell" v-if="access === 'RW'"><item-info :item="file"></item-info></td>
-        <td class="fit-cell" v-if="access === 'RW'"><span class="btn-dc" :title="language.data.cm2" @click="edit = true">&#x1f589;</span></td>
-        <td><button class="btn btn-sm btn-link" @click="download">{{ file.name }}</button></td>
+        <td class="fit">
+            <img class="iv-icon" src="/svg/lock.svg">
+        </td>
+        <td class="fit" v-if="access === 'RW'"><item-info :item="file"></item-info></td>
+        <td class="fit" v-if="access === 'RW'">
+            <button class="btn-img edit" :title="language.data.cm2" @click="edit = true"></button>
+        </td>
+        <td><span class="iv-item-name" @click="download">{{ file.name }}</span></td>
         <td>{{ file.size }} bytes</td>
-        <td class="fit-cell">
+        <td class="fit">
             <span style="user-select: none">{{ language.data.cm10 }} &nbsp;</span>$id:{{ $parent.$props.item.id }}f{{ file.id }}&nbsp;
         </td>
-        <td class="fit-cell" v-if="access === 'RW'"><span class="btn-dc" :title="language.data.cm5" @click="remove">&#x1f5d1;</span></td>
+        <td class="fit" v-if="access === 'RW'">
+            <button class="btn-img rmv" :title="language.data.cm5" @click="remove"></button>
+        </td>
     </tr>
 </template>
 

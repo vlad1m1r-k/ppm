@@ -1,0 +1,61 @@
+databaseChangeLog:
+  - changeSet:
+      id: "1.2"
+      author: v
+      changes:
+        - createTable:
+            tableName: user_auth_data
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints: 
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: ip
+                  type: varchar(30)
+              - column:
+                  name: user_agent
+                  type: varchar(255)
+              - column:
+                  name: session_id
+                  type: varchar(100)
+        - addColumn:
+            tableName: users
+            columns:
+            - column:
+                name: last_tfa_date
+                type: datetime(6)
+            - column:
+                name: tfa_code
+                type: varchar(32)
+            - column:
+                name: tfa_status
+                type: varchar(15)
+                value: "DISABLED"
+                constraints:
+                   nullable: false
+            - column:
+                name: auth_data_id
+                type: bigint
+                constraints:
+                   foreignKeyName: users_user_auth_data
+                   references: user_auth_data(id)
+        - addColumn:
+           tableName: settings
+           columns:
+           - column:
+               name: tfa_require_period_hours
+               type: int
+               valueNumeric: 24
+               constraints:
+                  nullable: false
+           - column:
+               name: tfa_token_life_time_minutes
+               type: int
+               valueNumeric: 60
+               afterColumn: token_life_time_minutes
+               constraints:
+                  nullable: false

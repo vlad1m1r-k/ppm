@@ -1,44 +1,29 @@
 <template>
-    <div class="modal-dlg">
-        <div class="modal-dlg-body">
-            <div class="row">
-                <div class="col">
-                    {{ language.data.us3 }} ({{ user.login }})
-                    <button class="close" @click="$emit('close-dlg')">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
+    <div class="modal">
+        <div class="modal-body dialog">
+            <div class="modal-header">
+                {{ language.data.us3 }} ({{ user.login }})
+                <button class="btn-img cncl" @click="$emit('close-dlg')"></button>
             </div>
-            <div class="modal-dlg-scroll mt-3 p-1">
-                <div class="row m-0">
-                    <div class="col p-0">
-                        <button class="btn btn-sm btn-outline-success" @click="addDlg = !addDlg">&#x2795;</button>
-                    </div>
+            <div>
+                <button class="btn blue" @click="addDlg = !addDlg">&#x2795;</button>
+                <div class="flex-view" v-if="addDlg">
+                    <input type="text" v-model="ip" placeholder="x.x.x.x/xx" ref="admUsrAddIp" @keypress.enter="addIp" @keydown.esc="ip = ''; addDlg = false">
+                    <button class="btn-img acpt" :disabled="!isIpValid" @click="addIp"></button>
+                    <button class="btn-img cncl" @click="ip = ''; addDlg = false"></button>
                 </div>
-                <div class="row m-0 mt-1" v-if="addDlg">
-                    <div class="col p-0">
-                        <input type="text" class="form-control-sm align-middle" v-model="ip" placeholder="x.x.x.x/xx" ref="admUsrAddIp"
-                            @keypress.enter="addIp" @keydown.esc="ip = ''; addDlg = false">
-                        <button class="btn btn-sm btn-outline-success" :disabled="!isIpValid" @click="addIp">&check;
-                        </button>
-                        <button class="btn btn-sm btn-danger" @click="ip = ''; addDlg = false">X</button>
-                    </div>
-                </div>
-                <table class="table table-bordered table-striped table-sm mt-1">
+                <table class="table">
                     <thead></thead>
                     <tbody>
-                    <tr v-if="list.length === 0">
-                        <td>{{ language.data.cm9 }}</td>
-                    </tr>
-                    <tr v-for="(item, id) in list" :key="'usrip' + id">
-                        <td>{{ item }}</td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-danger" :title="language.data.cm5"
-                                    @click="removeIp(item)">
-                                &#x1f5d1;
-                            </button>
-                        </td>
-                    </tr>
+                        <tr v-if="list.length === 0">
+                            <td>{{ language.data.cm9 }}</td>
+                        </tr>
+                        <tr v-for="(item, id) in list" :key="'usrip' + id">
+                            <td>{{ item }}</td>
+                            <td>
+                                <button class="btn-img rmv" :title="language.data.cm5" @click="removeIp(item)"></button>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>

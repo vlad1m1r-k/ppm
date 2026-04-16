@@ -3,23 +3,23 @@
         <td>
             <input type="checkbox" :value="note.id" v-model="$parent.$data.checkedNotes">
         </td>
-        <td><span class="btn-link cursor-pointer" @click="toggle" :title="language.data.cm1">{{ note.name }}</span></td>
+        <td><button class="btn link" @click="toggle" :title="language.data.cm1">{{ note.name }}</button></td>
         <td>{{ note.createdDate }}</td>
         <td>{{ note.createdBy }}</td>
         <td>{{ note.editedDate }}</td>
         <td>{{ note.editedBy }}</td>
         <td>{{ note.deletedDate }}</td>
         <td>{{ note.deletedBy }}</td>
-        <td>
-            <span class="btn-dc text-success" :title="language.data.cm7" @click="restore">&#x21ba;</span>
+        <td class="fit">
+            <button class="btn-img redo" :title="language.data.cm7" @click="restore"></button>
         </td>
-        <td>
-            <span class="btn-dc" :title="language.data.cm5" @click="remove">&#x1f5d1;</span>
+        <td class="fit">
+            <button class="btn-img rmv" :title="language.data.cm5" @click="remove"></button>
         </td>
     </tr>
     <tr v-show="show">
         <td colspan="15">
-            <textarea class="form-control" rows="4" readonly v-model="text"></textarea>
+            <textarea class="text-box" rows="4" readonly v-model="text"></textarea>
         </td>
     </tr>
 </template>

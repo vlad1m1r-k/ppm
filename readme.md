@@ -13,6 +13,7 @@
 - IP blacklist
 - IP whitelist
 - dynamic blocking for incorrect login attempts
+- 2FA authentication
 
 ### Installation
 Prerequisites:
@@ -117,4 +118,9 @@ __RW__ - Read Write. Full access.
 - __1.003__
   + convenience improvements
   + change password at next login feature added
+- __1.3.0__
+  + Components version updated
+- __1.4.0__
+  + Frontend reworked
+  + 2FA feature added
   

@@ -1,28 +1,24 @@
 <template>
-    <div class="modal-dlg">
-        <div class="modal-dlg-body">
-            <div class="row">
-                <div class="col">
-                    {{ user.login }}{{language.data.gs1}}
-                    <button class="close" @click="$emit('close-dlg')">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
+    <div class="modal">
+        <div class="modal-body dialog">
+            <div class="modal-header">
+                {{ user.login }}{{ language.data.gs1 }}
+                <button class="btn-img cncl" @click="$emit('close-dlg')"></button>
             </div>
-            <div class="modal-dlg-scroll">
-                <table class="table table-bordered table-striped table-sm mt-3">
-                    <thead class="tab-header-area">
+            <div>
+                <table class="table">
+                    <thead>
                     <tr>
                         <th></th>
-                        <th><button class="btn btn-sm btn-link" @click="setSort('name')">{{ language.data.gp2 }}</button></th>
-                        <th><button class="btn btn-sm btn-link" @click="setSort('adminSettings')">{{ language.data.gp3 }}</button></th>
+                        <th><button class="btn link" @click="setSort('name')">{{ language.data.gp2 }}</button></th>
+                        <th><button class="btn link" @click="setSort('adminSettings')">{{ language.data.gp3 }}</button></th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr v-for="group in groups">
                         <td><input type="checkbox" :checked="isChecked(group.id)" @change="setGroup(group.id, $event.target.checked)"></td>
                         <td>{{ group.name }}</td>
-                        <td :class="{'bg-danger': group.adminSettings}">{{ group.adminSettings }}</td>
+                        <td :class="{'text-danger': group.adminSettings}">{{ group.adminSettings }}</td>
                     </tr>
                     </tbody>
                 </table>

@@ -1,56 +1,46 @@
 <template>
-    <div class="modal-dlg">
-        <div class="modal-dlg-body">
-            <div class="row">
-                <div class="col">
-                    {{ item.name }}
-                    <button class="close" @click="$emit('close-dlg')">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
+    <div class="modal">
+        <div class="modal-body dialog">
+            <div class="modal-header">
+                {{ item.name }}
+                <button class="btn-img cncl" @click="$emit('close-dlg')"></button>
             </div>
-            <div class="modal-dlg-scroll mt-3 p-1">
-                <div class="row m-0">
-                    <div class="col p-0">
-                        <button class="btn btn-sm btn-outline-success" @click="addDlg = !addDlg">&#x2795;</button>
-                    </div>
-                </div>
-                <div class="row m-0 mt-1" v-if="addDlg">
-                    <div class="col p-0">
-                        <select class="form-control-sm align-middle" v-model="groupId">
+            <div>
+                <button class="btn blue" @click="addDlg = !addDlg">&#x2795;</button>
+                <div v-if="addDlg">
+                    <div style="display: flex;">
+                        <select v-model="groupId">
                             <option selected disabled value="null">{{ language.data.gp1 }}</option>
                             <option v-for="grp in groups" :value="grp.id">
                                 {{ grp.name }}
                             </option>
                         </select>
-                        <select class="form-control-sm align-middle" v-model="access">
+                        <select v-model="access">
                             <option selected disabled value="null">{{ language.data.amg1 }}</option>
                             <option value="NA">{{ language.data.amg2 }}</option>
                             <option value="PT">{{ language.data.amg3 }}</option>
                             <option value="RO">{{ language.data.amg4 }}</option>
                             <option value="RW">{{ language.data.amg5 }}</option>
                         </select>
-                        <button class="btn btn-sm btn-outline-success" :disabled="groupId === null && access === null"
-                                @click="setAccess">&check;
-                        </button>
-                        <button class="btn btn-sm btn-danger" @click="cancel">X</button>
-                        <br>
-                        <input type="checkbox" v-model="ptAbove"> {{ language.data.amg6 }}
-                        <br>
-                        <input type="checkbox" v-model="sameBelow"> {{ language.data.amg7 }}
+                        <button class="btn-img acpt" :title="language.data.cm3" :disabled="groupId === null || access === null" @click="setAccess"></button>
+                        <button class="btn-img cncl" :title="language.data.cm4" @click="cancel"></button>
                     </div>
+                    <br>
+                    <input type="checkbox" v-model="ptAbove"> {{ language.data.amg6 }}
+                    <br>
+                    <input type="checkbox" v-model="sameBelow"> {{ language.data.amg7 }}
                 </div>
-                <table class="table table-bordered table-striped table-sm mt-1">
+                <table class="table">
                     <thead></thead>
                     <tbody>
+                        <tr v-if="assignedGroups.length === 0">
+                            <td>{{ language.data.cm9 }}</td>
+                        </tr>
                     <tr v-for="group in assignedGroups" :key="'access' + group.id">
                         <td>{{ group.name }}</td>
                         <td :class="paintAccess(group.access)">{{ printAccess(group.access) }}</td>
                         <td>
-                            <button class="btn btn-sm btn-outline-danger" :title="language.data.cm5"
-                                    @click="removeAccess(group.id, group.access, group.name)">
-                                &#x1f5d1;
-                            </button>
+                            <button class="btn-img rmv" :title="language.data.cm5" @click="removeAccess(group.id, group.access, group.name)"></button>
                         </td>
                     </tr>
                     </tbody>

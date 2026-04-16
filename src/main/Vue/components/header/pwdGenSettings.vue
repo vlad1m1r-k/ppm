@@ -1,34 +1,28 @@
 <template>
-    <div class="modal-dlg">
-        <div class="modal-dlg-body">
-            <div class="row">
-                <div class="col">
-                    {{ language.data.pg1 }}
-                    <button class="close" @click="$emit('close-dlg')">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
+    <div class="modal">
+        <div class="modal-body dialog">
+            <div class="modal-header">
+                {{ language.data.pg1 }}
+                <button class="btn-img cncl" @click="$emit('close-dlg')"></button>
             </div>
-            <div class="modal-dlg-scroll mt-3 p-1">
-                <table>
-                    <thead></thead>
-                    <tbody>
+            <table>
+                <thead></thead>
+                <tbody>
                     <tr>
                         <td>{{ language.data.pg2 }}</td>
-                        <td><input type="number" class="form-control-sm" min="1" v-model="settings.pwdLength"></td>
+                        <td><input type="number" class="input" min="1" v-model="settings.pwdLength"></td>
                     </tr>
                     <tr>
                         <td>{{ language.data.pg3 }}</td>
-                        <td><input type="checkbox" class="form-control-sm" v-model="settings.numbers"></td>
+                        <td><input type="checkbox" class="input" v-model="settings.numbers"></td>
                     </tr>
                     <tr>
                         <td>{{ language.data.pg4 }}</td>
-                        <td><input type="checkbox" class="form-control-sm" v-model="settings.symbols"></td>
+                        <td><input type="checkbox" class="input" v-model="settings.symbols"></td>
                     </tr>
-                    </tbody>
-                </table>
-                <button class="btn btn-sm btn-success" @click="save">{{ language.data.cm3 }}</button>
-            </div>
+                </tbody>
+            </table>
+            <button class="btn blue" @click="save">{{ language.data.cm3 }}</button>
         </div>
     </div>
 </template>

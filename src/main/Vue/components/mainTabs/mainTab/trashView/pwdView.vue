@@ -3,29 +3,29 @@
         <td>
             <input type="checkbox" :value="pwd.id" v-model="$parent.$data.checkedPass">
         </td>
-        <td><span class="btn-link cursor-pointer" @click="toggle" :title="language.data.cm1">{{ pwd.name }}</span></td>
+        <td><button class="btn link" @click="toggle" :title="language.data.cm1">{{ pwd.name }}</button></td>
         <td>{{ pwd.createdDate }}</td>
         <td>{{ pwd.createdBy }}</td>
         <td>{{ pwd.editedDate }}</td>
         <td>{{ pwd.editedBy }}</td>
         <td>{{ pwd.deletedDate }}</td>
         <td>{{ pwd.deletedBy }}</td>
-        <td>
-            <span class="btn-dc text-success" :title="language.data.cm7" @click="restore">&#x21ba;</span>
+        <td class="fit">
+            <button class="btn-img redo" :title="language.data.cm7" @click="restore"></button>
         </td>
-        <td>
-            <span class="btn-dc" :title="language.data.cm5" @click="remove">&#x1f5d1;</span>
+        <td class="fit">
+            <button class="btn-img rmv" :title="language.data.cm5" @click="remove"></button>
         </td>
     </tr>
     <tr v-show="show">
         <td colspan="15">
-            <input class="form-control" v-model="login" readonly>
+            <input class="input" v-model="login" readonly>
             <div style="display: flex">
-                <div class="btn-st fs" @click="loadPwdBody" :title="language.data.cm1">&#x1f441;</div>
-                <div class="btn-st" :title="language.data.cm6" @click="pwdToClipboard">&#x1f4cb;</div>
-                <input class="form-control er" v-model="pass" readonly placeholder="******">
+                <button class="btn-img show" @click="loadPwdBody" :title="language.data.cm1"></button>
+                <button class="btn-img copy" :title="language.data.cm6" @click="pwdToClipboard"></button>
+                <input class="input" v-model="pass" readonly placeholder="******">
             </div>
-            <textarea class="form-control" rows="4" readonly v-model="note"></textarea>
+            <textarea class="text-box" rows="4" readonly v-model="note"></textarea>
         </td>
     </tr>
 </template>

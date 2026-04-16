@@ -1,5 +1,4 @@
-import MainBlock from './components/mainBlock.vue';
-import loginForm from "./components/loginForm.vue";
+import { defineAsyncComponent } from "vue";
 import tokenProvider from "./provider/tokenProvider";
 import cryptoProvider from "./provider/cryptoProvider";
 import mitt from "mitt";
@@ -10,8 +9,8 @@ cryptoProvider.init();
 
 const app = createApp({
     components: {
-        MainBlock,
-        loginForm
+        MainBlock: defineAsyncComponent(() => import("./components/mainBlock.vue")),
+        loginForm: defineAsyncComponent(() => import("./components/loginForm.vue"))
     },
     template: "<login-form></login-form><main-block></main-block>",
     data() {

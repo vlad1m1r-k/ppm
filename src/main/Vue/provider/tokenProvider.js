@@ -5,6 +5,9 @@ export default {
     userName: null,
     adminSettings: false,
     changePwd: false,
+    tfaRequired: false,
+    tfaSetup: false,
+    tfaQrCode: null,
     async login(login, password) {
         let data = {login: "", password: ""};
         data.login = login;
@@ -36,8 +39,8 @@ export default {
                 await (() => new Promise((resolve) => setTimeout(resolve, 1000)))();
             }
         }
-        if (this.changePwd && !any) {
-            while (this.changePwd) {
+        if ((this.changePwd || this.tfaRequired || this.tfaSetup) && !any) {
+            while (this.changePwd || this.tfaRequired || this.tfaSetup) {
                 await (() => new Promise((resolve) => setTimeout(resolve, 1000)))();
             }
         }
@@ -63,5 +66,22 @@ export default {
         this.adminSettings = token.adminSettings;
         this.renewTime = Date.now() + (token.lifeTime - Date.now()) / 2;
         this.changePwd = token.changePwd;
+        this.tfaRequired = token.tfaRequired;
+        this.tfaSetup = token.tfaSetup;
+        this.tfaQrCode = token.tfaQrCode;
+    },
+    async verifyTfaCode(code) {
+        const data = {token: this.token, tfaCode: code};
+        const encryptedData = await cryptoProvider.encrypt(data);
+        const answer = await $.ajax({
+            url: "/user/verifyTfaCode",
+            method: "POST",
+            data: encryptedData
+        });
+        const decryptedAnswer = cryptoProvider.decrypt(answer);
+        if (decryptedAnswer.message) {
+            throw new Error(decryptedAnswer.message);
+        }
+        this.setToken(decryptedAnswer);
     }
 }

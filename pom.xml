@@ -1,26 +1,22 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.vladimir</groupId>
+    <groupId>com.volodymyr</groupId>
     <artifactId>ppm</artifactId>
-    <version>1.3.2</version>
+    <version>1.4.0</version>
     <packaging>jar</packaging>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.0.2</version>
+        <version>4.0.5</version>
     </parent>
 
     <properties>
-        <frontend.plugin.version>1.12.1</frontend.plugin.version>
-        <node.version>v18.14.1</node.version>
-        <webjars.locator.version>0.46</webjars.locator.version>
-        <jquery.version>3.6.3</jquery.version>
-        <bc.version>1.70</bc.version>
+        <frontend.plugin.version>1.15.4</frontend.plugin.version>
+        <node.version>v25.9.0</node.version>
+        <jquery.version>3.7.1</jquery.version>
+        <bc.version>1.84</bc.version>
     </properties>
 
     <dependencies>
@@ -30,16 +26,21 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-thymeleaf</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+        	<groupId>org.springframework.boot</groupId>
+        	<artifactId>spring-boot-starter-liquibase</artifactId>
+        	<scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
@@ -52,16 +53,10 @@
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
-            </dependency>
-        <dependency>
-            <groupId>org.liquibase</groupId>
-            <artifactId>liquibase-core</artifactId>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.webjars</groupId>
-            <artifactId>webjars-locator</artifactId>
-            <version>${webjars.locator.version}</version>
+            <artifactId>webjars-locator-lite</artifactId>  
         </dependency>
         <dependency>
             <groupId>org.webjars</groupId>
@@ -70,12 +65,12 @@
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk15on</artifactId>
+            <artifactId>bcprov-jdk18on</artifactId>
             <version>${bc.version}</version>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
-            <artifactId>bcpkix-jdk15on</artifactId>
+            <artifactId>bcpkix-jdk18on</artifactId>
             <version>${bc.version}</version>
         </dependency>
         <dependency>
@@ -83,6 +78,39 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+			<groupId>dev.samstevens.totp</groupId>
+			<artifactId>totp</artifactId>
+			<version>1.7.1</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.beust</groupId>
+					<artifactId>jcommander</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.commons</groupId>
+					<artifactId>commons-compress</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.jcommander</groupId>
+			<artifactId>jcommander</artifactId>
+			<version>3.0</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-compress</artifactId>
+			<version>1.28.0</version>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>io.airlift</groupId>
+					<artifactId>aircompressor</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
     </dependencies>
 
     <build>
@@ -121,6 +149,20 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+            	<groupId>org.apache.maven.plugins</groupId>
+            	<artifactId>maven-clean-plugin</artifactId>
+            	<configuration>
+            		<filesets>
+            			<fileset>
+            				<directory>src/main/resources/static</directory>
+            				<includes>
+            					<include>**/*controller.js*</include>
+            				</includes>
+            			</fileset>
+            		</filesets>
+            	</configuration>
             </plugin>
         </plugins>
     </build>

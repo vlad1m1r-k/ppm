@@ -1,33 +1,10 @@
 <template>
-    <div>
-        <div class="row">
-            <div class="col">
-                <button class="btn btn-sm btn-outline-success" :disabled="name.length === 0" @click="addPasswd">&check;
-                </button>
-                <button class="btn btn-sm btn-outline-danger" @click="$emit('close-dlg')">&Chi;</button>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <input class="form-control" v-model="name" :placeholder="language.data.iv6" ref="ivAddPwd" @keydown.esc="$emit('close-dlg')">
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <input class="form-control" v-model="login" :placeholder="language.data.lf1">
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <input class="form-control" v-model="pass" :placeholder="language.data.lf2">
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <textarea class="form-control" rows="3" v-model="note"></textarea>
-            </div>
-        </div>
-    </div>
+    <button class="btn-img acpt" :disabled="name.length === 0" @click="addPasswd"></button>
+    <button class="btn-img cncl" @click="$emit('close-dlg')"></button>
+    <input class="input" v-model="name" :placeholder="language.data.iv6" ref="ivAddPwd" @keydown.esc="$emit('close-dlg')">
+    <input class="input" v-model="login" :placeholder="language.data.lf1">
+    <input class="input" v-model="pass" :placeholder="language.data.lf2">
+    <textarea class="text-box" rows="4" v-model="note"></textarea>
 </template>
 
 <script>

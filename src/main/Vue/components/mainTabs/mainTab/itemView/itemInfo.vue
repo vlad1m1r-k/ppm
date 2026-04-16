@@ -1,11 +1,13 @@
 <template>
-    <span class="btn-dc" :title="language.data.cm8" @click.stop="show = !show">&#x2139;</span>
-    <div v-if="show" class="info-box" @click.stop="show = false">
-        {{ language.data.div2 }} : &nbsp; {{ item.createdDate }} <br>
-        {{ language.data.div3 }} : &nbsp; {{ item.createdBy }} <br>
-        {{ language.data.div4 }} : &nbsp; {{ item.editedDate }} <br>
-        {{ language.data.div5 }} : &nbsp; {{ item.editedBy }} <br>
-    </div>
+    <span>
+        <button class="btn-img info" :title="language.data.cm8" @click.stop="show = !show"></button>
+        <div v-if="show" class="info-box" @click.stop="show = false">
+            {{ language.data.div2 }} : &nbsp; {{ item.createdDate }} <br>
+            {{ language.data.div3 }} : &nbsp; {{ item.createdBy }} <br>
+            {{ language.data.div4 }} : &nbsp; {{ item.editedDate }} <br>
+            {{ language.data.div5 }} : &nbsp; {{ item.editedBy }} <br>
+        </div>
+    </span>
 </template>
 
 <script>

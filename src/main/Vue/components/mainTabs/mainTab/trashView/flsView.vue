@@ -3,7 +3,7 @@
         <td>
             <input type="checkbox" :value="file.id" v-model="$parent.$data.checkedFls">
         </td>
-        <td><button class="btn btn-sm btn-link" @click="downloadFile">{{ file.name }}</button></td>
+        <td><button class="btn link" @click="downloadFile">{{ file.name }}</button></td>
         <td>{{ file.size }} bytes</td>
         <td>{{ file.createdDate }}</td>
         <td>{{ file.createdBy }}</td>
@@ -11,11 +11,11 @@
         <td>{{ file.editedBy }}</td>
         <td>{{ file.deletedDate }}</td>
         <td>{{ file.deletedBy }}</td>
-        <td>
-            <span class="btn-dc text-success" :title="language.data.cm7" @click="restore">&#x21ba;</span>
+        <td class="fit">
+            <button class="btn-img redo" :title="language.data.cm7" @click="restore"></button>
         </td>
-        <td>
-            <span class="btn-dc" :title="language.data.cm5" @click="remove">&#x1f5d1;</span>
+        <td class="fit">
+            <button class="btn-img rmv" :title="language.data.cm5" @click="remove"></button>
         </td>
     </tr>
 </template>

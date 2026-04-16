@@ -1,84 +1,69 @@
-.modal-dlg {
+.modal {
+    position: fixed;
     left: 0;
     top: 0;
     right: 0;
     bottom: 0;
-    position: fixed;
-    background: rgba(0, 0, 0, 0.69);
-    z-index: 1050;
-    transition: all 0.4s ease-in-out;
-    -moz-transition: all 0.4s ease-in-out;
-    -webkit-transition: all 0.4s ease-in-out;
-    margin: 0;
-    padding: 0;
     pointer-events: auto;
-}
-
-.modal-dlg-body {
-    padding: 15px;
-    width: 600px;
-    margin: 30px auto;
-    border-radius: 5px;
-    background: #fff;
-    box-shadow: 0 3px 7px rgba(0, 0, 0, .25);
-    -moz-box-shadow: 0 3px 7px rgba(0, 0, 0, .25);
-    -webkit-box-shadow: 0 3px 7px rgba(0, 0, 0, .25);
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    max-height: calc(100vh - 40px);
-    overflow-y: hidden;
-}
-
-.modal-dlg-scroll {
-    margin-top: 1rem;
-    overflow: auto;
-    max-height: calc(100vh - 90px);
-    border-radius: 5px;
-    background: #f2f2f2;
-}
-
-.l-modal {
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    position: fixed;
+    z-index: 700;
     background: rgba(0, 0, 0, 0.69);
-    z-index: 1050;
-    transition: all 0.4s ease-in-out;
-    -moz-transition: all 0.4s ease-in-out;
-    -webkit-transition: all 0.4s ease-in-out;
-    margin: 0;
-    padding: 0;
-    pointer-events: auto;
+    display: grid;
+    justify-items: center;
 }
 
-.l-modal-body {
-    padding: 15px;
-    width: 400px;
-    margin: 30px auto;
-    border-radius: 5px;
+.modal-header {
+    display: grid;
+    grid-template-columns: auto min-content;
+    align-items: center;
+    margin-bottom: 5px;
+    box-shadow: 0px 1px 0px rgba(0,0,0,0.13), 0px 2px 0px rgba(0,0,0,0.08);
+    border-radius: 0.25rem;
+    padding-left: 1rem;
+    padding-right: 0.5rem;
+}
+
+.modal-body {
+    min-width: 260px;
     background: #fff;
-    box-shadow: 0 3px 7px rgba(0, 0, 0, .25);
-    -moz-box-shadow: 0 3px 7px rgba(0, 0, 0, .25);
-    -webkit-box-shadow: 0 3px 7px rgba(0, 0, 0, .25);
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.login {
+    width: min(400px, 100%);
+    display: grid;
+    height: fit-content;
+    margin-top: 20vh;
+    gap: 20px;
+    justify-items: center;
+
+    & .input div {
+        width: 100%;
+    }
+}
+
+.dialog {
+    display: grid;
+    height: fit-content;
+    margin-top: 20vh;
+    gap: 1rem;
+
+    & .btn {
+        justify-self: center;
+    }
+
+    & .input {
+        margin-left: 1rem;
+    }
 }
 
 .info-box {
-    margin-left: 15px;
+    margin-left: 2px;
     padding: 10px;
     display: inline;
     position: absolute;
     z-index: 1000000;
-    background-color: #c0c4c4;
-    border-bottom-width: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
-    border-radius: 4px;
+    background-color: #d6f0ff;
+    border-radius: 0.25rem;
     user-select: none;
 }

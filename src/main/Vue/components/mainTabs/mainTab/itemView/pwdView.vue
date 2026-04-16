@@ -1,23 +1,25 @@
 <template>
     <div :class="{'searchTarget': isSearchTarget}">
-        <div class="decor">
-            &#x1f512;
-            <item-info :item="pwd" v-if="access === 'RW'"></item-info>
-            &nbsp; <span class="btn-link cursor-pointer" @click="toggle" :title="language.data.cm1">{{ pwd.name }}</span> &nbsp;
-            <span class="btn-dc" v-show="show && access === 'RW' && !edit" :title="language.data.cm2" @click="edit = true">&#x1f589;</span>
-            <span class="btn-dc" v-show="show && access === 'RW' && edit" :title="language.data.cm3" @click="save">&#x2705;</span>
-            <span class="btn-dc" v-show="show && access === 'RW' && edit" :title="language.data.cm4" @click="cancel">&#x274c;</span>
-            <span class="btn-dc float-right" v-show="access === 'RW'" :title="language.data.cm5" @click="remove">&#x1f5d1;</span>
-            <span class="float-right"><span style="user-select: none">{{ language.data.cm10 }} &nbsp;</span>$id:{{ $parent.$props.item.id }}p{{ pwd.id }}&nbsp;</span>
+        <div class="iv-item">
+            <img class="iv-icon" src="/svg/lock.svg">
+            <item-info :item="pwd" v-if="access === 'RW'"></item-info><span v-else>&nbsp;</span>
+            <span class="flex-view">
+                <span class="iv-item-name" @click="toggle" :title="language.data.cm1">{{ pwd.name }}</span>
+                <button class="btn-img edit" :title="language.data.cm2" v-show="show && access === 'RW' && !edit" @click="edit = true"></button>
+                <button class="btn-img acpt" :title="language.data.cm3" v-show="show && access === 'RW' && edit" @click="save"></button>
+                <button class="btn-img cncl" :title="language.data.cm4" v-show="show && access === 'RW' && edit" @click="cancel"></button>
+            </span>
+            <button class="btn-img rmv" :title="language.data.cm5" v-show="access === 'RW'" @click="remove"></button>
+            <span class="iv-item-link"><span style="user-select: none">{{ language.data.cm10 }} &nbsp;</span>$id:{{ $parent.$props.item.id }}p{{ pwd.id }}&nbsp;</span>
         </div>
-        <input class="form-control" v-show="show && edit" v-model="name">
-        <input class="form-control" v-show="show" v-model="login" :readonly="!edit">
+        <input class="input" v-show="show && edit" v-model="name">
+        <input class="input" v-show="show" v-model="login" :readonly="!edit">
         <div v-show="show" style="display: flex">
-            <div class="btn-st fs" v-show="!edit" @click="loadPwdBody" :title="language.data.cm1">&#x1f441;</div>
-            <div class="btn-st" v-show="!edit" :title="language.data.cm6" @click="pwdToClipboard">&#x1f4cb;</div>
-            <input class="form-control er" v-model="pass" :readonly="!edit" placeholder="******">
+            <button class="btn-img show" :title="language.data.cm1" v-show="!edit" @click="loadPwdBody"></button>
+            <button class="btn-img copy" :title="language.data.cm6" v-show="!edit" @click="pwdToClipboard"></button>
+            <input class="input" v-model="pass" :readonly="!edit" placeholder="******">
         </div>
-        <textarea class="form-control" rows="4" :readonly="!edit" v-show="show" v-model="note"></textarea>
+        <textarea class="text-box" rows="4" :readonly="!edit" v-show="show" v-model="note"></textarea>
     </div>
 </template>
 

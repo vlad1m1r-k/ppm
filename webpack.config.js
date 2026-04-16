@@ -6,6 +6,10 @@ const { VueLoaderPlugin } = require('vue-loader');
 module.exports = {
     mode: 'production',
     entry: './src/main/Vue/controller.js',
+	performance: {
+		maxEntrypointSize: 512000,
+		maxAssetSize: 512000
+	},
     output: {
         path: path.resolve(__dirname, 'src/main/resources/static'),
         publicPath: '/',
