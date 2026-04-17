@@ -108,6 +108,7 @@
 
 .iv-icon {
     height: 2rem;
+    pointer-events: none;
 }
 
 .iv-item-link {
