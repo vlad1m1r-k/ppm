@@ -413,6 +413,7 @@ public class UserServiceImpl implements UserService {
 			tfaTokenLifeTime.add(Calendar.HOUR, settingsProvider.getTfaRequirePeriod());
 			return settingsProvider.getTfaRequirePeriod() < 0 || new Date().compareTo(tfaTokenLifeTime.getTime()) <= 0;
 		}
+		user.setLastTfaDate(null);
 		return false;
     }
 }
