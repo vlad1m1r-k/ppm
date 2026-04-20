@@ -5,7 +5,8 @@
 
 html {
     box-sizing: border-box;
-    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-family: Verdana, Arial, sans-serif;
+    font-size: 14px;
 }
 
 body {
