@@ -17,6 +17,7 @@
 
 .item-tree {
     list-style-type: none;
+    padding-left: 1.2rem;
     li {
         margin-top: 0.2rem;
     }
@@ -37,9 +38,10 @@
 }
 
 .branch {
+    font-size: initial;
     user-select: none;
     cursor: pointer;
-    padding: 0.05rem 0.4rem;
+    padding: 0.05rem 0px;
     border-radius: .25rem;
 
     &:hover {
@@ -76,9 +78,8 @@
     display: grid;
     grid-template-columns: min-content min-content auto min-content min-content;
     white-space: nowrap;
-    border: 2px solid #2e91fb;
+    border: 2px solid #e0efff;
     border-radius: 0.25rem;
-    padding: 0.2rem;
     margin-top: 0.1rem;
     align-items: center;
 
@@ -107,7 +108,8 @@
 }
 
 .iv-icon {
-    height: 2rem;
+    height: 1.6rem;
+    pointer-events: none;
 }
 
 .iv-item-link {
