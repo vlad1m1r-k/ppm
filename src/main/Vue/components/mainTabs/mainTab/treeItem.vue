@@ -34,6 +34,9 @@ export default {
             if (this.item.id === this.selectedItem.id) {
                 this.$emit('item-select', this.item);
             }
+            if (this.item.name === "root") {
+                this.isOpen = true;
+            }
         }
     },
     methods: {
