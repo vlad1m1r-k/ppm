@@ -8,6 +8,7 @@ export default {
     tfaRequired: false,
     tfaSetup: false,
     tfaQrCode: null,
+    isTokenInvalid: false,
     async login(login, password) {
         let data = {login: "", password: ""};
         data.login = login;
@@ -30,6 +31,7 @@ export default {
         this.token = null;
     },
     async getToken(any) {
+        if (this.isTokenInvalid) this.logout();
         if (this.token !== null && Date.now() > this.renewTime && Date.now() < this.lifeTime) {
             await this.renewToken(this.token);
         }
@@ -60,15 +62,19 @@ export default {
         const decryptedAnswer = cryptoProvider.decrypt(answer);
         this.setToken(decryptedAnswer);
     },
+    invalidToken() {
+        this.isTokenInvalid = true;
+    },
     setToken(token) {
         this.lifeTime = token.lifeTime;
-        this.token = token.token;
         this.adminSettings = token.adminSettings;
         this.renewTime = Date.now() + (token.lifeTime - Date.now()) / 2;
         this.changePwd = token.changePwd;
         this.tfaRequired = token.tfaRequired;
         this.tfaSetup = token.tfaSetup;
         this.tfaQrCode = token.tfaQrCode;
+        this.isTokenInvalid = false;
+        this.token = token.token;
     },
     async verifyTfaCode(code) {
         const data = {token: this.token, tfaCode: code};

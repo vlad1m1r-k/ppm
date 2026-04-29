@@ -1,4 +1,5 @@
 import forge from "node-forge";
+import tokenProvider from "./tokenProvider";
 
 export default {
     serverKeyExpireDate: null,
@@ -28,15 +29,26 @@ export default {
 
     },
     decrypt(data) {
-        const aesKeyBytes = forge.util.decode64(data.key);
-        const aesKeyBundle = JSON.parse(this.frontKeyPair.privateKey.decrypt(aesKeyBytes));
-        const key = forge.util.decode64(aesKeyBundle.key);
-        const iv = forge.util.decode64(aesKeyBundle.iv);
-        const decipher = forge.cipher.createDecipher("AES-CBC", key);
-        decipher.start({iv: iv});
-        decipher.update(forge.util.createBuffer(forge.util.decode64(data.data)));
-        decipher.finish();
-        return JSON.parse(forge.util.decodeUtf8(decipher.output.data));
+        if (!data) {
+            const err = new Error("Empty server answer.");
+            err.responseJSON = {
+                status: "403",
+                error: "Empty server answer.",
+                message: "Refresh page."
+            };
+            tokenProvider.invalidToken();
+            throw err;
+        } else {
+            const aesKeyBytes = forge.util.decode64(data.key);
+            const aesKeyBundle = JSON.parse(this.frontKeyPair.privateKey.decrypt(aesKeyBytes));
+            const key = forge.util.decode64(aesKeyBundle.key);
+            const iv = forge.util.decode64(aesKeyBundle.iv);
+            const decipher = forge.cipher.createDecipher("AES-CBC", key);
+            decipher.start({ iv: iv });
+            decipher.update(forge.util.createBuffer(forge.util.decode64(data.data)));
+            decipher.finish();
+            return JSON.parse(forge.util.decodeUtf8(decipher.output.data));
+        }
     },
     async checkKey() {
         if (this.serverPublicKey === null || this.serverKeyExpireDate === null || this.serverKeyExpireDate < Date.now()) {

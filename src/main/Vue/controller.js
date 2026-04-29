@@ -58,7 +58,7 @@ const app = createApp({
 
 app.config.globalProperties.errorParser = (error) => {
     if (error.responseJSON) {
-        return 'Error ' + error.responseJSON.status + ' ' + error.responseJSON.error + ' ' + error.responseJSON.message;
+        return 'Error ' + error.responseJSON.status + '; ' + error.responseJSON.error + ' ' + error.responseJSON.message;
     }
     console.log(error);
     return 'Error ' + error.status;
