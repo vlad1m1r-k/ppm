@@ -36,6 +36,7 @@ export default {
                 error: "Empty server answer.",
                 message: "Refresh page."
             };
+            tokenProvider.invalidToken();
             throw err;
         } else {
             const aesKeyBytes = forge.util.decode64(data.key);
