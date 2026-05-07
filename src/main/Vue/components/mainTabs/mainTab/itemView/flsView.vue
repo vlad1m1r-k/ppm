@@ -12,7 +12,7 @@
         <td class="fit">
             <img class="iv-icon" src="/svg/lock.svg">
         </td>
-        <td class="fit" v-if="access === 'RW'"><item-info :item="file"></item-info></td>
+        <td class="fit"><item-info :item="file"></item-info></td>
         <td class="fit" v-if="access === 'RW'">
             <button class="btn-img edit" :title="language.data.cm2" @click="edit = true"></button>
         </td>
