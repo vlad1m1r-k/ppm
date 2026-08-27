@@ -123,4 +123,5 @@ __RW__ - Read Write. Full access.
 - __1.4.0__
   + Frontend reworked
   + 2FA feature added
-  
+- __1.4.4__
+  + Minor UI changes
