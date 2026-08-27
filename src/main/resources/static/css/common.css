@@ -195,3 +195,12 @@
         }
     }
 }
+
+.di-cont {
+    display: flex;
+    border-radius: 0.25rem;
+    border: 1px solid #b9cbf7;
+    user-select: none;
+    cursor: pointer;
+    padding: 0.5rem;
+}

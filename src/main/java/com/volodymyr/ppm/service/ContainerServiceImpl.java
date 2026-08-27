@@ -310,60 +310,53 @@ public class ContainerServiceImpl implements ContainerService {
 
     @Override
     @Transactional(readOnly = true)
-    public ContainerDto getDeletedItems(Token token, long containerId, String sortNotes, String sortPwd, String sortFls) {
-        Container container = containerRepository.getReferenceById(containerId);
-        if (cryptoProvider.isSystemClosed() || container.isDeleted() || !userService.isAdmin(token)) {
-            return ContainerDto.builder().build();
+    public List<ContainerDto> getDeletedItems(Token token) {
+        if (cryptoProvider.isSystemClosed() || !userService.isAdmin(token)) {
+            return new ArrayList<>();
         }
-        String notesSortField = sortNotes.substring(0, sortNotes.indexOf(","));
-        Sort.Direction notesSortDirection = Sort.Direction.fromString(sortNotes.substring(sortNotes.indexOf(",") + 1));
-        List<Note> deletedNotes = noteRepository.getAllByParentAndDeleted(container, true, Sort.by(notesSortDirection, notesSortField));
-        String pwdSortField = sortPwd.substring(0, sortPwd.indexOf(","));
-        Sort.Direction pwdSortDirection = Sort.Direction.fromString(sortPwd.substring(sortPwd.indexOf(",") + 1));
-        List<Password> deletedPasswords = passwordRepository.getAllByParentAndDeleted(container, true, Sort.by(pwdSortDirection, pwdSortField));
-        String fileSortField = sortFls.substring(0, sortFls.indexOf(","));
-        Sort.Direction filesSortDirection = Sort.Direction.fromString(sortFls.substring(sortFls.indexOf(",") + 1));
-        List<File> deletedFiles = fileRepository.getAllByParentAndDeleted(container, true, Sort.by(filesSortDirection, fileSortField));
-        return ContainerDto.builder()
-                .id(containerId)
-                .notes(deletedNotes.stream().map(n -> NoteDto.builder()
-                        .id(n.getId())
-                        .name(n.getName())
-                        .createdDate(n.getCreatedDate())
-                        .createdBy(n.getCreatedBy())
-                        .editedDate(n.getEditedDate())
-                        .editedBy(n.getEditedBy())
-                        .deletedDate(n.getDeletedDate())
-                        .deletedBy(n.getDeletedBy())
-                        .build())
-                        .collect(Collectors.toList()))
-                .passwords(deletedPasswords.stream().map(p -> PasswordDto.builder()
-                        .id(p.getId())
-                        .name(p.getName())
-                        .createdDate(p.getCreatedDate())
-                        .createdBy(p.getCreatedBy())
-                        .editedDate(p.getEditedDate())
-                        .editedBy(p.getEditedBy())
-                        .deletedDate(p.getDeletedDate())
-                        .deletedBy(p.getDeletedBy())
-                        .build())
-                        .collect(Collectors.toList()))
-                .files(deletedFiles.stream().map(f -> FileDto.builder()
-                        .id(f.getId())
-                        .name(f.getName())
-                        .size(f.getSize())
-                        .createdDate(f.getCreatedDate())
-                        .createdBy(f.getCreatedBy())
-                        .editedDate(f.getEditedDate())
-                        .editedBy(f.getEditedBy())
-                        .deletedDate(f.getDeletedDate())
-                        .deletedBy(f.getDeletedBy())
-                        .build())
-                        .collect(Collectors.toList()))
-                .build();
+        List<ContainerDto> deletedItems = new ArrayList<>();
+        List<Note> deletedNotes = noteRepository.getAllByDeleted(true);
+        List<Password> deletedPasswords = passwordRepository.getAllByDeleted(true);
+        List<File> deletedFiles = fileRepository.getAllByDeleted(true);
+        while ((deletedNotes.size() > 0) || (deletedPasswords.size() > 0) || (deletedFiles.size() > 0)) {
+        	Container nextItem = getNextItemParent(deletedNotes, deletedPasswords, deletedFiles);
+        	deletedItems.add(ContainerDto.builder()
+        			.name(containerPathBuilder(nextItem))
+        			.notes(getNotesByParent(nextItem.getId(), deletedNotes))
+        			.passwords(getPasswordsByParent(nextItem.getId(), deletedPasswords))
+        			.files(getFilesByParent(nextItem.getId(), deletedFiles))
+        			.build());
+        }
+        deletedItems.sort(Comparator.comparing(ContainerDto::getName));
+        return deletedItems;
     }
 
     @Override
+	@Transactional(readOnly = true)
+	public List<ContainerDto> getDeletedContainers(Token token, String sort) {
+	    if (cryptoProvider.isSystemClosed() || !userService.isAdmin(token)) {
+	        return new ArrayList<>();
+	    }
+	    String sortField = sort.substring(0, sort.indexOf(","));
+	    Sort.Direction sortDirection = Sort.Direction.fromString(sort.substring(sort.indexOf(",") + 1));
+	    List<Container> deletedContainers = containerRepository.getAllByDeleted(true, Sort.by(sortDirection, sortField));
+	    return deletedContainers.stream().map(c -> ContainerDto.builder()
+	            .id(c.getId())
+	            .name(containerPathBuilder(c))
+	            .notes(c.getNotes().stream().map(n -> NoteDto.builder().name(n.getName()).build()).collect(Collectors.toList()))
+	            .passwords(c.getPasswords().stream().map(p -> PasswordDto.builder().name(p.getName()).build()).collect(Collectors.toList()))
+	            .files(c.getFiles().stream().map(f -> FileDto.builder().name(f.getName()).build()).collect(Collectors.toList()))
+	            .createdDate(c.getCreatedDate())
+	            .createdBy(c.getCreatedBy())
+	            .editedDate(c.getEditedDate())
+	            .editedBy(c.getEditedBy())
+	            .deletedDate(c.getDeletedDate())
+	            .deletedBy(c.getDeletedBy())
+	            .build())
+	            .collect(Collectors.toList());
+	}
+    
+	@Override
     @Transactional
     public MessageDto restoreNote(Token token, long noteId) {
         if (!userService.isAdmin(token)) {
@@ -387,31 +380,6 @@ public class ContainerServiceImpl implements ContainerService {
         logger.log(token.getLogin(), Acts.RESTORE, Objects.PASSWORD, password.getName(), new Date(),
                 "Container: " + containerPathBuilder(password.getParent()));
         return MessageDto.builder().build();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<ContainerDto> getDeletedContainers(Token token, String sort) {
-        if (cryptoProvider.isSystemClosed() || !userService.isAdmin(token)) {
-            return new ArrayList<>();
-        }
-        String sortField = sort.substring(0, sort.indexOf(","));
-        Sort.Direction sortDirection = Sort.Direction.fromString(sort.substring(sort.indexOf(",") + 1));
-        List<Container> deletedContainers = containerRepository.getAllByDeleted(true, Sort.by(sortDirection, sortField));
-        return deletedContainers.stream().map(c -> ContainerDto.builder()
-                .id(c.getId())
-                .name(containerPathBuilder(c))
-                .notes(c.getNotes().stream().map(n -> NoteDto.builder().name(n.getName()).build()).collect(Collectors.toList()))
-                .passwords(c.getPasswords().stream().map(p -> PasswordDto.builder().name(p.getName()).build()).collect(Collectors.toList()))
-                .files(c.getFiles().stream().map(f -> FileDto.builder().name(f.getName()).build()).collect(Collectors.toList()))
-                .createdDate(c.getCreatedDate())
-                .createdBy(c.getCreatedBy())
-                .editedDate(c.getEditedDate())
-                .editedBy(c.getEditedBy())
-                .deletedDate(c.getDeletedDate())
-                .deletedBy(c.getDeletedBy())
-                .build())
-                .collect(Collectors.toList());
     }
 
     @Override
@@ -853,5 +821,81 @@ public class ContainerServiceImpl implements ContainerService {
             return containerPathBuilder(container.getParent()) + "/" + container.getName();
         }
         return container.getName();
+    }
+
+    private Container getNextItemParent(List<Note> notes, List<Password> pwd, List<File> files ) {
+    	if (notes.size() > 0) return notes.get(0).getParent();
+    	if (pwd.size() > 0) return pwd.get(0).getParent();
+    	return files.get(0).getParent();
+    }
+    
+    private List<NoteDto> getNotesByParent(Long parentId, List<Note> deletedNotes) {
+    	List<NoteDto> notes = new ArrayList<>();
+    	List<Note> processedNotes = new ArrayList<>();
+    	for (Note note : deletedNotes) {
+			if (note.getParent().getId() == parentId) {
+				notes.add(NoteDto.builder()
+						.id(note.getId())
+						.name(note.getName())
+						.createdDate(note.getCreatedDate())
+						.createdBy(note.getCreatedBy())
+						.editedDate(note.getEditedDate())
+						.editedBy(note.getEditedBy())
+						.deletedDate(note.getDeletedDate())
+						.deletedBy(note.getDeletedBy())
+						.build());
+				processedNotes.add(note);
+			}
+		}
+    	deletedNotes.removeAll(processedNotes);
+    	notes.sort(Comparator.comparing(NoteDto::getName));
+    	return notes;
+    }
+    
+    private List<PasswordDto> getPasswordsByParent(Long parentId, List<Password> deletedPasswords) {
+    	List<PasswordDto> passwords = new ArrayList<>();
+    	List<Password> processedPasswords = new ArrayList<>();
+    	for (Password pwd : deletedPasswords) {
+    		if (pwd.getParent().getId() == parentId) {
+    			passwords.add(PasswordDto.builder()
+    					.id(pwd.getId())
+    					.name(pwd.getName())
+    					.createdDate(pwd.getCreatedDate())
+    					.createdBy(pwd.getCreatedBy())
+    					.editedDate(pwd.getEditedDate())
+    					.editedBy(pwd.getEditedBy())
+    					.deletedDate(pwd.getDeletedDate())
+    					.deletedBy(pwd.getDeletedBy())
+    					.build());
+    			processedPasswords.add(pwd);
+    		}
+    	}
+    	deletedPasswords.removeAll(processedPasswords);
+    	passwords.sort(Comparator.comparing(PasswordDto::getName));
+    	return passwords;
+    }
+    
+    private List<FileDto> getFilesByParent(Long parentId, List<File> deletedFiles) {
+    	List<FileDto> files = new ArrayList<>();
+    	List<File> processedFiles = new ArrayList<>();
+    	for (File file : deletedFiles) {
+    		if (file.getParent().getId() == parentId) {
+    			files.add(FileDto.builder()
+    					.id(file.getId())
+    					.name(file.getName())
+    					.size(file.getSize())
+    					.createdDate(file.getCreatedDate())
+    					.createdBy(file.getCreatedBy())
+    					.editedDate(file.getEditedDate())
+    					.editedBy(file.getEditedBy())
+    					.deletedDate(file.getDeletedDate())
+    					.deletedBy(file.getDeletedBy())
+    					.build());
+    			processedFiles.add(file);
+    		}
+    	}
+    	deletedFiles.removeAll(processedFiles);
+    	files.sort(Comparator.comparing(FileDto::getName));
+    	return files;
     }
 }
