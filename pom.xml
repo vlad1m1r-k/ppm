@@ -3,20 +3,20 @@
 
     <groupId>com.volodymyr</groupId>
     <artifactId>ppm</artifactId>
-    <version>1.4.3</version>
+    <version>1.4.4</version>
     <packaging>jar</packaging>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.5</version>
+        <version>4.1.1</version>
     </parent>
 
     <properties>
-        <frontend.plugin.version>1.15.4</frontend.plugin.version>
-        <node.version>v25.9.0</node.version>
+        <frontend.plugin.version>2.0.2</frontend.plugin.version>
+        <node.version>v26.8.1</node.version>
         <jquery.version>3.7.1</jquery.version>
-        <bc.version>1.84</bc.version>
+        <bc.version>1.85</bc.version>
     </properties>
 
     <dependencies>

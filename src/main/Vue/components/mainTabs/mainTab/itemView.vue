@@ -23,7 +23,7 @@
         </div>
     </span>
     <span class="iv-d">{{ language.data.cm10 }} &nbsp;</span>
-    $id:{{ item.id }}
+    <span>$id:{{ item.id }}</span>
     <div class="iv-d2">
         <add-dlg :item="item" v-if="showAddDlg" @close-dlg="showAddDlg = false"></add-dlg>
         <rename-dlg :item="item" v-if="showRenameDlg" @close-dlg="showRenameDlg = false"></rename-dlg>

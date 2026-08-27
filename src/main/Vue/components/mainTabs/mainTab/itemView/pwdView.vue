@@ -2,7 +2,7 @@
     <div :class="{'searchTarget': isSearchTarget}">
         <div class="iv-item">
             <img class="iv-icon" src="/svg/lock.svg">
-            <item-info :item="pwd" v-if="access === 'RW'"></item-info><span v-else>&nbsp;</span>
+            <item-info :item="pwd"></item-info>
             <span class="flex-view">
                 <span class="iv-item-name" @click="toggle" :title="language.data.cm1">{{ pwd.name }}</span>
                 <button class="btn-img edit" :title="language.data.cm2" v-show="show && access === 'RW' && !edit" @click="edit = true"></button>

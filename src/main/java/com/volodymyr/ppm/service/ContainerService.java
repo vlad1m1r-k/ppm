@@ -26,10 +26,10 @@ public interface ContainerService {
     PasswordDto getPwdBody(Token token, long pwdId);
     MessageDto editPassword(Token token, long pwdId, String name, String login, String pass, String note);
     MessageDto removePassword(Token token, long pwdId, boolean permanent);
-    ContainerDto getDeletedItems(Token token, long containerId, String sortNotes, String sortPwd, String sortFls);
+    List<ContainerDto> getDeletedItems(Token token);
+    List<ContainerDto> getDeletedContainers(Token token, String sort);
     MessageDto restoreNote(Token token, long noteId);
     MessageDto restorePasswd(Token token, long pwdId);
-    List<ContainerDto> getDeletedContainers(Token token, String sort);
     MessageDto setAccess(Token token, long containerId, long groupId, Access access, boolean ptAbove, boolean sameBelow);
     void removeAccess(Token token, long containerId, long groupId, Access access);
     List<AccessDto> getAssignedGroups(Token token, long containerId);

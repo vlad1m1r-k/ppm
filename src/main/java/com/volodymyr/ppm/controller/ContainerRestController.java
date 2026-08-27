@@ -327,15 +327,11 @@ public class ContainerRestController {
             JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
             String publicKeyPEM = json.get("publicKey").asString();
             String token = json.get("token").asString();
-            long containerId = json.get("item").longValue();
-            String sortNotes = json.get("sortNotes").asString();
-            String sortPwd = json.get("sortPwd").asString();
-            String sortFls = json.get("sortFls").asString();
             User user = userService.getUser(tokenService.decryptToken(token));
             Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
             if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
-                ContainerDto container = containerService.getDeletedItems(decryptedToken, containerId, sortNotes, sortPwd, sortFls);
-                return cryptoProvider.encrypt(publicKeyPEM, container.toJson());
+                List<ContainerDto> containers = containerService.getDeletedItems(decryptedToken);
+                return cryptoProvider.encrypt(publicKeyPEM, mapper.writeValueAsString(containers));
             }
         }
         return null;
