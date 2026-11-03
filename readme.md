@@ -125,3 +125,5 @@ __RW__ - Read Write. Full access.
   + 2FA feature added
 - __1.4.4__
   + Minor UI changes
+- __1.4.5__
+  + Minor UI changes

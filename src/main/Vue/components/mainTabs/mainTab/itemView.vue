@@ -1,29 +1,32 @@
 <template>
     <access-mgmt-dlg v-if="showAccessMgmtDlg" :item="item" @close-dlg="showAccessMgmtDlg = false"></access-mgmt-dlg>
     <input type="file" v-if="item.access === 'RW'" style="display: none" ref="cnt_file" @change="addFile">
-    <span v-if="item.access === 'RW'">
-        <button class="btn blue" @click.stop="showMenu = !showMenu">{{ item.name }}</button>
-        <div class="dropdown" :class="{ show: showMenu }">
-            <a class="dropdown-item" @click="showAddDlg = true">{{ language.data.iv1 }}</a>
-            <a class="dropdown-item" @click="showRenameDlg = true" v-if="item.name !== 'root'">
-                {{ language.data.iv4 }}
-            </a>
-            <a class="dropdown-item" @click="showAddNoteDlg = true">{{ language.data.iv5 }}</a>
-            <a class="dropdown-item" @click="showAddPwdDlg = true">{{ language.data.iv11 }}</a>
-            <a class="dropdown-item" @click="$refs.cnt_file.click()">{{ language.data.iv13 }}</a>
-            <a class="dropdown-item" v-if="tokenProvider.adminSettings" @click="showAccessMgmtDlg = true">
-                {{ language.data.iv12 }}
-            </a>
-            <div class="dropdown-divider" v-if="item.name !== 'root'"></div>
-            <span :title="item.children.length > 0 ? language.data.iv3 : ''" :class="{ 'cursor-stop': item.children.length > 0 }" v-if="item.name !== 'root'">
-                <a style="width: 100%;" class="dropdown-item" :class="{ disabled: item.children.length > 0 || item.name === 'root' }" @click="deleteContainer">
-                    {{ language.data.iv2 }}
+    <div class="iv-header">
+        <span v-if="item.access === 'RW'">
+            <button class="btn-img menu" @click.stop="showMenu = !showMenu" :title="language.data.cm12"></button>
+            <div class="dropdown" :class="{ show: showMenu }">
+                <a class="dropdown-item" @click="showAddDlg = true">{{ language.data.iv1 }}</a>
+                <a class="dropdown-item" @click="showRenameDlg = true" v-if="item.name !== 'root'">
+                    {{ language.data.iv4 }}
                 </a>
-            </span>
-        </div>
-    </span>
-    <span class="iv-d">{{ language.data.cm10 }} &nbsp;</span>
-    <span>$id:{{ item.id }}</span>
+                <a class="dropdown-item" @click="showAddNoteDlg = true">{{ language.data.iv5 }}</a>
+                <a class="dropdown-item" @click="showAddPwdDlg = true">{{ language.data.iv11 }}</a>
+                <a class="dropdown-item" @click="$refs.cnt_file.click()">{{ language.data.iv13 }}</a>
+                <a class="dropdown-item" v-if="tokenProvider.adminSettings" @click="showAccessMgmtDlg = true">
+                    {{ language.data.iv12 }}
+                </a>
+                <div class="dropdown-divider" v-if="item.name !== 'root'"></div>
+                <span :title="item.children.length > 0 ? language.data.iv3 : ''" :class="{ 'cursor-stop': item.children.length > 0 }" v-if="item.name !== 'root'">
+                    <a style="width: 100%;" class="dropdown-item" :class="{ disabled: item.children.length > 0 || item.name === 'root' }" @click="deleteContainer">
+                        {{ language.data.iv2 }}
+                    </a>
+                </span>
+            </div>
+        </span>
+        <b>&#8810 {{ item.name }} &#8811</b>
+        <span class="iv-d">{{ language.data.cm10 }}</span>
+        <span>$id:{{ item.id }}</span>
+    </div>
     <div class="iv-d2">
         <add-dlg :item="item" v-if="showAddDlg" @close-dlg="showAddDlg = false"></add-dlg>
         <rename-dlg :item="item" v-if="showRenameDlg" @close-dlg="showRenameDlg = false"></rename-dlg>

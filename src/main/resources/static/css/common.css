@@ -64,9 +64,14 @@
     background-color: #b7f696 !important;
 }
 
+.iv-header {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
 .iv-d {
     user-select: none;
-    margin-left: 2rem;
 }
 
 .iv-d2 {
@@ -76,11 +81,13 @@
 
 .iv-item {
     display: grid;
-    grid-template-columns: min-content min-content auto min-content min-content;
+    grid-template-columns: min-content min-content min-content auto min-content min-content;
+    gap: 0.5rem;
     white-space: nowrap;
     border: 2px solid #e0efff;
     border-radius: 0.25rem;
     margin-top: 0.1rem;
+    padding-left: 0.5rem;
     align-items: center;
 
     &:hover {

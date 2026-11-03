@@ -3,13 +3,19 @@
         <div class="iv-item">
             <img class="iv-icon" src="/svg/lock.svg">
             <item-info :item="note"></item-info>
+            <span>
+                <button class="btn-img menu" v-show="access === 'RW'" @click.stop="showMenu = !showMenu" :title="language.data.cm12"></button>
+                <div class="dropdown" :class="{ show: showMenu }">
+                    <a class="dropdown-item" @click.stop="showInfo = true; showMenu = false">{{ language.data.cm8 }}</a>
+                    <a class="dropdown-item" @click="loadNote(); show = true; edit = true" v-show="access === 'RW' && !edit">{{ language.data.cm2 }}</a>
+                    <a class="dropdown-item" @click="remove" v-show="access === 'RW'">{{ language.data.cm5 }}</a>
+                </div>
+            </span>
             <span class="flex-view">
                 <span class="iv-item-name" @click="toggle" :title="language.data.cm1">{{ note.name }}</span>
-                <button class="btn-img edit" :title="language.data.cm2" v-show="show && access === 'RW' && !edit" @click="edit = true"></button>
                 <button class="btn-img acpt" :title="language.data.cm3" v-show="show && access === 'RW' && edit" @click="save"></button>
                 <button class="btn-img cncl" :title="language.data.cm4" v-show="show && access === 'RW' && edit" @click="cancel"></button>
             </span>
-            <button class="btn-img rmv" :title="language.data.cm5" v-show="access === 'RW'" @click="remove"></button>
             <span class="iv-item-link"><span style="user-select: none">{{ language.data.cm10 }} &nbsp;</span>$id:{{ $parent.$props.item.id }}n{{ note.id }}&nbsp;</span>
         </div>
         <input type="text" class="input" v-show="show && edit" v-model="name">
@@ -34,6 +40,8 @@ export default {
         return {
             language: this.$root.$data.language,
             tokenProvider: this.$root.$data.tokenProvider,
+            showMenu: false,
+            showInfo: false,
             show: false,
             edit: false,
             name: "",
@@ -134,10 +142,19 @@ export default {
                     this.eventHub.emit("show-msg", this.errorParser(e));
                 }
             }
+        },
+        closeMenu() {
+            this.showMenu = false;
         }
     },
     mounted() {
         this.name = this.note.name;
+    },
+    created() {
+        this.eventHub.on("close-menu", this.closeMenu);
+    },
+    beforeUnmount() {
+        this.eventHub.off("close-menu", this.closeMenu);
     }
 }
 </script>
