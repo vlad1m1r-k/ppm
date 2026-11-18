@@ -1,7 +1,6 @@
 ## PPM Password Manager
 ### Features
 - tree-like structure of containers with notes, passwords and files
-- edit tree structure by drag and drop
 - notes, passwords and files are encrypted in database
 - users and groups management
 - allowed IP for users

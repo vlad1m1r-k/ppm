@@ -8,6 +8,7 @@
                 <div class="dropdown" :class="{ show: showMenu }">
                     <a class="dropdown-item" @click.stop="showInfo = true; showMenu = false">{{ language.data.cm8 }}</a>
                     <a class="dropdown-item" @click="loadNote(); show = true; edit = true" v-show="access === 'RW' && !edit">{{ language.data.cm2 }}</a>
+                    <a class="dropdown-item" @click="copyToClipboard" v-show="access === 'RW'">{{ language.data.cf1 }}</a>
                     <a class="dropdown-item" @click="remove" v-show="access === 'RW'">{{ language.data.cm5 }}</a>
                 </div>
             </span>
@@ -40,6 +41,7 @@ export default {
         return {
             language: this.$root.$data.language,
             tokenProvider: this.$root.$data.tokenProvider,
+            clipboard: this.$root.$data.clipboard,
             showMenu: false,
             showInfo: false,
             show: false,
@@ -145,6 +147,11 @@ export default {
         },
         closeMenu() {
             this.showMenu = false;
+        },
+        copyToClipboard() {
+            this.clipboard.id = this.note.id;
+            this.clipboard.type = "n";
+            this.clipboard.name = this.note.name;
         }
     },
     mounted() {

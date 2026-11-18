@@ -121,6 +121,10 @@ public class File {
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
+    
+    public void setParent(Container parent ) {
+    	this.parent = parent;
+    }
 
     @Override
     public boolean equals(Object o) {

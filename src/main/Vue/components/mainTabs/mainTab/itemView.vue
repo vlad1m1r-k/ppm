@@ -15,6 +15,8 @@
                 <a class="dropdown-item" v-if="tokenProvider.adminSettings" @click="showAccessMgmtDlg = true">
                     {{ language.data.iv12 }}
                 </a>
+                <a class="dropdown-item" @click="copyToClipboard" v-if="item.name !== 'root'">{{ language.data.cf1 }}</a>
+                <a class="dropdown-item" v-if="clipboard.id && !(clipboard.type === 'c' && clipboard.id === item.id)" :title="clipboard.name" @click="moveClipboard">{{ language.data.cf3 }}</a>
                 <div class="dropdown-divider" v-if="item.name !== 'root'"></div>
                 <span :title="item.children.length > 0 ? language.data.iv3 : ''" :class="{ 'cursor-stop': item.children.length > 0 }" v-if="item.name !== 'root'">
                     <a style="width: 100%;" class="dropdown-item" :class="{ disabled: item.children.length > 0 || item.name === 'root' }" @click="deleteContainer">
@@ -78,6 +80,7 @@ export default {
         return {
             language: this.$root.$data.language,
             tokenProvider: this.$root.$data.tokenProvider,
+            clipboard: this.$root.$data.clipboard,
             showAddDlg: false,
             showRenameDlg: false,
             showAddNoteDlg: false,
@@ -158,8 +161,149 @@ export default {
                 this.eventHub.emit("show-msg", this.errorParser(e));
             }
         },
+        moveClipboard() {
+            switch (this.clipboard.type) {
+                case "c":
+                    this.moveContainer();
+                    break;
+                case "n":
+                    this.moveNote();
+                    break;
+                case "p":
+                    this.movePwd();
+                    break;
+                case "f":
+                    this.moveFile();
+            }
+        },
+        async moveContainer() {
+            this.eventHub.emit("show-msg", "");
+            const confResult = confirm(this.language.data.cf1 + " " + this.language.data.cf4 + " \"" + this.clipboard.name +
+                    "\" " + this.language.data.cf2 + " \"" + this.item.name + "\" ?");
+            if (confResult) {
+                try {
+                    const token = await this.tokenProvider.getToken();
+                    const encryptedData = await cryptoProvider.encrypt({
+                        token: token,
+                        item: this.clipboard.id,
+                        moveTo: this.item.id
+                    });
+                    const answer = await $.ajax({
+                        url: "/container/move",
+                        method: "POST",
+                        data: encryptedData
+                    });
+                    const data = cryptoProvider.decrypt(answer);
+                    if (data.message) {
+                        this.eventHub.emit("show-msg", this.language.data[data.message]);
+                    } else {
+                        this.eventHub.emit("update-tree");
+                    }
+                } catch (e) {
+                    this.eventHub.emit("show-msg", this.errorParser(e));
+                }
+            };
+            this.clearClipboard();
+        },
+        async moveNote() {
+            this.eventHub.emit("show-msg", "");
+            const confResult = confirm(this.language.data.cf1 + " " + this.language.data.cf5 + " \"" + this.clipboard.name +
+                    "\" " + this.language.data.cf2 + " \"" + this.item.name + "\" ?");
+            if (confResult) {
+                try {
+                    const token = await this.tokenProvider.getToken();
+                    const encryptedData = await cryptoProvider.encrypt({
+                        token: token,
+                        item: this.clipboard.id,
+                        moveTo: this.item.id
+                    });
+                    const answer = await $.ajax({
+                        url: "/container/moveNote",
+                        method: "POST",
+                        data: encryptedData
+                    });
+                    const data = cryptoProvider.decrypt(answer);
+                    if (data.message) {
+                        this.eventHub.emit("show-msg", this.language.data[data.message]);
+                    } else {
+                        this.eventHub.emit("update-tree");
+                    }
+                } catch (e) {
+                    this.eventHub.emit("show-msg", this.errorParser(e));
+                }
+            };
+            this.clearClipboard();
+        },
+        async movePwd() {
+            this.eventHub.emit("show-msg", "");
+            const confResult = confirm(this.language.data.cf1 + " " + this.language.data.cf6 + " \"" + this.clipboard.name +
+                    "\" " + this.language.data.cf2 + " \"" + this.item.name + "\" ?");
+            if (confResult) {
+                try {
+                    const token = await this.tokenProvider.getToken();
+                    const encryptedData = await cryptoProvider.encrypt({
+                        token: token,
+                        item: this.clipboard.id,
+                        moveTo: this.item.id
+                    });
+                    const answer = await $.ajax({
+                        url: "/container/movePwd",
+                        method: "POST",
+                        data: encryptedData
+                    });
+                    const data = cryptoProvider.decrypt(answer);
+                    if (data.message) {
+                        this.eventHub.emit("show-msg", this.language.data[data.message]);
+                    } else {
+                        this.eventHub.emit("update-tree");
+                    }
+                } catch (e) {
+                    this.eventHub.emit("show-msg", this.errorParser(e));
+                }
+            };
+            this.clearClipboard();
+        },
+        async moveFile() {
+            this.eventHub.emit("show-msg", "");
+            const confResult = confirm(this.language.data.cf1 + " " + this.language.data.cf7 + " \"" + this.clipboard.name +
+                    "\" " + this.language.data.cf2 + " \"" + this.item.name + "\" ?");
+            if (confResult) {
+                try {
+                    const token = await this.tokenProvider.getToken();
+                    const encryptedData = await cryptoProvider.encrypt({
+                        token: token,
+                        item: this.clipboard.id,
+                        moveTo: this.item.id
+                    });
+                    const answer = await $.ajax({
+                        url: "/container/moveFile",
+                        method: "POST",
+                        data: encryptedData
+                    });
+                    const data = cryptoProvider.decrypt(answer);
+                    if (data.message) {
+                        this.eventHub.emit("show-msg", this.language.data[data.message]);
+                    } else {
+                        this.eventHub.emit("update-tree");
+                    }
+                } catch (e) {
+                    this.eventHub.emit("show-msg", this.errorParser(e));
+                }
+            };
+            this.clearClipboard();
+        },
         closeMenu() {
             this.showMenu = false;
+        },
+        copyToClipboard() {
+            this.clipboard.id = this.item.id;
+            this.clipboard.type = "c";
+            this.clipboard.name = this.item.name;
+        },
+        clearClipboard() {
+            this.clipboard.id = null;
+            this.clipboard.type = null;
+            this.clipboard.name = null;
         }
     },
     created() {

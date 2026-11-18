@@ -1,7 +1,6 @@
 <template>
     <ul class="item-tree">
-        <li style="white-space: nowrap" :draggable="item.access === 'RW' && item.name !== 'root'" @dragover="dragover"
-            @dragstart="startDrag($event, item)" @drop="dropHandler($event, item)">
+        <li style="white-space: nowrap">
             <span class="caret" :class="{'caret-down': isOpen}" @click="isOpen = !isOpen" v-if="item.children && item.children.length > 0"></span>
             <span class="branch" :class="{'tr-selected': item.id === selectedItem.id}" @click="$emit('item-select', item); isOpen = true" @dblclick="isOpen = !isOpen">
                 {{ item.name }}
@@ -40,45 +39,6 @@ export default {
         }
     },
     methods: {
-        dragover(evt) {
-            if (this.item.access === "RW" && evt.dataTransfer.getData("id") != this.item.id) {
-                evt.preventDefault();
-            }
-        },
-        startDrag(evt, item) {
-            evt.dataTransfer.dropEffect = "move";
-            evt.dataTransfer.effectAllowed = "move";
-            evt.dataTransfer.setData("id", item.id);
-            evt.dataTransfer.setData("name", item.name);
-        },
-        async dropHandler(evt, item) {
-            this.eventHub.emit("show-msg", "");
-            const confResult = confirm(this.language.data.cf1 + " \"" + evt.dataTransfer.getData("name") +
-                    "\" " + this.language.data.cf2 + " \"" + item.name + "\" ?");
-            if (confResult) {
-                try {
-                    const token = await this.tokenProvider.getToken();
-                    const encryptedData = await cryptoProvider.encrypt({
-                        token: token,
-                        item: parseInt(evt.dataTransfer.getData("id")),
-                        moveTo: item.id
-                    });
-                    const answer = await $.ajax({
-                        url: "/container/move",
-                        method: "POST",
-                        data: encryptedData
-                    });
-                    const data = cryptoProvider.decrypt(answer);
-                    if (data.message) {
-                        this.eventHub.emit("show-msg", this.language.data[data.message]);
-                    } else {
-                        this.eventHub.emit("update-tree");
-                    }
-                } catch (e) {
-                    this.eventHub.emit("show-msg", this.errorParser(e));
-                }
-            }
-        },
         searchEvent(data) {
             if (this.item.id === data.cntId) {
                 this.$emit('item-select', this.item, data);

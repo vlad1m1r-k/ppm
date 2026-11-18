@@ -20,6 +20,7 @@ const app = createApp({
                 name: "",
                 data: {}
             },
+            clipboard: {id: null, type: null, name: null},
             langLoadStatus: false
         }
     },
