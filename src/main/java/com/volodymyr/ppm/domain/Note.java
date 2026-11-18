@@ -115,6 +115,10 @@ public class Note {
     public void setDeletedBy(String deletedBy) {
         this.deletedBy = deletedBy;
     }
+    
+    public void setParent(Container parent ) {
+    	this.parent = parent;
+    }
 
     @Override
     public boolean equals(Object o) {

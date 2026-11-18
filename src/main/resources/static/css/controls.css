@@ -125,6 +125,7 @@ input {
     border: 2px solid #007bff;
     border-radius: 0.25rem;
     padding: 0.25rem;
+    font-size: initial;
 }
 
 .dropdown-item {
@@ -244,5 +245,9 @@ input {
 
     &.redo {
         background-image: url(/svg/redo.svg);
+    }
+
+    &.menu {
+        background-image: url(/svg/menu.svg);
     }
 }

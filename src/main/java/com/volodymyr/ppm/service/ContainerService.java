@@ -13,6 +13,9 @@ import com.volodymyr.ppm.dto.PasswordDto;
 public interface ContainerService {
     ContainerDto getTree(Token token);
     MessageDto moveContainer(Token token, long itemId, long moveToId);
+    MessageDto moveNote(Token token, long itemId, long moveToId);
+    MessageDto movePwd(Token token, long itemId, long moveToId);
+    MessageDto moveFile(Token token, long itemId, long moveToId);
     MessageDto add(Token token, long parentId, String name);
     MessageDto restore(Token decryptedToken, long contId, long restoreToId);
     MessageDto delete(Token token, long itemId, boolean permanent);

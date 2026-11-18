@@ -3,13 +3,20 @@
         <div class="iv-item">
             <img class="iv-icon" src="/svg/lock.svg">
             <item-info :item="pwd"></item-info>
+            <span>
+                <button class="btn-img menu" v-show="access === 'RW'" @click.stop="showMenu = !showMenu" :title="language.data.cm12"></button>
+                <div class="dropdown" :class="{ show: showMenu }">
+                    <a class="dropdown-item" @click.stop="showInfo = true; showMenu = false">{{ language.data.cm8 }}</a>
+                    <a class="dropdown-item" @click="loadPwdEnv(); show = true; edit = true" v-show="access === 'RW' && !edit">{{ language.data.cm2 }}</a>
+                    <a class="dropdown-item" @click="copyToClipboard" v-show="access === 'RW'">{{ language.data.cf1 }}</a>
+                    <a class="dropdown-item" @click="remove" v-show="access === 'RW'">{{ language.data.cm5 }}</a>
+                </div>
+            </span>
             <span class="flex-view">
                 <span class="iv-item-name" @click="toggle" :title="language.data.cm1">{{ pwd.name }}</span>
-                <button class="btn-img edit" :title="language.data.cm2" v-show="show && access === 'RW' && !edit" @click="edit = true"></button>
                 <button class="btn-img acpt" :title="language.data.cm3" v-show="show && access === 'RW' && edit" @click="save"></button>
                 <button class="btn-img cncl" :title="language.data.cm4" v-show="show && access === 'RW' && edit" @click="cancel"></button>
             </span>
-            <button class="btn-img rmv" :title="language.data.cm5" v-show="access === 'RW'" @click="remove"></button>
             <span class="iv-item-link"><span style="user-select: none">{{ language.data.cm10 }} &nbsp;</span>$id:{{ $parent.$props.item.id }}p{{ pwd.id }}&nbsp;</span>
         </div>
         <input class="input" v-show="show && edit" v-model="name">
@@ -40,6 +47,9 @@ export default {
         return {
             language: this.$root.$data.language,
             tokenProvider: this.$root.$data.tokenProvider,
+            clipboard: this.$root.$data.clipboard,
+            showMenu: false,
+            showInfo: false,
             show: false,
             edit: false,
             name: "",
@@ -197,10 +207,24 @@ export default {
             if (!this.edit) {
                 this.pass = "";
             }
+        },
+        closeMenu() {
+            this.showMenu = false;
+        },
+        copyToClipboard() {
+            this.clipboard.id = this.pwd.id;
+            this.clipboard.type = "p";
+            this.clipboard.name = this.pwd.name;
         }
     },
     mounted() {
         this.name = this.pwd.name;
+    },
+    created() {
+        this.eventHub.on("close-menu", this.closeMenu);
+    },
+    beforeUnmount() {
+        this.eventHub.off("close-menu", this.closeMenu);
     }
 }
 </script>

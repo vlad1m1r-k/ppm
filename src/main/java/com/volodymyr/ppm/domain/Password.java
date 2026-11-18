@@ -142,6 +142,10 @@ public class Password {
     public void setEncryptedNote(byte[] encryptedNote) {
         this.encryptedNote.setData(encryptedNote);
     }
+    
+    public void setParent(Container parent ) {
+    	this.parent = parent;
+    }
 
     @Override
     public boolean equals(Object o) {

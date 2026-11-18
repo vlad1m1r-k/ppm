@@ -81,6 +81,60 @@ public class ContainerRestController {
         }
         return null;
     }
+    
+    @PostMapping("/moveNote")
+    public CryptoDto moveNote(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
+    	if (validatorService.validateCrypto(key, data)) {
+    		JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String publicKeyPEM = json.get("publicKey").asString();
+            String token = json.get("token").asString();
+            long itemId = json.get("item").longValue();
+            long moveToId = json.get("moveTo").longValue();
+            User user = userService.getUser(tokenService.decryptToken(token));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+            	MessageDto message = containerService.moveNote(decryptedToken, itemId, moveToId);
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
+            }
+    	}
+    	return null;
+    }
+    
+    @PostMapping("/movePwd")
+    public CryptoDto movePwd(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
+    	if (validatorService.validateCrypto(key, data)) {
+    		JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String publicKeyPEM = json.get("publicKey").asString();
+            String token = json.get("token").asString();
+            long itemId = json.get("item").longValue();
+            long moveToId = json.get("moveTo").longValue();
+            User user = userService.getUser(tokenService.decryptToken(token));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+            	MessageDto message = containerService.movePwd(decryptedToken, itemId, moveToId);
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
+            }
+    	}
+    	return null;
+    }
+    
+    @PostMapping("/moveFile")
+    public CryptoDto moveFile(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {
+    	if (validatorService.validateCrypto(key, data)) {
+    		JsonNode json = mapper.readTree(cryptoProvider.decrypt(key, data));
+            String publicKeyPEM = json.get("publicKey").asString();
+            String token = json.get("token").asString();
+            long itemId = json.get("item").longValue();
+            long moveToId = json.get("moveTo").longValue();
+            User user = userService.getUser(tokenService.decryptToken(token));
+            Token decryptedToken = tokenService.validateToken(user, token, request.getRemoteAddr(), request.getHeader("User-Agent"), session.getId());
+            if (decryptedToken != null && userService.isUserEnabled(decryptedToken)) {
+            	MessageDto message = containerService.moveFile(decryptedToken, itemId, moveToId);
+                return cryptoProvider.encrypt(publicKeyPEM, message.toJson());
+            }
+    	}
+    	return null;
+    }
 
     @PostMapping("/add")
     public CryptoDto add(@RequestParam String key, @RequestParam String data, HttpServletRequest request, HttpSession session) {

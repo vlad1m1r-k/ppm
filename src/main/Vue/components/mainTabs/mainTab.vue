@@ -27,7 +27,6 @@
 </template>
 
 <script>
-import { defineAsyncComponent } from "vue";
 import treeItem from "./mainTab/treeItem.vue";
 import itemView from "./mainTab/itemView.vue";
 import trashView from "./mainTab/trashView.vue";

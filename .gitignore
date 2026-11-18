@@ -10,5 +10,6 @@
 .project
 .settings
 .vscode
+.github
 package-lock.json
 *controller.js

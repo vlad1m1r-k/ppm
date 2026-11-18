@@ -1,7 +1,6 @@
 <template>
     <span>
-        <button class="btn-img info" :title="language.data.cm8" @click.stop="show = !show"></button>
-        <div v-if="show" class="info-box" @click.stop="show = false">
+        <div v-if="$parent.$data.showInfo" class="info-box" @click.stop="$parent.$data.showInfo = false">
             {{ language.data.div2 }} : &nbsp; {{ item.createdDate }} <br>
             {{ language.data.div3 }} : &nbsp; {{ item.createdBy }} <br>
             {{ language.data.div4 }} : &nbsp; {{ item.editedDate }} <br>
@@ -18,13 +17,12 @@ export default {
     },
     data() {
         return {
-            language: this.$root.$data.language,
-            show: false
+            language: this.$root.$data.language
         }
     },
     methods: {
         closeMenu() {
-            this.show = false;
+            this.$parent.$data.showInfo = false;
         }
     },
     created() {

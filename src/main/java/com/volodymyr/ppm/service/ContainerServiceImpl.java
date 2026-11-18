@@ -78,12 +78,69 @@ public class ContainerServiceImpl implements ContainerService {
                 || container.getName().equals("root") || container.equals(cntMoveTo) || container.isDeleted() || cntMoveTo.isDeleted()) {
             return MessageDto.builder().message("cfe1").build();
         }
+        logger.log(token.getLogin(), Acts.MOVE, Objects.CONTAINER, containerPathBuilder(container), new Date(),
+                "to container " + containerPathBuilder(cntMoveTo));
         container.getParent().getChildren().remove(container);
         container.setEditedBy(token.getLogin());
         container.setEditedDate(new Date());
         cntMoveTo.addChild(container);
-        logger.log(token.getLogin(), Acts.MOVE, Objects.CONTAINER, containerPathBuilder(container), new Date(),
+        return MessageDto.builder().build();
+    }
+    
+    @Override
+    @Transactional
+    public MessageDto moveNote(Token token, long itemId, long moveToId) {
+    	Note note = noteRepository.getReferenceById(itemId);
+    	Container cntMoveTo = containerRepository.getReferenceById(moveToId);
+    	if (getAccess(note.getParent(), userService.getGroups(token)) != Access.RW || getAccess(cntMoveTo, userService.getGroups(token)) != Access.RW
+                || note.getParent().equals(cntMoveTo) || note.isDeleted() || cntMoveTo.isDeleted() || note.getParent().isDeleted()) {
+            return MessageDto.builder().message("cfe1").build();
+        }
+    	logger.log(token.getLogin(), Acts.MOVE, Objects.NOTE, containerPathBuilder(note.getParent()) + "/" + note.getName(), new Date(),
                 "to container " + containerPathBuilder(cntMoveTo));
+    	note.getParent().getNotes().remove(note);
+    	note.setEditedBy(token.getLogin());
+    	note.setEditedDate(new Date());
+    	cntMoveTo.getNotes().add(note);
+    	note.setParent(cntMoveTo);
+        return MessageDto.builder().build();
+    }
+    
+    @Override
+    @Transactional
+    public MessageDto movePwd(Token token, long itemId, long moveToId) {
+    	Password pwd = passwordRepository.getReferenceById(itemId);
+    	Container cntMoveTo = containerRepository.getReferenceById(moveToId);
+    	if (getAccess(pwd.getParent(), userService.getGroups(token)) != Access.RW || getAccess(cntMoveTo, userService.getGroups(token)) != Access.RW
+                || pwd.getParent().equals(cntMoveTo) || pwd.isDeleted() || cntMoveTo.isDeleted() || pwd.getParent().isDeleted()) {
+            return MessageDto.builder().message("cfe1").build();
+        }
+    	logger.log(token.getLogin(), Acts.MOVE, Objects.PASSWORD, containerPathBuilder(pwd.getParent()) + "/" + pwd.getName(), new Date(),
+                "to container " + containerPathBuilder(cntMoveTo));
+    	pwd.getParent().getPasswords().remove(pwd);
+    	pwd.setEditedBy(token.getLogin());
+    	pwd.setEditedDate(new Date());
+    	cntMoveTo.getPasswords().add(pwd);
+    	pwd.setParent(cntMoveTo);
+        return MessageDto.builder().build();
+    }
+    
+    @Override
+    @Transactional
+    public MessageDto moveFile(Token token, long itemId, long moveToId) {
+    	File file = fileRepository.getReferenceById(itemId);
+    	Container cntMoveTo = containerRepository.getReferenceById(moveToId);
+    	if (getAccess(file.getParent(), userService.getGroups(token)) != Access.RW || getAccess(cntMoveTo, userService.getGroups(token)) != Access.RW
+                || file.getParent().equals(cntMoveTo) || file.isDeleted() || cntMoveTo.isDeleted() || file.getParent().isDeleted()) {
+            return MessageDto.builder().message("cfe1").build();
+        }
+    	logger.log(token.getLogin(), Acts.MOVE, Objects.PASSWORD, containerPathBuilder(file.getParent()) + "/" + file.getName(), new Date(),
+                "to container " + containerPathBuilder(cntMoveTo));
+    	file.getParent().getFiles().remove(file);
+    	file.setEditedBy(token.getLogin());
+    	file.setEditedDate(new Date());
+    	cntMoveTo.getFiles().add(file);
+    	file.setParent(cntMoveTo);
         return MessageDto.builder().build();
     }
 
