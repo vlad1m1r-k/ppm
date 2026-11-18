@@ -25,7 +25,7 @@
             </span>
         </td>
         <td><span class="iv-item-name" @click="download">{{ file.name }}</span></td>
-        <td>{{ file.size }} bytes</td>
+        <td class="fit">&nbsp; {{ file.size }} bytes &nbsp;</td>
         <td class="fit">
             <span style="user-select: none">{{ language.data.cm10 }} &nbsp;</span>$id:{{ $parent.$props.item.id }}f{{ file.id }}&nbsp;
         </td>
